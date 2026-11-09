@@ -23,7 +23,7 @@ var _player_grid: Vector2 = Vector2(8.5, 8.5)
 var _facing: int = 0
 var _joy: Vector2 = Vector2.ZERO
 
-var _joystick: VirtualJoystick
+var _joystick: TouchJoystick
 var _btn_interact: TouchActionButton
 var _btn_tile: TouchActionButton
 var _info: Label
@@ -124,7 +124,7 @@ func _build_hud() -> void:
 	_toast.modulate.a = 0.0
 	layer.add_child(_toast)
 
-	_joystick = VirtualJoystick.new()
+	_joystick = TouchJoystick.new()
 	_joystick.vector_changed.connect(func(v: Vector2) -> void: _joy = v)
 	layer.add_child(_joystick)
 

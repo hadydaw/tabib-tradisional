@@ -1,4 +1,4 @@
-class_name VirtualJoystick
+class_name TouchJoystick
 extends Control
 ## Joystick virtual multi-touch. Membaca InputEventScreenTouch/Drag langsung (bukan
 ## event mouse), sehingga bisa dipakai bersamaan dengan TouchActionButton.
