@@ -36,5 +36,10 @@ echo "== 4. Tes unit =="
 godot --headless --path game --script res://tests/unit/run_tests.gd 2>&1 | tee "$LOGS/unit_tests.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 
+echo "== 5. Tes asap (semua profil render x tile x beban, headless) =="
+godot --headless --path game --script res://tests/smoke/run_smoke.gd 2>&1 | tee "$LOGS/smoke_tests.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_tests.log"; then FAIL=1; fi
+
 if [ "$FAIL" -ne 0 ]; then echo "VALIDASI GAGAL"; exit 1; fi
 echo "VALIDASI LOLOS"
