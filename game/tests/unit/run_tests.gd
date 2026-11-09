@@ -145,8 +145,8 @@ func _test_collision() -> void:
 	_check(p.x <= 4.75 + 0.0001 and p.x > 4.5, "berhenti di depan sel terblokir (x=%.3f)" % p.x)
 	_check(is_equal_approx(p.y, 5.5), "tidak bergeser sumbu lain")
 	# Meluncur di sepanjang dinding
-	var q: Vector2 = c.move(Vector2(4.7, 4.0), Vector2(0.3, 1.0))
-	_check(q.y > 4.9, "meluncur sepanjang dinding (y naik)")
+	var q: Vector2 = c.move(Vector2(4.7, 5.5), Vector2(0.3, 1.0))
+	_check(q.y > 6.4 and q.x <= 4.75 + 0.0001, "meluncur sepanjang dinding (x tertahan, y lanjut): %s" % q)
 	_check(c.is_free(q), "hasil luncur tetap bebas")
 	# Tidak menembus walau delta besar
 	var t: Vector2 = c.move(Vector2(1.5, 5.5), Vector2(20.0, 0.0))
