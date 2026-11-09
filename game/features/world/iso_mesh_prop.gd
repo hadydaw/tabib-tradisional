@@ -7,10 +7,10 @@ static var _cache: Dictionary = {}
 var _mesh: ArrayMesh
 
 
-func setup(tile: Vector2, height: float) -> void:
-	var key: String = "%d_%d_%d" % [int(tile.x), int(tile.y), int(height * 10.0)]
+func setup(tile: Vector2, height: float, footprint: float = IsoMeshes.PROP_FOOTPRINT, color: Color = IsoMeshes.PROP_COLOR) -> void:
+	var key: String = "%d_%d_%d_%d_%s" % [int(tile.x), int(tile.y), int(height * 10.0), int(footprint * 100.0), color.to_html()]
 	if not _cache.has(key):
-		_cache[key] = IsoMeshes.prop_mesh(tile, height)
+		_cache[key] = IsoMeshes.prop_mesh(tile, height, footprint, color)
 	_mesh = _cache[key]
 	queue_redraw()
 

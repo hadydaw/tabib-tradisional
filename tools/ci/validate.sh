@@ -41,5 +41,10 @@ godot --headless --path game --script res://tests/smoke/run_smoke.gd 2>&1 | tee 
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_tests.log"; then FAIL=1; fi
 
+echo "== 6. Tes asap dunia Fase 2 (gerak, tabrakan, kamera, joystick) =="
+godot --headless --path game --script res://tests/smoke/run_smoke_world.gd 2>&1 | tee "$LOGS/smoke_world.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_world.log"; then FAIL=1; fi
+
 if [ "$FAIL" -ne 0 ]; then echo "VALIDASI GAGAL"; exit 1; fi
 echo "VALIDASI LOLOS"
