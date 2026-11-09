@@ -21,3 +21,6 @@ Thumbs.db
 # Rahasia (jangan pernah dikomit)
 .env
 *.pem
+
+# Hasil build lokal/CI
+build/
