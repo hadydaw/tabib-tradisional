@@ -46,6 +46,7 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-09 | Nama kelas kustom wajib dicek terhadap kelas native Godot. Kasus nyata: `VirtualJoystick` bentrok dengan kelas native Godot 4.7, diganti `TouchJoystick`. | Ditangkap oleh validasi CI. |
 | T-11 | Prototipe menampilkan telemetri (FPS, waktu frame, draw call, memori, info GPU) dan punya tombol uji beban serta batas FPS. | Mengukur di perangkat tanpa alat tambahan. |
 | T-12 | CI memeriksa kompatibilitas statis APK terhadap profil perangkat uji (`tools/check_apk_compat.py`) dan menggagalkan build bila menyimpang. | Menjaga APK tetap cocok dengan target. Bukan pengganti uji perangkat. |
+| T-13 | Prototipe punya 4 profil render dengan visual sama untuk memisahkan penyebab biaya (draw call vs node vs batching). Telemetri memakai pemanasan 60 frame dan p99. Ini alat ukur, bukan keputusan arsitektur render final. | Data uji awal tidak bisa membedakan penyebab. |
 | T-10 | UI sentuh memakai kontrol buatan sendiri yang membaca `InputEventScreenTouch/Drag`, dengan `emulate_mouse_from_touch=false`. | Emulasi mouse hanya melayani satu jari; joystick dan tombol harus bisa dipakai bersamaan. **Belum diuji di perangkat.** |
 
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)

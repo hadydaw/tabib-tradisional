@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-11-09: Fase 1, analisis performa T820 dan alat eksperimen
+- Laporan `docs/reports/ANALISIS_PERFORMA_T820.md` dari hasil uji HP pemilik; koreksi klaim keliru "lantai dicatat sekali" di laporan kompatibilitas.
+- Prototipe: 4 profil render (poligon, lantai mesh, lantai+balok mesh, atlas sprite) dengan bentuk visual sama; tombol Profil.
+- Telemetri: p99, persen frame lambat, waktu skrip, waktu gambar CPU, jumlah node, biaya HUD, pemanasan 60 frame, panel 1 dtk.
+- Kelas baru: `IsoMeshes`, `IsoGroundMesh`, `IsoMeshProp`, `IsoSpriteAtlas`, `PerfStats`.
+- Tes: unit 36 -> 51; tes asap headless 68 pemeriksaan (semua profil x tile x beban). CI run build #10 lolos.
+- **Masalah performa belum terbukti selesai**; menunggu uji ulang di nubia Neo 2 5G. Ukuran tile tetap tidak dikunci.
+
 ## 2026-11-09: Fase 1, penyesuaian perangkat uji (nubia Neo 2 5G)
 - Prototipe: telemetri performa dan info perangkat, tombol Beban +300 dan FPS maks.
 - `tools/check_apk_compat.py` + langkah CI: kompatibilitas statis APK terhadap Android 13 / arm64 / landscape.

@@ -15,6 +15,8 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
 ## Fase 1: Prototipe teknis isometrik
 **Status (9 Nov 2026): CI, APK debug, alat ukur performa, dan pemeriksaan kompatibilitas statis selesai; uji di HP BELUM dilakukan.** Tidak ada fitur gameplay sebelum uji perangkat selesai (F-20). Lihat `docs/reports/FASE1_BUILD.md`. Ukuran tile belum dikunci.
 
+**Pembaruan:** uji HP pertama dilakukan pemilik (60 FPS pada adegan normal tidak stabil; ~30 FPS dengan +300 objek). Analisis dan eksperimen: `docs/reports/ANALISIS_PERFORMA_T820.md`. Menunggu uji ulang 4 profil render.
+
 - Proyek Godot berjalan, scene uji.
 - Tile diamond, uji **64×32 vs 128×64** di HP (P-01), kunci ukuran.
 - Pemain placeholder 8 arah, joystick virtual, Y-sort, kamera.

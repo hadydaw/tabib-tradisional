@@ -52,7 +52,7 @@ Pemeriksaan ini otomatis di setiap build (`tools/check_apk_compat.py`) dan akan 
 - Kelas menengah: 4 inti besar A76 dan GPU Mali-G57 MP4. Layar 1080x2400 pada 120 Hz berarti banyak piksel per frame, jadi **fill-rate dan panas** lebih mungkin jadi hambatan daripada CPU untuk game 2D.
 - `canvas_items` merender pada resolusi asli layar (2400x1080). Mode `viewport` merender pada 1280x720 lalu diperbesar: lebih hemat GPU tetapi lebih buram. **Pending P-18**, diputuskan setelah data.
 - Dengan layar 120 Hz, tanpa batas FPS game bisa mencoba 120 FPS: halus tetapi lebih panas dan boros baterai. Tombol "FPS maks" (auto/60/30) disediakan untuk membandingkan. **Pending P-19.**
-- Sudah hemat di desain: hanya 2D, tanpa bayangan/cahaya dinamis, gambar lantai dicatat sekali (tidak digambar ulang tiap frame), satu kelompok Y-sort.
+- Sudah hemat di desain: hanya 2D, tanpa bayangan/cahaya dinamis, satu kelompok Y-sort. **[KOREKSI 9 Nov 2026]** Versi awal kalimat ini menyebut lantai "dicatat sekali"; itu menyesatkan. Uji di HP menunjukkan lantai memakai 512 draw call per frame. Lihat `ANALISIS_PERFORMA_T820.md`.
 - Tidak ada angka performa yang diklaim. Semua menunggu pengukuran di HP.
 
 ## 5. Alat ukur di APK (versi 9 ke atas)
@@ -81,7 +81,8 @@ Kirim screenshot panel info untuk langkah 2, 5, dan 6. Dari situ saya isi tabel 
 ## 7. Hasil uji perangkat
 | Uji | Hasil |
 |---|---|
-| Semua langkah di bagian 6 | **Belum dijalankan** |
+| Uji awal 9 Nov 2026 (pemilik, 4 tangkapan layar) | Dijalankan; angka di `ANALISIS_PERFORMA_T820.md` bagian 2. 60 FPS stabil **belum tercapai** pada beban +300. |
+| Uji ulang dengan 4 profil render (build #10 ke atas) | **Belum dijalankan** |
 
 ## 8. Risiko yang diketahui
 - Kontrol sentuh buatan sendiri (T-10) belum pernah dicoba di layar nyata.
