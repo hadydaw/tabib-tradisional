@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-09: Fase 1, penyesuaian perangkat uji (nubia Neo 2 5G)
+- Prototipe: telemetri performa dan info perangkat, tombol Beban +300 dan FPS maks.
+- `tools/check_apk_compat.py` + langkah CI: kompatibilitas statis APK terhadap Android 13 / arm64 / landscape.
+- Laporan `docs/reports/KOMPATIBILITAS_NUBIA_NEO_2.md` dengan protokol uji di HP.
+- Keputusan F-19, F-20, T-11, T-12; pending P-18, P-19.
+- Belum diuji di perangkat.
+
 ## 2026-11-09: Fase 1, prototipe dan CI
 - Workflow GitHub Actions: pasang Godot 4.7.2, validasi, ekspor APK debug, unggah artifact.
 - Prototipe isometrik (`game/scenes/proto/`): lantai diamond, pemain 8 arah, joystick sentuh, Y-sort, kamera, tombol interaksi, info perangkat.

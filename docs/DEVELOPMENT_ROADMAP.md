@@ -13,7 +13,7 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
   3. Keputusan P-02, P-03 minimal dasar.
 
 ## Fase 1: Prototipe teknis isometrik
-**Status (9 Nov 2026): CI dan APK debug selesai; uji di HP BELUM dilakukan.** Lihat `docs/reports/FASE1_BUILD.md`. Ukuran tile belum dikunci.
+**Status (9 Nov 2026): CI, APK debug, alat ukur performa, dan pemeriksaan kompatibilitas statis selesai; uji di HP BELUM dilakukan.** Tidak ada fitur gameplay sebelum uji perangkat selesai (F-20). Lihat `docs/reports/FASE1_BUILD.md`. Ukuran tile belum dikunci.
 
 - Proyek Godot berjalan, scene uji.
 - Tile diamond, uji **64×32 vs 128×64** di HP (P-01), kunci ukuran.

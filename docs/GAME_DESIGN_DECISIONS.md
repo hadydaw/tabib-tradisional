@@ -25,6 +25,8 @@ Sumber FINAL: instruksi proyek dari pemilik (Tahap 1, 9 Nov 2026).
 | F-15 | Android landscape first: virtual joystick, tombol interaksi, HUD khusus horizontal, UI responsif, optimasi untuk HP Android. |
 | F-16 | Alur kerja memakai GitHub, bertahap, mandiri, diuji per modul, semua perubahan didokumentasikan. |
 | F-17 | (9 Nov 2026) Build dan validasi dilakukan di GitHub Actions: pasang Godot 4.x stabil di server GitHub, periksa `project.godot`, bangun APK debug Android, simpan sebagai Actions Artifact. Hasil build tidak boleh diklaim "teruji" sebelum benar-benar diuji di perangkat Android. |
+| F-19 | (9 Nov 2026) Perangkat uji utama: nubia Neo 2 5G (Z2352N), Android 13, Unisoc T820, RAM fisik 8 GB. RAM virtual 12 GB tidak dihitung sebagai RAM. |
+| F-20 | (9 Nov 2026) Tidak ada fitur gameplay tambahan sebelum fondasi aplikasi berhasil diuji di perangkat utama. Ukuran tile tidak dikunci sebelum uji visual. |
 | F-18 | (9 Nov 2026) Repository proyek ini: `hadydaw/tabib-tradisional` (publik). |
 
 ## B. Keputusan TEKNIS yang diambil Claude (rutin, bisa diubah lewat ADR)
@@ -42,6 +44,8 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-07 | Renderer **Compatibility** dipakai untuk prototipe. P-03 tetap terbuka sampai ada benchmark di perangkat. | Jangkauan perangkat luas; belum ada data performa. |
 | T-08 | Tes unit berada di `game/tests/` (bukan `tests/` di akar repo) dan dijalankan dengan runner sederhana tanpa plugin. | Skrip headless Godot butuh path `res://`. |
 | T-09 | Nama kelas kustom wajib dicek terhadap kelas native Godot. Kasus nyata: `VirtualJoystick` bentrok dengan kelas native Godot 4.7, diganti `TouchJoystick`. | Ditangkap oleh validasi CI. |
+| T-11 | Prototipe menampilkan telemetri (FPS, waktu frame, draw call, memori, info GPU) dan punya tombol uji beban serta batas FPS. | Mengukur di perangkat tanpa alat tambahan. |
+| T-12 | CI memeriksa kompatibilitas statis APK terhadap profil perangkat uji (`tools/check_apk_compat.py`) dan menggagalkan build bila menyimpang. | Menjaga APK tetap cocok dengan target. Bukan pengganti uji perangkat. |
 | T-10 | UI sentuh memakai kontrol buatan sendiri yang membaca `InputEventScreenTouch/Drag`, dengan `emulate_mouse_from_touch=false`. | Emulasi mouse hanya melayani satu jari; joystick dan tombol harus bisa dipakai bersamaan. **Belum diuji di perangkat.** |
 
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
@@ -53,7 +57,7 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | P-03 | Renderer | Usulan: Compatibility (OpenGL ES 3) untuk jangkauan perangkat luas. Alternatif: Mobile (Vulkan). Perlu benchmark. | Performa dan kompatibilitas HP. |
 | P-04 | Gaya seni (pixel art, painted, vektor) dan sumber aset (buat sendiri, generasi AI, aset berlisensi) | Belum ada. Lihat ASSET_PRODUCTION_GUIDE.md. | Pipeline aset. |
 | P-05 | Tinggi/lebar kanvas referensi | Usulan: 1280×720 dengan stretch `canvas_items`. | Layout UI. |
-| P-06 | Versi Android minimum dan arsitektur CPU | Usulan: Android 8.0 (API 26) ke atas, arm64. Perlu persetujuan. | Jangkauan perangkat. |
+| P-06 | Versi Android minimum dan arsitektur CPU | Perangkat uji utama Android 13 (API 33), arm64. minSdk 24 saat ini hanya bawaan Godot, **belum diputuskan**. | Jangkauan perangkat. |
 | P-07 | Package name | Untuk APK debug dipakai ID sementara `com.hadydaw.tabibtradisional.debug`. **Bukan keputusan final**; ID rilis ditentukan pemilik dan tidak bisa diubah setelah rilis. | Tidak bisa diubah setelah rilis. |
 | P-08 | Lingkup pembuat karakter (gender, wajah, pakaian, nama) | Belum ditentukan. | CHARACTER_DESIGN.md. |
 | P-09 | Sistem waktu (jam nyata atau jam game, hari, musim) | Belum ditentukan. | Herbal, klinik, ekonomi. |
@@ -64,6 +68,8 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | P-14 | Kontrol: tap-to-move, joystick saja, atau keduanya | Joystick sudah diminta. Tap-to-move belum. | Input. |
 | P-15 | Repository GitHub khusus proyek ini | **Selesai**: lihat F-18. | - |
 | P-16 | Isi dunia fantasi: apakah ada makhluk dan unsur supernatural (jin, roh), seberapa besar | Belum ditentukan. | Penyakit fiktif, cerita. |
+| P-18 | Mode stretch: `canvas_items` (tajam, render resolusi asli) atau `viewport` (render 1280x720, lebih hemat GPU, lebih buram) | Diputuskan setelah uji di T820. | Performa, panas, ketajaman. |
+| P-19 | Batas FPS (auto/60/30) pada layar 120 Hz | Diputuskan setelah data panas dan baterai. | Baterai, panas. |
 | P-17 | Rating usia dan sensitivitas budaya (penggunaan istilah tradisional, simbol, dan nama) | Belum ditentukan. | Konten dan rilis. |
 
 ## D. Aturan perubahan

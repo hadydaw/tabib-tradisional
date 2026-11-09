@@ -63,3 +63,6 @@ Minimal: satu HP kelas bawah, satu menengah, satu dengan notch. Catat hasil di `
 - Bahasa ID dan EN; bahasa perangkat menentukan awal, pengguna bisa mengganti.
 - Opsi ukuran teks dan getar dapat dimatikan [USULAN].
 - Kebijakan privasi diperlukan bila ada pengumpulan data atau iklan (terkait P-12).
+
+## 11. Perangkat uji utama [FINAL, F-19]
+nubia Neo 2 5G (Z2352N), Android 13 (API 33), Unisoc T820, Mali-G57 MP4, layar 6,72" 1080x2400 120 Hz, RAM fisik 8 GB (RAM virtual tidak dihitung). Detail, sumber, hasil pemeriksaan, dan protokol uji: `docs/reports/KOMPATIBILITAS_NUBIA_NEO_2.md`.
