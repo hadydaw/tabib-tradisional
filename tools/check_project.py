@@ -67,6 +67,7 @@ w = disp.get("window/size/viewport_width", "0")
 h = disp.get("window/size/viewport_height", "0")
 check(w.isdigit() and h.isdigit() and int(w) > int(h) > 0, f"viewport landscape ({w}x{h})")
 check(rend.get("renderer/rendering_method", "").strip('"') in {"gl_compatibility", "mobile"}, "renderer valid")
+check(rend.get("textures/vram_compression/import_etc2_astc") == "true", "kompresi ETC2/ASTC aktif (wajib untuk ekspor Android)")
 
 # Semua ext_resource di scene menunjuk berkas yang ada
 for scene in sorted(GAME.rglob("*.tscn")):
