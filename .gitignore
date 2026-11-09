@@ -24,3 +24,6 @@ Thumbs.db
 
 # Hasil build lokal/CI
 build/
+
+# Pengecualian: keystore DEBUG publik untuk CI (bukan kunci rilis)
+!tools/ci/debug.keystore
