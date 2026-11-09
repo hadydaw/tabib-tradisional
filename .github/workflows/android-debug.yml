@@ -67,6 +67,10 @@ jobs:
             else
               echo "- APK: **tidak dibuat**"
             fi
+            if [ -f build/logs/compat.log ]; then
+              echo "### Kompatibilitas statis (nubia Neo 2 5G, Android 13)"
+              echo '```'; cat build/logs/compat.log; echo '```'
+            fi
             echo "- **Belum diuji di perangkat Android.** Build berhasil tidak berarti aplikasi sudah teruji."
           } >> "$GITHUB_STEP_SUMMARY"
 

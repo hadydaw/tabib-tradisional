@@ -9,6 +9,9 @@ FAIL=0
 echo "== 1. Pemeriksaan statis project.godot =="
 python3 tools/check_project.py game 2>&1 | tee "$LOGS/check_project.log" || FAIL=1
 
+echo "== 1b. Uji parser kompatibilitas APK =="
+python3 tools/check_apk_compat.py --selftest 2>&1 | tee "$LOGS/compat_selftest.log" || FAIL=1
+
 echo "== 2. Impor proyek (membangun cache class dan resource) =="
 godot --headless --path game --import 2>&1 | tee "$LOGS/import.log"
 # Kegagalan parse/muat terlihat sebagai SCRIPT ERROR atau Parse Error pada log impor.

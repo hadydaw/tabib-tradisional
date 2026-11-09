@@ -30,3 +30,7 @@ echo "== Inspeksi APK (build-tools: $BT) =="
   echo "-- Manifest: orientasi dan minSdk --"
   "$BT/aapt2" dump xmltree --file AndroidManifest.xml "$APK" 2>&1 | grep -iE "screenOrientation|minSdkVersion|targetSdkVersion|glEsVersion" | head -8
 } 2>&1 | tee "$LOGS/apk_inspect.log"
+
+echo "== Kompatibilitas statis terhadap perangkat uji utama =="
+python3 tools/check_apk_compat.py "$APK" "$BT/aapt2" 2>&1 | tee "$LOGS/compat.log"
+exit "${PIPESTATUS[0]}"
