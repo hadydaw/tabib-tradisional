@@ -108,8 +108,15 @@ func _test_camera(player: Player) -> void:
 	var view: Vector2 = cam.view_size()
 	var b: Rect2 = cam.bounds
 	var c: Vector2 = cam.global_position
-	_check(c.x - view.x * 0.5 >= b.position.x - 0.01 and c.x + view.x * 0.5 <= b.end.x + 0.01, "kamera di dalam batas peta (x)")
-	_check(c.y - view.y * 0.5 >= b.position.y - 0.01 and c.y + view.y * 0.5 <= b.end.y + 0.01, "kamera di dalam batas peta (y)")
+	# Bila peta lebih kecil dari layar pada satu sumbu, kamera dipusatkan; selain itu di dalam batas.
+	if b.size.x <= view.x:
+		_check(is_equal_approx(c.x, b.get_center().x), "peta lebih sempit dari layar: dipusatkan (x)")
+	else:
+		_check(c.x - view.x * 0.5 >= b.position.x - 0.01 and c.x + view.x * 0.5 <= b.end.x + 0.01, "kamera di dalam batas peta (x), layar %s" % view)
+	if b.size.y <= view.y:
+		_check(is_equal_approx(c.y, b.get_center().y), "peta lebih pendek dari layar: dipusatkan (y), layar %s" % view)
+	else:
+		_check(c.y - view.y * 0.5 >= b.position.y - 0.01 and c.y + view.y * 0.5 <= b.end.y + 0.01, "kamera di dalam batas peta (y), layar %s" % view)
 
 
 func _test_ysort_structure(player: Player) -> void:

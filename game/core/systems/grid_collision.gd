@@ -41,9 +41,9 @@ func is_cell_blocked(cell: Vector2i) -> bool:
 ## Apakah kotak pemain berpusat di `pos` bebas dari sel terblokir?
 func is_free(pos: Vector2) -> bool:
 	var x0: int = floori(pos.x - radius)
-	var x1: int = floori(pos.x + radius)
+	var x1: int = ceili(pos.x + radius) - 1  # tepi atas setengah-terbuka: menyentuh tepi bukan tabrakan
 	var y0: int = floori(pos.y - radius)
-	var y1: int = floori(pos.y + radius)
+	var y1: int = ceili(pos.y + radius) - 1
 	for cy in range(y0, y1 + 1):
 		for cx in range(x0, x1 + 1):
 			if is_cell_blocked(Vector2i(cx, cy)):
