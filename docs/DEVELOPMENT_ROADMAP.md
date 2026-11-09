@@ -24,7 +24,10 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
 - Ukur performa dasar.
 - Keluaran: keputusan ukuran tile, renderer, dan catatan performa.
 
-## Fase 2: Dasar sistem
+## Fase 2 (berjalan, nomor menyesuaikan instruksi pemilik): Dunia isometrik dan kontrol pemain
+**Status (10 Nov 2026): kode selesai dan lolos tes otomatis di CI; uji di HP belum dilakukan.** Lihat `docs/reports/FASE2_DUNIA_PEMAIN.md`. Isi: dunia uji, tile/ground, pemain 8 arah dengan animasi idle/walk placeholder, tabrakan, Y-sort, kamera ikut, joystick melayang. Fase "Dasar sistem" di bawah menjadi berikutnya setelah uji HP.
+
+## Fase 2 (rencana awal): Dasar sistem
 - Autoload (`EventBus`, `Game`, `Settings`, `Locale`, `SaveService`).
 - Resource bertipe dan validator data.
 - Interaction System, Dialogue System (dasar), Localization ID/EN.

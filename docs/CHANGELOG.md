@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-11-10: Fase 2, dunia isometrik dan kontrol pemain
+- Investigasi performa dihentikan atas keputusan pemilik; kondisi performa saat ini diterima.
+- Dunia uji 24x24: `TileKinds`, `GroundMap`, `IsoMapMeshes`, `IsoGroundMapView`, `WorldLayout`, `WorldObjectKinds`.
+- Pemain: `Player`, `PlayerAnimator` (idle/walk x 8 arah), `PlayerPlaceholder` dengan animasi.
+- Gerak 8 arah seragam (`IsoMath.snap_input_8`, `input_to_grid_velocity`, `speed_factor`), `GridCollision`.
+- `FollowCamera` (ikut, perataan, batas peta), `SafeArea`, `DebugOverlay`, joystick melayang.
+- Scene utama diganti ke `scenes/world/test_world.tscn`; prototipe Fase 1 tetap ada.
+- Tes: unit 108, asap prototipe 68, asap dunia 46; CI lolos (run 42663761542, versionCode 14).
+- Belum diuji di perangkat. Laporan: `docs/reports/FASE2_DUNIA_PEMAIN.md`.
+
 ## 2026-11-09: Fase 1, analisis performa T820 dan alat eksperimen
 - Laporan `docs/reports/ANALISIS_PERFORMA_T820.md` dari hasil uji HP pemilik; koreksi klaim keliru "lantai dicatat sekali" di laporan kompatibilitas.
 - Prototipe: 4 profil render (poligon, lantai mesh, lantai+balok mesh, atlas sprite) dengan bentuk visual sama; tombol Profil.

@@ -47,6 +47,10 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-11 | Prototipe menampilkan telemetri (FPS, waktu frame, draw call, memori, info GPU) dan punya tombol uji beban serta batas FPS. | Mengukur di perangkat tanpa alat tambahan. |
 | T-12 | CI memeriksa kompatibilitas statis APK terhadap profil perangkat uji (`tools/check_apk_compat.py`) dan menggagalkan build bila menyimpang. | Menjaga APK tetap cocok dengan target. Bukan pengganti uji perangkat. |
 | T-13 | Prototipe punya 4 profil render dengan visual sama untuk memisahkan penyebab biaya (draw call vs node vs batching). Telemetri memakai pemanasan 60 frame dan p99. Ini alat ukur, bukan keputusan arsitektur render final. | Data uji awal tidak bisa membedakan penyebab. |
+| T-14 | Tile 64x32 dipakai sebagai **standar kerja sementara** agar pekerjaan tidak terhambat. Ini bukan penguncian P-01; ukuran final tetap ditentukan pemilik. Kode memakai `tile` sebagai parameter. | Instruksi Fase 2. |
+| T-15 | Tabrakan pemain berbasis sel grid (`GridCollision`), kotak sejajar sumbu grid, gerak per sumbu. Tidak memakai fisika Godot. | Sederhana, deterministik, bisa dites tanpa engine. |
+| T-16 | Lantai dari `GroundMap` + mesh per jenis tile (bukan `TileMapLayer`) untuk saat ini. Dapat diganti `TileMapLayer` saat aset tile final ada; data `GroundMap` tetap sumber kebenaran tabrakan. | Menjaga draw call rendah tanpa aset; tidak mengubah sistem yang sudah diterima. |
+| T-17 | Joystick melayang di separuh kiri layar; masukan dikunci ke 8 arah dengan faktor kecepatan 0,4-1,0. | Nyaman di HP; sesuai F-09. **Belum diuji di perangkat.** |
 | T-10 | UI sentuh memakai kontrol buatan sendiri yang membaca `InputEventScreenTouch/Drag`, dengan `emulate_mouse_from_touch=false`. | Emulasi mouse hanya melayani satu jari; joystick dan tombol harus bisa dipakai bersamaan. **Belum diuji di perangkat.** |
 
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
