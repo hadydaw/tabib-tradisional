@@ -80,7 +80,7 @@ Format JSON versi (`save_version`), ditulis ke `user://`. Hanya data state (buka
 Joystick virtual dan tombol dibuat sebagai `Control` yang mengirim `InputEvent` atau memanggil `Input.action_press`. Pemetaan aksi (`move_*`, `interact`, `menu`) didefinisikan di `project.godot`. Multi-touch wajib. Zona aman (notch/cutout) diperhitungkan. Lihat `ANDROID_REQUIREMENTS.md`.
 
 ## 10. Pengujian
-- Unit test logika murni (usulan: GUT, gratis; belum dipasang, P-02 dan lingkungan).
+- Unit test logika murni: runner sederhana `game/tests/unit/run_tests.gd` (tanpa plugin), dijalankan di CI. Plugin seperti GUT bisa ditambah nanti bila perlu.
 - Tes data: semua Resource valid, semua ID unik, semua kunci teks ada di `id` dan `en`.
 - Uji di perangkat sebelum modul dianggap selesai.
 
@@ -98,11 +98,12 @@ tabib-tradisional/
 │   ├── features/<19 fitur>/
 │   ├── ui/{hud,panels,virtual_input}/
 │   ├── data/{herbs,recipes,patients,ailments,items,skills,points}/
-│   ├── scenes/
+│   ├── scenes/            (proto/ = prototipe Fase 1)
+│   ├── tests/{unit,integration}/
 │   └── localization/
 ├── assets/               aset mentah per kategori (+ _source/)
-├── tests/{unit,integration}/
-├── tools/                skrip bantu (validasi data, dll.)
+├── tools/                skrip bantu (check_project.py, ci/*.sh)
+├── .github/workflows/    CI: validasi + APK debug
 └── export/               preset dan catatan ekspor (tanpa rahasia)
 ```
 Catatan: aset siap-pakai-engine ditempatkan di `game/` saat diimpor; `assets/` menyimpan sumber dan versi kerja (lihat ASSET_PRODUCTION_GUIDE.md).

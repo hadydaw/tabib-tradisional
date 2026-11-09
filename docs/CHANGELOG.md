@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-11-09: Fase 1, prototipe dan CI
+- Workflow GitHub Actions: pasang Godot 4.7.2, validasi, ekspor APK debug, unggah artifact.
+- Prototipe isometrik (`game/scenes/proto/`): lantai diamond, pemain 8 arah, joystick sentuh, Y-sort, kamera, tombol interaksi, info perangkat.
+- `IsoMath` (logika murni) dengan 36 tes unit; runner di `game/tests/unit/run_tests.gd`.
+- `tools/check_project.py` untuk pemeriksaan statis `project.godot`.
+- Perbaikan: `VirtualJoystick` diganti `TouchJoystick` (bentrok kelas native); aktifkan ETC2/ASTC.
+- Dokumen: ADR 0002, laporan `docs/reports/FASE1_BUILD.md`, keputusan F-17, F-18, T-06 s.d. T-10.
+- APK belum diuji di perangkat.
+
 ## 2026-11-09: Tahap 1, Project Foundation
 - Repo git lokal baru dibuat (terpisah dari proyek lain).
 - Ditambahkan 9 dokumen fondasi, register keputusan (FINAL/PENDING), ADR 0001, dan laporan pemeriksaan.

@@ -20,5 +20,7 @@ echo "== Inspeksi APK (build-tools: $BT) =="
   ls -l "$APK"
   sha256sum "$APK"
   "$BT/apksigner" verify --verbose --print-certs "$APK" 2>&1 | head -12
-  "$BT/aapt2" dump badging "$APK" 2>&1 | grep -E "^(package|sdkVersion|targetSdkVersion|native-code|launchable-activity|application-label:)|screen-orientation|landscape" | head -20
+  "$BT/aapt2" dump badging "$APK" 2>&1 | grep -E "^(package|sdkVersion|minSdkVersion|targetSdkVersion|native-code|launchable-activity|application-label:)|screen-orientation|landscape" | head -20
+  echo "-- Manifest: orientasi dan minSdk --"
+  "$BT/aapt2" dump xmltree --file AndroidManifest.xml "$APK" 2>&1 | grep -iE "screenOrientation|minSdkVersion|targetSdkVersion|glEsVersion" | head -8
 } 2>&1 | tee "$LOGS/apk_inspect.log"

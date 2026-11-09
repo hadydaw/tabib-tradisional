@@ -11,7 +11,10 @@ Game Hybrid Simulator + Adventure + RPG bertema Fantasi Nusantara. Kamu menjadi 
 Nama "Tabib Tradisional" bersifat sementara.
 
 ## Status
-**Tahap 1: Project Foundation.** Baru dokumen, struktur, dan konfigurasi dasar. Belum ada gameplay dan belum pernah dijalankan di Godot (lihat `docs/reports/TAHAP1_PEMERIKSAAN.md`).
+**Fase 1: prototipe teknis.** CI GitHub Actions memvalidasi proyek dan membangun APK debug (Godot 4.7.2). Isinya prototipe isometrik, bukan gameplay. **APK belum diuji di perangkat Android.** Lihat `docs/reports/FASE1_BUILD.md`.
+
+## APK debug
+Actions → run terbaru → Artifacts → `tabib-tradisional-debug-apk`. Copot versi lama sebelum memasang yang baru (tanda tangan debug berbeda tiap build).
 
 ## Proyek ini terpisah
 Tidak ada hubungan dengan Ladang Reinkarnasi atau proyek lain. Tidak ada kode, aset, atau arsitektur yang dipakai ulang.
@@ -38,4 +41,4 @@ Tidak ada hubungan dengan Ladang Reinkarnasi atau proyek lain. Tidak ada kode, a
 ## Cara membuka
 1. Pasang Godot 4.x (versi pasti belum diputuskan, P-02).
 2. Impor `game/project.godot`.
-3. Ekspor Android memerlukan template ekspor, JDK, dan Android SDK.
+3. Build Android otomatis lewat `.github/workflows/android-debug.yml`.
