@@ -19,7 +19,7 @@ Tanggal: 2026-11-09. Pelapor: Claude.
 Tautan: https://github.com/hadydaw/tabib-tradisional/actions/runs/42648706345
 - Godot: 4.7.2.stable (official).
 - Validasi: pemeriksaan statis 14/14, semua skrip lolos sintaks, 36 tes unit lolos.
-- APK: `tabib-tradisional-debug.apk`, 28366679 byte (±27 MB), SHA-256 `fb535588d30fa5053d3a84b7fbb9f5aaff05864e57b4136bc955e54706d643f9`. Hash berubah tiap build karena keystore debug dibuat baru.
+- APK: `tabib-tradisional-debug.apk`, 28366679 byte (±27 MB), SHA-256 `fb535588d30fa5053d3a84b7fbb9f5aaff05864e57b4136bc955e54706d643f9`. Hash berbeda tiap build.
 - Tanda tangan: terverifikasi (v2 dan v3, sertifikat debug sementara).
 - Manifest: package `com.hadydaw.tabibtradisional.debug`, versionCode 1, **minSdk 24** (bawaan Godot, bukan keputusan; lihat P-06), targetSdk 36, OpenGL ES 3.0, orientasi `userLandscape` (landscape), native-code hanya `arm64-v8a`.
 - Artifact: `tabib-tradisional-debug-apk` dan `build-logs` (retensi 14 hari).
@@ -39,4 +39,4 @@ Scene `res://scenes/proto/iso_test.tscn`: lantai diamond 16x16, tombol ganti til
 
 ## Peringatan
 - Package name `...debug` bersifat sementara (P-07).
-- Karena keystore debug dibuat baru tiap run, copot APK lama sebelum memasang yang baru.
+- Sejak run #6, keystore debug tetap dan versionCode naik otomatis, sehingga build baru bisa dipasang sebagai update. APK dari run #1 sampai #5 memakai kunci sementara yang berbeda: copot sekali jika sudah terpasang.

@@ -14,7 +14,7 @@ Nama "Tabib Tradisional" bersifat sementara.
 **Fase 1: prototipe teknis.** CI GitHub Actions memvalidasi proyek dan membangun APK debug (Godot 4.7.2). Isinya prototipe isometrik, bukan gameplay. **APK belum diuji di perangkat Android.** Lihat `docs/reports/FASE1_BUILD.md`.
 
 ## APK debug
-Actions → run terbaru → Artifacts → `tabib-tradisional-debug-apk`. Copot versi lama sebelum memasang yang baru (tanda tangan debug berbeda tiap build).
+Actions → run terbaru → Artifacts → `tabib-tradisional-debug-apk`. Build baru dapat dipasang sebagai update di atas yang lama (kunci debug tetap, versionCode naik otomatis).
 
 ## Proyek ini terpisah
 Tidak ada hubungan dengan Ladang Reinkarnasi atau proyek lain. Tidak ada kode, aset, atau arsitektur yang dipakai ulang.

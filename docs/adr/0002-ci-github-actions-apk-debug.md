@@ -15,6 +15,6 @@ Workflow `.github/workflows/android-debug.yml` pada setiap push ke `main`, pull 
 5. Unggah APK dan log sebagai Actions Artifact (retensi 14 hari).
 
 ## Konsekuensi
-- APK debug memakai keystore debug yang dibuat baru di setiap run. **Tanda tangannya berubah tiap build**, jadi APK dari run berbeda tidak bisa saling meng-update; copot dulu versi lama sebelum memasang yang baru. Keystore rilis yang tetap harus disiapkan sebelum rilis sungguhan (disimpan di GitHub Secrets).
+- APK debug memakai keystore debug **tetap** (`tools/ci/debug.keystore`, dikomit; kunci ini publik dan hanya untuk debug), dan `version/code` diisi dari `GITHUB_RUN_NUMBER`. Dengan begitu build baru bisa dipasang sebagai **update** di atas build lama tanpa mencopot. Keystore rilis yang berbeda harus disiapkan sebelum rilis (di GitHub Secrets).
 - Build yang lolos berarti proyek terbentuk dan terpaket, **bukan** bahwa aplikasi berjalan benar di perangkat.
 - Versi Godot dikunci di workflow; menaikkannya dilakukan dengan mengubah satu variabel dan melihat hasil CI.

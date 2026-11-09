@@ -20,14 +20,13 @@ yes | "$SDKMANAGER" --licenses >/dev/null || true
   | grep -vE '^\[=*' || true
 "$SDKMANAGER" --list_installed | sed -n '1,40p'
 
-# Debug keystore
+# Debug keystore TETAP (tools/ci/debug.keystore, dikomit) supaya APK dari build berbeda
+# bertanda tangan sama dan bisa saling meng-update. Kunci ini PUBLIK dan hanya untuk debug;
+# kunci rilis nanti disimpan di GitHub Secrets, bukan di repo.
 mkdir -p "$HOME/.android"
 KS="$HOME/.android/debug.keystore"
-if [ ! -f "$KS" ]; then
-  keytool -genkeypair -v -keystore "$KS" -alias androiddebugkey -keyalg RSA -keysize 2048 \
-    -validity 10000 -storepass android -keypass android \
-    -dname "CN=Android Debug,O=Android,C=US" >/dev/null
-fi
+cp "$(dirname "$0")/debug.keystore" "$KS"
+keytool -list -keystore "$KS" -storepass android 2>/dev/null | grep -E "androiddebugkey|SHA" | head -2
 
 # Pengaturan editor Godot (nama berkas berbeda antar versi minor, tulis keduanya)
 SETTINGS_DIR="$HOME/.config/godot"

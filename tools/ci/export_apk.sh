@@ -7,6 +7,12 @@ SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
 APK="build/tabib-tradisional-debug.apk"
 rm -f "$APK"
 
+# Nomor versi naik otomatis tiap build agar Android menerimanya sebagai update.
+if [ -n "${GITHUB_RUN_NUMBER:-}" ]; then
+  sed -i "s/^version\/code=.*/version\/code=${GITHUB_RUN_NUMBER}/" game/export_presets.cfg
+  echo "version/code = ${GITHUB_RUN_NUMBER}"
+fi
+
 godot --headless --path game --export-debug "Android Debug" "../$APK" 2>&1 | tee "$LOGS/export.log"
 
 if [ ! -s "$APK" ]; then
