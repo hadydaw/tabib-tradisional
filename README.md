@@ -36,9 +36,9 @@ Tidak ada hubungan dengan Ladang Reinkarnasi atau proyek lain. Tidak ada kode, a
 | `docs/reports/` | Laporan pemeriksaan dan uji |
 
 ## Struktur
-`game/` proyek Godot (buka `game/project.godot`), `assets/` aset mentah, `tests/`, `tools/`, `export/`, `docs/`.
+`game/` proyek Godot (buka `game/project.godot`; tes di `game/tests/`), `assets/` aset mentah, `tools/`, `export/`, `docs/`, `.github/workflows/`.
 
 ## Cara membuka
-1. Pasang Godot 4.x (versi pasti belum diputuskan, P-02).
+1. Pasang Godot 4.7.2 (versi yang dipakai CI).
 2. Impor `game/project.godot`.
 3. Build Android otomatis lewat `.github/workflows/android-debug.yml`.
