@@ -18,6 +18,8 @@ func set_overlay(cells: Array[Vector2i]) -> void:
 
 
 func _ready() -> void:
+	# Tekstur tile diperkecil ke ukuran layar; filter linear mencegah tepi bergerigi dan aliasing.
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	for kind in range(TileKinds.COUNT):
 		if TileKinds.TEXTURE_VARIANTS.has(kind):
 			var paths: Array = TileKinds.TEXTURE_VARIANTS[kind]
