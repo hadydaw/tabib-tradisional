@@ -6,6 +6,7 @@ var map: GroundMap
 var tile: Vector2 = Vector2(64, 32)
 var _meshes: Array[ArrayMesh] = []
 var _lines: ArrayMesh
+var _tex_meshes: Array = []   # pasangan [mesh, Texture2D] untuk jenis tile bertekstur
 ## Lapisan kabut/segel (Fase 9): sel yang tertutup digambar transparan di atas lantai.
 var _overlay_cells: Array[Vector2i] = []
 var _overlay_color: Color = Color(0.85, 0.9, 0.95, 0.55)
@@ -18,6 +19,12 @@ func set_overlay(cells: Array[Vector2i]) -> void:
 
 func _ready() -> void:
 	for kind in range(TileKinds.COUNT):
+		if TileKinds.TEXTURES.has(kind):
+			var tm: ArrayMesh = IsoMapMeshes.textured_fill_mesh(map, tile, kind)
+			var tex: Texture2D = load(TileKinds.TEXTURES[kind]) as Texture2D
+			if tm != null and tex != null:
+				_tex_meshes.append([tm, tex])
+				continue
 		var m: ArrayMesh = IsoMapMeshes.fill_mesh(map, tile, kind)
 		if m != null:
 			_meshes.append(m)
@@ -28,6 +35,8 @@ func _ready() -> void:
 func _draw() -> void:
 	for m in _meshes:
 		draw_mesh(m, null)
+	for pair in _tex_meshes:
+		draw_mesh(pair[0], pair[1])
 	if _lines != null:
 		draw_mesh(_lines, null)
 	for c in _overlay_cells:

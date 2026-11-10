@@ -42,3 +42,36 @@ static func screen_bounds(map: GroundMap, tile: Vector2, top_margin: float = 0.0
 		-float(map.height) * tile.x * 0.5, -top_margin,
 		float(map.width + map.height) * tile.x * 0.5,
 		float(map.width + map.height) * tile.y * 0.5 + top_margin)
+
+
+## Mesh bertekstur untuk satu jenis tile: setiap sel mendapat UV dari kotak layarnya (diamond mengisi kotak).
+static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int) -> ArrayMesh:
+	var verts := PackedVector2Array()
+	var uvs := PackedVector2Array()
+	var cols := PackedColorArray()
+	for y in range(map.height):
+		for x in range(map.width):
+			if map.kind_at(Vector2i(x, y)) != kind:
+				continue
+			var q: PackedVector2Array = IsoMeshes.tile_corners(x, y, tile)
+			var mn: Vector2 = q[0]
+			var mx: Vector2 = q[0]
+			for p in q:
+				mn = mn.min(p)
+				mx = mx.max(p)
+			var size: Vector2 = mx - mn
+			for idx: int in [0, 1, 2, 0, 2, 3]:
+				verts.append(q[idx])
+				uvs.append((q[idx] - mn) / size)
+				cols.append(Color(1, 1, 1, 1))
+	if verts.is_empty():
+		return null
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	arrays[Mesh.ARRAY_COLOR] = cols
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
+
