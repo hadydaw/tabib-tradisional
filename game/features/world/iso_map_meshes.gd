@@ -48,6 +48,10 @@ static func screen_bounds(map: GroundMap, tile: Vector2, top_margin: float = 0.0
 
 
 ## Mesh bertekstur untuk satu jenis tile: setiap sel mendapat UV dari kotak layarnya (diamond mengisi kotak).
+## Bagian atas tekstur yang berisi permukaan tile (di bawahnya ada pita tepi gelap ketebalan sisi).
+const TOP_FACE_V: float = 0.875
+
+
 static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int, variant: int = 0, count: int = 1) -> ArrayMesh:
 	var verts := PackedVector2Array()
 	var uvs := PackedVector2Array()
@@ -67,8 +71,9 @@ static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int, variant
 			var size: Vector2 = mx - mn
 			for idx: int in [0, 1, 2, 0, 2, 3]:
 				verts.append(q[idx])
-				# Aset dibuat sebagai satu tile isometrik utuh: UV 0-1 per sel (diamond mengisi kotak).
-				uvs.append((q[idx] - mn) / size)
+				# UV per sel: x 0-1, y dipotong ke permukaan atas (TOP_FACE_V) agar pita tepi gelap tidak tampil.
+				var uv: Vector2 = (q[idx] - mn) / size
+				uvs.append(Vector2(uv.x, uv.y * TOP_FACE_V))
 				cols.append(Color(1, 1, 1, 1))
 	if verts.is_empty():
 		return null
