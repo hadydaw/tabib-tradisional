@@ -1,6 +1,6 @@
 # Laporan Fase 9: Wilayah baru, dungeon, dan penemuan langka
 
-Status: **dibangun dan dites otomatis (CI); belum diuji di perangkat.** Godot tidak tersedia di lingkungan pengembangan ini, jadi seluruh tes dijalankan oleh CI pada commit ini.
+Status: **lolos CI (run 42806096395, kode 0a30567); APK sudah dibuat; belum diuji di perangkat.** Godot tidak tersedia di lingkungan pengembangan ini, jadi seluruh tes dijalankan oleh CI pada commit ini.
 
 ## Yang dibuat
 
@@ -23,6 +23,25 @@ Status: **dibangun dan dites otomatis (CI); belum diuji di perangkat.** Godot ti
 - Asap `run_smoke_frontier.gd`: masuk Rawa, ambil bahan, cooldown, jawaban salah lalu benar, kabut terangkat, gerbang gua, tablet, tuas, peti, dan simpan/muat lintas dunia.
 - Unit Fase 8 diperbarui agar daftar jenis langkah quest menerima `discover` dan `dungeon`.
 - Screenshot baru (41 rawa, 42 gua, 43 teka-teki, 44 Buku Tabib) di `capture.gd`.
+
+## Hasil CI final
+
+Run GitHub Actions `42806096395` pada kode `0a30567`: **sukses**. Validasi lolos.
+
+| Tes | Hasil |
+|---|---|
+| Unit Fase 2-8 (`run_tests`, fase3..fase8) | lolos, 0 gagal |
+| Unit Fase 9 | 55 pemeriksaan, 0 gagal |
+| Asap regresi (Fase 2-8) | lolos |
+| Asap sosial Fase 8 | 54 pemeriksaan, 0 gagal |
+| Asap eksplorasi Fase 9 | 34 pemeriksaan, 0 gagal |
+| APK debug | dibuat; artifact `tabib-tradisional-debug-apk` (sekitar 28,6 MB) |
+
+Versi APK: `version/code=1` (belum dinaikkan di konfigurasi ekspor).
+
+Lewat CI tiga kali sebelum hijau: bool dari teks (data rusak), gua tanpa dinding dan keterjangkauan 85% (batu padat di luar ruangan), dan urutan tes gerbang. Penyebab tiap kegagalan sudah diperbaiki di kode, bukan dengan melonggarkan tes.
+
+Screenshot yang diperiksa: rawa (41), gua (42), teka-teki (43), Buku Tabib (44). Tidak ada teks terpotong atau lokasi kosong. Di gua, batu padat membentuk massa besar di sekitar ruangan; ini sengaja untuk tampilan gua, tetapi perlu dilihat di HP.
 
 ## Batasan yang harus diketahui
 
