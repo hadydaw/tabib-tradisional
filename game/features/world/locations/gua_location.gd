@@ -54,6 +54,7 @@ static func build() -> LocationData:
 	b.add_interactable(RareDb.LEVER_ID, LEVER_CELL, "Tarik tuas batu")
 
 	# Peti di ceruk (terbuka setelah celah dibuka).
+	b.force_object(CHEST_CELL, "chest")
 	b.add_interactable(RareDb.CHEST_ID, CHEST_CELL, "Buka peti")
 
 	# Titik penemuan langka: satu di aula, satu di ruang dalam.

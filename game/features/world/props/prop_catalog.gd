@@ -14,7 +14,7 @@ const BLOCKS: Dictionary = {
 	"herb_a": false, "herb_b": false, "herb_c": false,
 	# dekorasi luar
 	"rock": true, "fence_x": true, "fence_y": true, "well": true, "lantern": true,
-	"basket": true, "jar": true, "sign": true,
+	"basket": true, "jar": true, "sign": true, "chest": true,
 	# perabot interior
 	"wall_in": true, "wall_in_win_y": true, "wall_in_win_x": true, "partition": true,
 	"counter": true, "mortar_counter": true, "table": true, "table_treat": true,
@@ -109,6 +109,11 @@ static func _build(kind: String, tile: Vector2) -> ArrayMesh:
 			b.add_ellipse(0.0, 0.0, 4.0, 8.0, 4.5, Color("#4aa14a"))
 			b.add_box(-0.03, -0.03, 0.03, 0.03, 0.0, 14.0, Color("#3f8a48"))
 			b.add_ellipse(0.0, 0.0, 17.0, 4.5, 3.0, Color("#e0c040"), 10)
+		"chest":
+			b.add_shadow(-0.4, -0.3, 0.4, 0.3)
+			b.add_box(-0.32, -0.22, 0.32, 0.22, 0.0, 0.42 * h, Color("#8a5a2b"))
+			b.add_box(-0.34, -0.24, 0.34, 0.24, 0.42 * h, 0.52 * h, Color("#a86f36"))
+			b.add_box(-0.06, -0.25, 0.06, 0.25, 0.0, 0.52 * h, Color("#d9a441"))
 		"rock":
 			b.add_shadow(-0.4, -0.4, 0.4, 0.4)
 			b.add_box(-0.35, -0.3, 0.35, 0.3, 0.0, 0.6 * h, Color("#7c7c82"))
