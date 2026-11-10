@@ -175,8 +175,11 @@ func _add_medical_steps() -> void:
 		_mg().transitions = false
 		_mp = _world.get_patients().queue.records[0]
 		_world._interact_reception()
-		for _k in range(400):
+		var guard: int = 0
+		while _mp.state != PatientRecord.State.DIPERIKSA and guard < 900:
 			_world.step_world(0.5)
+			guard += 1
+		print("medis: pasien ", _mp.npc_id, " state ", _mp.state_key(), " langkah ", guard)
 		_world.interact_exam_bed())
 	_steps.append(func() -> void:
 		var v := _mg().current_view() as DiagnosisView
