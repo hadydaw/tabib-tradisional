@@ -55,6 +55,7 @@ func _initialize() -> void:
 	_steps.append(func() -> void: _end_sheet())
 	# Fase 4: NPC, dialog, pasien di klinik
 	_steps.append(func() -> void:
+		_world.get_camera().zoom = Vector2(1.5, 1.5)
 		_world.load_location("desa", "awal")
 		_world.debug_set_time(1, 10, 0)
 		_go(Vector2(23.5, 16.5)))
@@ -70,10 +71,13 @@ func _initialize() -> void:
 		ps.auto_call = false
 		for _i in range(4):
 			_world.debug_new_patient()
-		for _k in range(700):
+		for _k in range(150):
 			_world.step_world(0.5)
 		_world.load_location("klinik", "dari_desa"))
+	_steps.append(func() -> void: _go(Vector2(8.0, 9.5)))
 	_steps.append(func() -> void: _shot("14_klinik_pasien"))
+	_steps.append(func() -> void: _go(Vector2(7.0, 7.5)))
+	_steps.append(func() -> void: _shot("14b_klinik_pasien_dekat"))
 	_steps.append(func() -> void:
 		_world.start_dialogue(_world.get_patients().queue.records[0].npc_id))
 	_steps.append(func() -> void: _shot("15_dialog_pasien"))
