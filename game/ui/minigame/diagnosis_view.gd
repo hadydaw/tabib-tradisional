@@ -391,5 +391,5 @@ func _draw_verdict() -> void:
 				draw_circle(Vector2(cx + col_w * 0.5, row.end.y - 14.0), 5.0, col)
 			if out:
 				col = C_DIM
-			_t(cx, row.position.y + 26.0, val, 20, col, HORIZONTAL_ALIGNMENT_CENTER, col_w)
+			_t(cx, row.position.y + 26.0, val, 20 if val.length() <= 11 else 16, col, HORIZONTAL_ALIGNMENT_CENTER, col_w)
 		y += 86.0

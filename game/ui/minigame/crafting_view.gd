@@ -257,7 +257,7 @@ func _draw_content() -> void:
 			_draw_pound()
 		HerbalCraftingSystem.Stage.ADUK:
 			_draw_stir()
-	if _msg_t > 0.0 and _msg != "" and sys.stage <= HerbalCraftingSystem.Stage.TUMBUK:
+	if _msg_t > 0.0 and _msg != "" and sys.stage <= HerbalCraftingSystem.Stage.TAKAR:
 		_t(area.position.x, area.end.y - 270.0 if sys.stage == HerbalCraftingSystem.Stage.TAKAR else area.end.y - 236.0, _msg, 26, Color(C_GOLD.r, C_GOLD.g, C_GOLD.b, clampf(_msg_t, 0.0, 1.0)), HORIZONTAL_ALIGNMENT_CENTER, area.size.x)
 
 
@@ -359,7 +359,7 @@ func _draw_measure() -> void:
 
 
 func _draw_pound() -> void:
-	var c := Vector2(area.get_center().x + 120.0, area.position.y + 410.0)
+	var c := Vector2(area.get_center().x + 120.0, area.position.y + 372.0)
 	# mortar
 	draw_colored_polygon(PackedVector2Array([c + Vector2(-130, -10), c + Vector2(130, -10), c + Vector2(95, 100), c + Vector2(-95, 100)]), Color("#6b6b70"))
 	draw_circle(c + Vector2(0, -10), 1.0, Color.WHITE)

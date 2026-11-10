@@ -40,7 +40,7 @@ func _say(text: String, color: Color = C_GOLD) -> void:
 
 
 func plant_rect() -> Rect2:
-	return Rect2(area.position.x, area.position.y + 78.0, 400.0, 340.0)
+	return Rect2(area.position.x, area.position.y + 78.0, 400.0, 318.0)
 
 
 func part_rect(i: int) -> Rect2:
