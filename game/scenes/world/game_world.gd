@@ -9,7 +9,9 @@ extends Node2D
 signal interaction_requested(interactable: Interactable)
 signal location_changed(location_id: String)
 
-const TILE: Vector2 = Vector2(64, 32)  # standar kerja sementara (T-14), bukan P-01
+## Ukuran diamond mengikuti Ladang Reinkarnasi: dasar 44x30 dikali skala layar k (lihat tile_for_width).
+var TILE: Vector2 = Vector2(44, 30)
+const TILE_BASE: Vector2 = Vector2(44, 30)
 const CAMERA_ZOOM: float = 1.5
 const WALK_SPEED: float = 3.5
 const PLAYER_RADIUS: float = 0.25
@@ -80,7 +82,14 @@ const OUTFIT_BUTTONS: PackedStringArray = ["Kulit", "Rambut", "Warna rambut", "B
 const TIME_SCALES: Array[float] = [1.0, 8.0, 30.0]
 
 
+## Skala layar seperti Ladang: k = clamp(lebar / 420 x 1.25, 1, 1.8); ukuran tile = dasar x k.
+static func tile_for_width(width: float) -> Vector2:
+	var k: float = clampf(width / 420.0 * 1.25, 1.0, 1.8)
+	return TILE_BASE * k
+
+
 func _ready() -> void:
+	TILE = tile_for_width(get_viewport().get_visible_rect().size.x)
 	RenderingServer.set_default_clear_color(Color("#161f23"))
 	_appearance = CharacterAppearance.new()
 	_clock = GameClock.new()

@@ -588,7 +588,7 @@ func _next_hop(from: String, to: String) -> Dictionary:
 
 
 static func facing_for(grid_delta: Vector2) -> int:
-	return IsoMath.direction_index(IsoMath.grid_to_screen(grid_delta, Vector2(64, 32)))
+	return IsoMath.direction_index(IsoMath.grid_to_screen(grid_delta, Vector2(44, 30)))
 
 
 func _facing_for(d: Vector2i) -> int:

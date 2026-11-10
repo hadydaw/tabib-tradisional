@@ -78,7 +78,7 @@ func _step_load() -> void:
 		var n: NpcNode = _world.get_npc_node(a.id)
 		if n == null or n.get_parent() != actors:
 			in_actors = false
-		elif not n.position.is_equal_approx(IsoMath.grid_to_screen(a.pos, Vector2(64, 32))):
+		elif not n.position.is_equal_approx(IsoMath.grid_to_screen(a.pos, _world.TILE)):
 			placed = false
 	_check(in_actors and actors.y_sort_enabled, "NPC berada di kelompok Y-sort yang sama dengan pemain")
 	_check(placed, "posisi node NPC = posisi grid -> layar (titik kaki)")
@@ -209,7 +209,7 @@ func _step_collision_with_npc() -> void:
 	_world.step_world(0.05)
 	var hit: bool = false
 	for _i in range(90):
-		player.move_input = IsoMath.direction_vector(IsoMath.direction_index(IsoMath.grid_to_screen(Vector2(1, 0), Vector2(64, 32))))
+		player.move_input = IsoMath.direction_vector(IsoMath.direction_index(IsoMath.grid_to_screen(Vector2(1, 0), Vector2(44, 30))))
 		player.advance(1.0 / 60.0)
 		if absf(player.grid_pos.x - target.x) < 0.7 and absf(player.grid_pos.y - target.y) < 0.7:
 			hit = true
