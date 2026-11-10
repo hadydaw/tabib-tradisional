@@ -40,7 +40,7 @@ func _say(text: String, color: Color = C_GOLD) -> void:
 
 
 func plant_rect() -> Rect2:
-	return Rect2(area.position.x, area.position.y + 66.0, 400.0, 380.0)
+	return Rect2(area.position.x, area.position.y + 78.0, 400.0, 340.0)
 
 
 func part_rect(i: int) -> Rect2:
@@ -105,12 +105,12 @@ func choose(option_id: String) -> void:
 func _draw_content() -> void:
 	if sys == null:
 		return
-	_t(area.position.x, area.position.y + 4.0, "%s — %s" % [title_text, spot_label], 30, C_GOLD)
+	_t(area.position.x + 170.0, area.position.y + 6.0, "%s — %s" % [title_text, spot_label], 30, C_GOLD)
 	# tanaman
 	var pr: Rect2 = plant_rect()
 	_box(pr, Color(0.55, 0.78, 0.9, 0.35), Color(1, 1, 1, 0.3), 16, 2)
 	PlantArt.draw_plant(self, sys.plant_id, pr, sys.hidden_parts)
-	_t(pr.position.x, pr.end.y + 4.0, Locale.t("plant.help"), 20, C_DIM, HORIZONTAL_ALIGNMENT_LEFT, 400.0)
+	_para(pr.position.x, pr.end.y + 6.0, Locale.t("plant.help"), 400.0, 18, C_DIM)
 	# pembesaran
 	var dr: Rect2 = detail_rect()
 	_box(dr, Color(0.07, 0.12, 0.11, 0.9), Color(1, 1, 1, 0.3), 16, 2)

@@ -87,7 +87,7 @@ func bowl_x() -> float:
 
 
 func stir_center() -> Vector2:
-	return Vector2(area.get_center().x, area.position.y + 360.0)
+	return Vector2(area.get_center().x, area.position.y + 410.0)
 
 
 func _build() -> void:
@@ -257,7 +257,7 @@ func _draw_content() -> void:
 			_draw_pound()
 		HerbalCraftingSystem.Stage.ADUK:
 			_draw_stir()
-	if _msg_t > 0.0 and _msg != "":
+	if _msg_t > 0.0 and _msg != "" and sys.stage <= HerbalCraftingSystem.Stage.TUMBUK:
 		_t(area.position.x, area.end.y - 270.0 if sys.stage == HerbalCraftingSystem.Stage.TAKAR else area.end.y - 236.0, _msg, 26, Color(C_GOLD.r, C_GOLD.g, C_GOLD.b, clampf(_msg_t, 0.0, 1.0)), HORIZONTAL_ALIGNMENT_CENTER, area.size.x)
 
 
@@ -329,7 +329,7 @@ func _draw_shelf() -> void:
 		_t(bowl.position.x + 12.0, y, "%d. %s" % [i + 1, Locale.t("herb.%s" % hid)], 20, C_TEXT if ok else C_RED)
 		y += 30.0
 		shown += 1
-	_t(area.position.x + 305.0, area.end.y - 150.0, Locale.t("craft.pick_help"), 21, C_DIM, HORIZONTAL_ALIGNMENT_LEFT, bx - area.position.x - 320.0)
+	_para(area.position.x + 305.0, area.end.y - 150.0, Locale.t("craft.pick_help"), bx - area.position.x - 320.0, 21, C_DIM)
 
 
 func _draw_measure() -> void:
@@ -350,8 +350,8 @@ func _draw_measure() -> void:
 	var fh: float = g.size.y * (_grams / mx)
 	if fh > 1.0:
 		draw_rect(Rect2(g.position.x + 6.0, g.end.y - fh, g.size.x - 12.0, fh), Color("#d6a52a"))
-	_t(hdr_x + 200.0, area.position.y + 250.0, "%.1f g" % _grams, 64, C_TEXT)
-	_t(hdr_x + 200.0, area.position.y + 330.0, Locale.t("craft.measure_help"), 21, C_DIM, HORIZONTAL_ALIGNMENT_LEFT, 360.0)
+	_t(hdr_x + 270.0, area.position.y + 230.0, "%.1f g" % _grams, 64, C_TEXT)
+	_para(hdr_x + 270.0, area.position.y + 320.0, Locale.t("craft.measure_help"), 360.0, 21, C_DIM)
 	var y: float = area.position.y + 150.0
 	for i in range(sys.measure_scores.size()):
 		_t(area.end.x - 430.0, y, "%s  %d%%" % [Locale.t("herb.%s" % sys.steps[i]["herb"]), int(roundf(sys.measure_scores[i] * 100.0))], 21, C_GREEN)
@@ -359,7 +359,7 @@ func _draw_measure() -> void:
 
 
 func _draw_pound() -> void:
-	var c := Vector2(area.get_center().x + 100.0, area.position.y + 280.0)
+	var c := Vector2(area.get_center().x + 120.0, area.position.y + 410.0)
 	# mortar
 	draw_colored_polygon(PackedVector2Array([c + Vector2(-130, -10), c + Vector2(130, -10), c + Vector2(95, 100), c + Vector2(-95, 100)]), Color("#6b6b70"))
 	draw_circle(c + Vector2(0, -10), 1.0, Color.WHITE)
@@ -373,16 +373,16 @@ func _draw_pound() -> void:
 	for b in sys.pound_beats:
 		var dt: float = float(b) - _pound_t
 		if dt >= -0.1 and dt <= 1.0:
-			var rr: float = 54.0 + clampf(dt, 0.0, 1.0) * 120.0
+			var rr: float = 54.0 + clampf(dt, 0.0, 1.0) * 90.0
 			draw_arc(ring_c, rr, 0.0, TAU, 40, Color(1, 1, 1, 0.9 - clampf(dt, 0.0, 1.0) * 0.6), 4.0)
 	var beats_done: int = 0
 	for b in sys.pound_beats:
 		if _pound_t >= float(b) + 0.2:
 			beats_done += 1
-	_t(area.position.x + 305.0, area.position.y + 96.0, Locale.t("craft.pound_help"), 24, C_TEXT, HORIZONTAL_ALIGNMENT_LEFT, 660.0)
-	_t(area.position.x + 305.0, area.position.y + 190.0, Locale.t("craft.pound_count", {"n": beats_done, "total": sys.pound_beats.size()}), 22, C_DIM)
+	_para(area.position.x + 305.0, area.position.y + 110.0, Locale.t("craft.pound_help"), 250.0, 22, C_TEXT)
+	_t(area.position.x + 305.0, area.position.y + 330.0, Locale.t("craft.pound_count", {"n": beats_done, "total": sys.pound_beats.size()}), 22, C_DIM)
 	if _pound_fb_t > 0.0:
-		_t(c.x - 200.0, c.y - 270.0, _pound_fb, 44, C_GOLD, HORIZONTAL_ALIGNMENT_CENTER, 400.0)
+		_t(c.x - 200.0, c.y - 285.0, _pound_fb, 44, C_GOLD, HORIZONTAL_ALIGNMENT_CENTER, 400.0)
 
 
 func _draw_stir() -> void:
@@ -397,7 +397,7 @@ func _draw_stir() -> void:
 	var tip: Vector2 = c + Vector2(cos(a), sin(a)) * 130.0
 	draw_line(c + Vector2(cos(a), sin(a)) * 40.0, tip, Color("#5c3a1e"), 14.0)
 	draw_circle(tip, 22.0, Color("#5c3a1e"))
-	_t(area.position.x + 305.0, area.position.y + 96.0, Locale.t("craft.stir_help"), 24, C_TEXT, HORIZONTAL_ALIGNMENT_LEFT, 660.0)
+	_para(area.position.x + 305.0, area.position.y + 108.0, Locale.t("craft.stir_help"), 560.0, 22, C_TEXT)
 	# meter kecepatan
 	var band: Vector2 = sys.stir_speed_band()
 	var m := Rect2(area.end.x - 150.0, area.position.y + 140.0, 60.0, 320.0)

@@ -281,7 +281,7 @@ func _draw_needle() -> void:
 	var total: int = sys.selected.size()
 	if pid != "":
 		_t(f.position.x, f.position.y - 44.0, "%s  (%d/%d)" % [Locale.t("point.%s" % pid), sys.cursor + 1, total], 28, C_TEXT, HORIZONTAL_ALIGNMENT_CENTER, f.size.x)
-		_t(f.position.x, f.end.y + 18.0, Locale.t("acu.aim_help"), 21, C_DIM, HORIZONTAL_ALIGNMENT_CENTER, f.size.x)
+		_para(f.position.x, f.end.y + 10.0, Locale.t("acu.aim_help"), f.size.x, 17, C_DIM, HORIZONTAL_ALIGNMENT_CENTER)
 	# jarum
 	var tip_v: Vector2 = aim
 	var depth_v: float = sys.depth_at(sys.point_time)

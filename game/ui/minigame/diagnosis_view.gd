@@ -158,6 +158,7 @@ func _on_button(id: String, phase: String) -> void:
 			_say(Locale.t("diag.observed", {"area": Locale.t("area.%s" % r["area"]), "value": Locale.t("finding.%s.%s" % [r["area"], r["value"]])}), C_GREEN)
 		_dirty = true
 	elif id == "to_verdict" and phase == "tap":
+		_msg_t = 0.0
 		mode = Mode.PUTUSAN
 		_dirty = true
 	elif id == "verdict_back" and phase == "tap":
@@ -192,6 +193,7 @@ func confirm_verdict() -> void:
 # --- Uji nadi ---------------------------------------------------------------
 
 func start_pulse() -> void:
+	_msg_t = 0.0
 	mode = Mode.NADI
 	_pulse_t = 0.0
 	_pulse_taps.clear()
@@ -390,3 +392,4 @@ func _draw_verdict() -> void:
 			if out:
 				col = C_DIM
 			_t(cx, row.position.y + 26.0, val, 20, col, HORIZONTAL_ALIGNMENT_CENTER, col_w)
+		y += 86.0

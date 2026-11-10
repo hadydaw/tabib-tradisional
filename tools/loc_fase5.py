@@ -22,7 +22,7 @@ FINDINGS = {
   "dahi": {"hangat": ("hangat", "warm"), "dingin": ("dingin", "cool"), "berkeringat": ("berkeringat", "sweaty"), "normal": ("biasa", "ordinary")},
   "mata": {"merah": ("merah", "red"), "kuning": ("kekuningan", "yellowish"), "berair": ("berair", "watery"), "sayu": ("sayu", "droopy")},
   "lidah": {"putih": ("berlapis putih", "white-coated"), "kuning": ("kekuningan", "yellowish"), "merah": ("merah", "red"), "pucat": ("pucat", "pale")},
-  "kulit": {"kering": ("kering", "dry"), "lembap": ("lembap", "damp"), "panas": ("hangat membara", "burning warm"), "ruam": ("berruam", "rashy")},
+  "kulit": {"kering": ("kering", "dry"), "lembap": ("lembap", "damp"), "panas": ("hangat membara", "burning warm"), "ruam": ("ada ruam", "rashy")},
   "perut": {"kembung": ("kembung", "bloated"), "nyeri": ("nyeri ditekan", "tender"), "lunak": ("lunak", "soft"), "normal": ("biasa", "ordinary")},
   "nadi": {"cepat": ("cepat", "quick"), "lambat": ("lambat", "slow"), "kuat": ("kuat", "strong"), "lemah": ("lemah", "weak"), "bergelombang": ("bergelombang", "wavy")},
 }
