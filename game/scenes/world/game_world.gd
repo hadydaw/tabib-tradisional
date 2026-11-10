@@ -252,10 +252,14 @@ func _refresh_blocked() -> void:
 	var blocked: Dictionary = {}
 	if _npcs_enabled:
 		blocked = _sim.occupied_cells(_loc.id).duplicate()
+	var sealed: Array[Vector2i] = []
 	if _frontier != null:
-		for c in _frontier.sealed_cells(_loc.id):
-			blocked[c] = true
+		sealed = _frontier.sealed_cells(_loc.id)
+	for c in sealed:
+		blocked[c] = true
 	_collision.set_dynamic_blocked(blocked)
+	if _ground_view != null:
+		_ground_view.set_overlay(sealed)
 
 
 func _interact_rare(node_id: String) -> void:

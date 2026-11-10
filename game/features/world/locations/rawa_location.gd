@@ -13,6 +13,8 @@ const GUARD_CELL: Vector2i = Vector2i(15, 9)
 static func build() -> LocationData:
 	var b := LocationBuilder.new("rawa", "Rawa", WIDTH, HEIGHT, 20261115)
 	b.fill(TileKinds.GRASS)
+	# Rawa dalam: tanah lumpur (berbeda dari rumput di luar).
+	b.rect(Rect2i(18, 0, WIDTH - 18, HEIGHT), TileKinds.DIRT)
 	b.rect(Rect2i(2, 12, 4, 3), TileKinds.WATER)
 	b.rect(Rect2i(12, 2, 3, 3), TileKinds.WATER)
 	b.rect(Rect2i(20, 12, 4, 3), TileKinds.WATER)
