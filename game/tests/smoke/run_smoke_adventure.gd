@@ -176,7 +176,7 @@ func _step_board() -> void:
 	_check(_near_id() == "adventure_board", "papan Pengembara dapat diinteraksi")
 	adv.bump("gather:hutan", 4 - adv.count("gather:hutan") if adv.count("gather:hutan") < 4 else 0)
 	var m0: int = st.money
-	_check(_world.press_interact() and _mg().kind() == "papan", "papan menampilkan misi")
+	_check(_world.press_interact() and _mg().kind() == "info", "papan menampilkan misi")
 	_check(st.money == m0 + 60 and adv.claimed.has("m_hutan"), "misi selesai: hadiah 60 koin diklaim sekali")
 	_mg().close()
 	_world.press_interact()
@@ -207,8 +207,9 @@ func _step_secret() -> void:
 	var m: int = _world.get_stats().money
 	_world.press_interact()
 	_check(not _world.is_minigame_open() and not adv.has_secret(AdventureState.SECRET_ID), "syarat belum terpenuhi: celah tetap tertutup")
+	## Syarat terbuka: tingkat Identifikasi minimal 2 (XP ambang level 2).
 	sk.known_plants = known_backup
-	sk.xp["identifikasi_tanaman"] = saved_xp
+	sk.xp["identifikasi_tanaman"] = SkillDb.LEVEL_XP[1]
 	var k0: int = inv.count(AdventureState.SECRET_HERB)
 	var s0: float = adv.stamina
 	_check(_world.press_interact() and _mg().kind() == "info", "syarat terpenuhi: celah terbuka")
@@ -217,6 +218,8 @@ func _step_secret() -> void:
 	_mg().close()
 	_world.press_interact()
 	_check(_world.get_stats().money == m + AdventureState.SECRET_COIN and not _world.is_minigame_open(), "celah yang sudah dibuka tidak memberi hadiah lagi")
+	sk.known_plants = known_backup
+	sk.xp["identifikasi_tanaman"] = saved_xp
 
 
 func _step_save() -> void:
