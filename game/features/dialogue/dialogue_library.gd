@@ -25,8 +25,6 @@ static func build(npc: NpcData, ctx: Dictionary) -> Dictionary:
 	# --- sapaan (pasien mendapat sapaan khusus; lainnya mengikuti tingkat kepercayaan) ---
 	var greet_key: String = "dlg.%s.greet" % npc.id
 	var greet_args: Dictionary = {}
-	if social != null and patient.is_empty():
-		greet_key = "dlg.%s.t%d" % [npc.id, social.tier(npc.id)]
 	if not patient.is_empty():
 		var st: String = String(patient.get("state", ""))
 		var comp: String = Locale.t("complaint.%s" % String(patient.get("complaint", "")))
@@ -44,6 +42,9 @@ static func build(npc: NpcData, ctx: Dictionary) -> Dictionary:
 				greet_args = {}
 			_:
 				pass
+	# Sapaan default diganti sapaan menurut tingkat kepercayaan (sapaan khusus pasien tetap didahulukan).
+	if social != null and greet_key == "dlg.%s.greet" % npc.id:
+		greet_key = "dlg.%s.t%d" % [npc.id, social.tier(npc.id)]
 	if req_status == RequestLog.READY:
 		greet_key = "dlg.request_claim"
 		greet_args = {}
