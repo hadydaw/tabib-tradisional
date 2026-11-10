@@ -219,7 +219,7 @@ func _test_state_roundtrip_and_sanitize() -> void:
 	var rl2 := RequestLog.new()
 	var b := SocialState.new(rl2)
 	b.from_dict(JSON.parse_string(JSON.stringify(a.to_dict())))
-	_check(b.trust_of("wiryo") == 50 and b.chapter_seen("wiryo", 1) and b.talk_day.get("wiryo") == 3, "kepercayaan, bab, dan hari bicara bolak-balik JSON")
+	_check(b.trust_of("wiryo") == a.trust_of("wiryo") and b.chapter_seen("wiryo", 1) and int(b.talk_day.get("wiryo", -1)) == 3, "kepercayaan, bab, dan hari bicara bolak-balik JSON")
 	_check(b.gift_available("karto", 2) == false and b.trust_of("karto") == a.trust_of("karto"), "hari pemberian bahan bolak-balik JSON")
 	_check(b.status("q_dewi_sungai") == SocialState.ACTIVE and b.is_ready("q_dewi_sungai"), "progres quest bolak-balik JSON")
 	_check(b.event_claimed("pasar_desa", 3) and not b.event_claimed("pasar_desa", 6), "klaim event bolak-balik JSON")
