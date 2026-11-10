@@ -19,6 +19,15 @@ static func from_rows(rows: Array[String]) -> GroundMap:
 	return m
 
 
+## Dari array jenis tile (urut baris demi baris).
+static func from_kinds(p_width: int, p_height: int, kinds: PackedInt32Array) -> GroundMap:
+	var m := GroundMap.new()
+	m.width = p_width
+	m.height = p_height
+	m.cells = kinds.duplicate()
+	return m
+
+
 func in_bounds(cell: Vector2i) -> bool:
 	return cell.x >= 0 and cell.y >= 0 and cell.x < width and cell.y < height
 

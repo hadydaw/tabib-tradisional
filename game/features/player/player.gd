@@ -15,17 +15,28 @@ var collision: GridCollision
 var animator: PlayerAnimator = PlayerAnimator.new()
 var last_moved: bool = false
 
-var _view: PlayerPlaceholder
+var appearance: CharacterAppearance
+var _view: Node2D  # PlayerPlaceholder atau CharacterView; keduanya punya apply_animation()
 
 
-func setup(p_tile: Vector2, p_collision: GridCollision, start_grid: Vector2) -> void:
+## Bila `p_appearance` diberikan, pemain memakai CharacterView (karakter kustom berlapis);
+## bila tidak, memakai PlayerPlaceholder lama (Fase 2).
+func setup(p_tile: Vector2, p_collision: GridCollision, start_grid: Vector2, p_appearance: CharacterAppearance = null) -> void:
 	tile = p_tile
 	collision = p_collision
 	grid_pos = start_grid
 	position = IsoMath.grid_to_screen(grid_pos, tile)
+	appearance = p_appearance
 	if _view == null:
-		_view = PlayerPlaceholder.new()
-		_view.body_scale = tile.x / 64.0
+		if appearance != null:
+			var cv := CharacterView.new()
+			cv.body_scale = tile.x / 64.0
+			cv.appearance = appearance
+			_view = cv
+		else:
+			var ph := PlayerPlaceholder.new()
+			ph.body_scale = tile.x / 64.0
+			_view = ph
 		add_child(_view)
 
 

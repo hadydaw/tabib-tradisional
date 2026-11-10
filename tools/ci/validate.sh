@@ -36,6 +36,11 @@ echo "== 4. Tes unit =="
 godot --headless --path game --script res://tests/unit/run_tests.gd 2>&1 | tee "$LOGS/unit_tests.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 
+echo "== 4b. Tes unit Fase 3 =="
+godot --headless --path game --script res://tests/unit/run_tests_fase3.gd 2>&1 | tee "$LOGS/unit_tests_fase3.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase3.log"; then FAIL=1; fi
+
 echo "== 5. Tes asap (semua profil render x tile x beban, headless) =="
 godot --headless --path game --script res://tests/smoke/run_smoke.gd 2>&1 | tee "$LOGS/smoke_tests.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
@@ -45,6 +50,11 @@ echo "== 6. Tes asap dunia Fase 2 (gerak, tabrakan, kamera, joystick) =="
 godot --headless --path game --script res://tests/smoke/run_smoke_world.gd 2>&1 | tee "$LOGS/smoke_world.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_world.log"; then FAIL=1; fi
+
+echo "== 7. Tes asap game Fase 3 (desa, klinik, karakter, interaksi) =="
+godot --headless --path game --script res://tests/smoke/run_smoke_game.gd 2>&1 | tee "$LOGS/smoke_game.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$LOGS/smoke_game.log"; then FAIL=1; fi
 
 if [ "$FAIL" -ne 0 ]; then echo "VALIDASI GAGAL"; exit 1; fi
 echo "VALIDASI LOLOS"

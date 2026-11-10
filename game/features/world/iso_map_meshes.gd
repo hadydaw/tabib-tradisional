@@ -36,8 +36,9 @@ static func line_mesh(map: GroundMap, tile: Vector2) -> ArrayMesh:
 
 
 ## Kotak pembatas peta dalam koordinat layar (untuk batas kamera).
-static func screen_bounds(map: GroundMap, tile: Vector2) -> Rect2:
+## `top_margin` memperluas batas ke atas untuk objek tinggi (pohon, dinding) di tepi belakang.
+static func screen_bounds(map: GroundMap, tile: Vector2, top_margin: float = 0.0) -> Rect2:
 	return Rect2(
-		-float(map.height) * tile.x * 0.5, 0.0,
+		-float(map.height) * tile.x * 0.5, -top_margin,
 		float(map.width + map.height) * tile.x * 0.5,
-		float(map.width + map.height) * tile.y * 0.5)
+		float(map.width + map.height) * tile.y * 0.5 + top_margin)

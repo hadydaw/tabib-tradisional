@@ -41,6 +41,11 @@ func _input(event: InputEvent) -> void:
 			_update(d.position)
 
 
+## Nilai joystick saat ini (nol bila tidak disentuh atau di zona mati).
+func get_value() -> Vector2:
+	return _value
+
+
 func _in_area(point: Vector2) -> bool:
 	var local: Vector2 = get_global_transform_with_canvas().affine_inverse() * point
 	return Rect2(Vector2.ZERO, size).grow(0.0 if floating else 30.0).has_point(local)
