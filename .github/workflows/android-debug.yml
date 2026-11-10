@@ -55,6 +55,10 @@ jobs:
       - name: Ekspor APK debug
         run: bash tools/ci/export_apk.sh
 
+      - name: Tangkapan layar visual (informatif)
+        continue-on-error: true
+        run: bash tools/ci/capture_shots.sh
+
       - name: Ringkasan
         if: always()
         run: |
