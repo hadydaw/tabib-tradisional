@@ -327,13 +327,13 @@ func show_book() -> bool:
 	var known: String = ""
 	for id in skills.known_plants:
 		known += Locale.t("herb.%s" % id) + ", "
-	lines.append({"text": Locale.t("book.plants", {"n": skills.known_plants.size(), "total": HerbDb.IDS.size(), "list": known if known != "" else "-"}), "size": 20})
+	lines.append({"text": Locale.t("book.plants", {"n": skills.known_plants.size(), "total": HerbDb.IDS.size(), "list": known.trim_suffix(", ") if known != "" else "-"}), "size": 20})
 	if upgrades != null:
 		var ups: String = ""
 		for id in ClinicUpgrades.IDS:
 			if upgrades.level(id) > 0:
 				ups += "%s %d, " % [Locale.t("upgrade.%s.name" % id), upgrades.level(id)]
-		lines.append({"text": Locale.t("book.upgrades", {"list": ups if ups != "" else "-", "cost": upgrades.operating_cost()}), "size": 20})
+		lines.append({"text": Locale.t("book.upgrades", {"list": ups.trim_suffix(", ") if ups != "" else "-", "cost": upgrades.operating_cost()}), "size": 20})
 	if not stats.ledger.is_empty():
 		var led: String = ""
 		var from: int = maxi(0, stats.ledger.size() - 3)
