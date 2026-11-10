@@ -363,4 +363,8 @@ func _add_medical_steps() -> void:
 		_mg().close()
 		_mg().show_book())
 	_steps.append(func() -> void: _shot("44_buku_langka"))
+	_steps.append(func() -> void: _mg().close())
+	_steps.append(func() -> void: _shot("45_gua_tablet_tuas"))
+	_steps.append(func() -> void: _mg().start_puzzle("tuas_gua"))
+	_steps.append(func() -> void: _shot("46_teka_tuas"))
 
