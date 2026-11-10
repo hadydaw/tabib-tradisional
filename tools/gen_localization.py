@@ -147,6 +147,11 @@ for rid, (ti, te, oi, oe, ri, re) in REQ.items():
     add(f"{rid}.offer", oi, oe)
     add(f"{rid}.remind", ri, re)
 
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import loc_fase5
+loc_fase5.register(add)
+
 if __name__ == "__main__":
     root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "game", "localization")
     os.makedirs(root, exist_ok=True)

@@ -46,6 +46,11 @@ godot --headless --path game --script res://tests/unit/run_tests_fase4.gd 2>&1 |
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase4.log"; then FAIL=1; fi
 
+echo "== 4d. Tes unit Fase 5 (penilaian, skill, diagnosis, akupunktur, peracikan, identifikasi, alur pengobatan) =="
+godot --headless --path game --script res://tests/unit/run_tests_fase5.gd 2>&1 | tee "$LOGS/unit_tests_fase5.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase5.log"; then FAIL=1; fi
+
 echo "== 5. Tes asap (semua profil render x tile x beban, headless) =="
 godot --headless --path game --script res://tests/smoke/run_smoke.gd 2>&1 | tee "$LOGS/smoke_tests.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1

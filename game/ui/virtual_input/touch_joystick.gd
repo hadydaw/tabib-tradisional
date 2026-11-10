@@ -26,6 +26,10 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if UiGate.blocked:
+		if _touch_index != -1:
+			_release()
+		return
 	if event is InputEventScreenTouch:
 		var t := event as InputEventScreenTouch
 		if t.pressed:

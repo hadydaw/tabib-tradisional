@@ -17,6 +17,7 @@ const PATIENCE_MIN: float = 120.0
 const VISIT_TIMEOUT_MIN: float = 180.0
 const AUTO_CALL_DELAY_MIN: float = 12.0
 const AUTO_EXAM_MIN: float = 25.0
+const EXAM_PATIENCE_MIN: float = 150.0  # Fase 5: pasien di ruang periksa yang tidak ditangani akhirnya pulang
 const STALE_ARRIVAL_MIN: int = 30     # rencana yang terlewat lebih dari ini (mis. lompat waktu) dilewati
 const RECEPTION_SPOT: String = "antre_resepsi"
 const STANDING_SPOT: String = "berdiri_tunggu"
@@ -25,6 +26,9 @@ var sim: NpcSimulation
 var clock: GameClock
 var queue: ClinicQueue = ClinicQueue.new()
 var auto_call: bool = true
+## Fase 4: pemeriksaan selesai otomatis (pengganti sementara). Fase 5: dimatikan; pemeriksaan diselesaikan
+## lewat alur pengobatan (TreatmentManager) dan pasien yang tidak ditangani pulang setelah EXAM_PATIENCE_MIN.
+var auto_exam: bool = true
 var completed_count: int = 0
 var gave_up_count: int = 0
 
@@ -115,8 +119,10 @@ func update(_delta: float) -> void:
 						or t - p.started_min > VISIT_TIMEOUT_MIN:
 					_leave(p, "batal")
 			PatientRecord.State.DIPERIKSA:
-				if auto_call and t - p.exam_started >= AUTO_EXAM_MIN:
+				if auto_exam and auto_call and t - p.exam_started >= AUTO_EXAM_MIN:
 					finish_exam()
+				elif not auto_exam and t - p.exam_started >= EXAM_PATIENCE_MIN:
+					_leave(p, "batal")
 			PatientRecord.State.DIPANGGIL:
 				if t - p.started_min > VISIT_TIMEOUT_MIN + 60.0:
 					_leave(p, "batal")
