@@ -49,7 +49,7 @@ static func screen_bounds(map: GroundMap, tile: Vector2, top_margin: float = 0.0
 
 ## Mesh bertekstur untuk satu jenis tile: setiap sel mendapat UV dari kotak layarnya (diamond mengisi kotak).
 ## Bagian atas tekstur yang berisi permukaan tile (di bawahnya ada pita tepi gelap ketebalan sisi).
-const TOP_FACE_V: float = 0.875
+const TOP_FACE_V: float = 1.0
 
 
 static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int, variant: int = 0, count: int = 1) -> ArrayMesh:
