@@ -48,10 +48,6 @@ static func screen_bounds(map: GroundMap, tile: Vector2, top_margin: float = 0.0
 
 
 ## Mesh bertekstur untuk satu jenis tile: setiap sel mendapat UV dari kotak layarnya (diamond mengisi kotak).
-## Satu periode tekstur (piksel layar) = satu ulangan tekstur 128x128.
-const TEXTURE_WORLD_PERIOD: Vector2 = Vector2(64, 64)
-
-
 static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int) -> ArrayMesh:
 	var verts := PackedVector2Array()
 	var uvs := PackedVector2Array()
@@ -61,10 +57,16 @@ static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int) -> Arra
 			if map.kind_at(Vector2i(x, y)) != kind:
 				continue
 			var q: PackedVector2Array = IsoMeshes.tile_corners(x, y, tile)
+			var mn: Vector2 = q[0]
+			var mx: Vector2 = q[0]
+			for p in q:
+				mn = mn.min(p)
+				mx = mx.max(p)
+			var size: Vector2 = mx - mn
 			for idx: int in [0, 1, 2, 0, 2, 3]:
 				verts.append(q[idx])
-				# UV mengikuti koordinat layar dunia, sehingga tekstur menyambung antar-sel.
-				uvs.append(q[idx] / TEXTURE_WORLD_PERIOD)
+				# Aset dibuat sebagai satu tile isometrik utuh: UV 0-1 per sel (diamond mengisi kotak).
+				uvs.append((q[idx] - mn) / size)
 				cols.append(Color(1, 1, 1, 1))
 	if verts.is_empty():
 		return null
