@@ -1,6 +1,6 @@
 # Laporan Fase 4: NPC dan Sistem Pasien (10 Nov 2026)
 
-**Status: kode selesai dan lolos tes otomatis di CI (HASIL_CI). Belum diuji di perangkat fisik; performa dengan NPC belum diukur.**
+**Status: kode selesai dan lolos tes otomatis di CI (run 42764859189, commit e0a349e, versionCode 22). Belum diuji di perangkat fisik; performa dengan NPC belum diukur.**
 
 ## Yang dibangun
 - **Penduduk (8 NPC)**: `NpcRoster`/`NpcData` (id, usia, rumah, tampilan, jadwal, permintaan). Nama/peran lewat localization. Tampilan memakai `CharacterAppearance` yang sama dengan pemain (`CharacterView`).
@@ -19,7 +19,15 @@
 Diagnosis, akupunktur, peracikan obat, inventaris, hadiah/ekonomi, NPC memanggil NPC lain, penyimpanan.
 
 ## Hasil tes
-HASIL_TES
+CI run 42764859189 (APK artifact `tabib-tradisional-debug-apk`): unit 108/0 gagal, unit Fase 3 142/0, **unit Fase 4 138/0**, asap prototipe 68/0, asap dunia Fase 2 46/0, asap game Fase 3 59/0, **asap NPC Fase 4 55/0**, validasi proyek lolos, kompatibilitas statis 5/5, APK terbentuk.
+
+Cakupan utama tes Fase 4:
+- Pencari jalan (rintangan, celah, sudut, kursi, keset), jam, localization (kunci ID = EN, penanda, fallback), semua spot/pintu/kursi/keset bebas dan terjangkau.
+- **Simulasi 3 hari permainan** (8 NPC): tidak pernah dua NPC di sel yang sama, tidak pernah di sel terhalang atau di sel pemain, hunian sel selalu sinkron, **tidak ada NPC macet lebih dari 30 detik (terburuk 8 detik)**, jadwal dipatuhi >= 90%, NPC keluar-masuk rumah dan klinik. Statistik: 106 rencana ulang, 37 menepi, 139 menunggu, 4 pengawas, 3 rencana gagal dalam 3 hari (rata-rata ~12 menepi per hari untuk 8 NPC).
+- Skenario terhalang: jalan ditutup pemain + jalan memutar ditutup -> NPC menunggu/menepi, tidak menembus pemain atau dinding, lalu sampai setelah jalan dibuka.
+- Dialog (semua NPC, kedua bahasa, sampai selesai tanpa teks mentah), permintaan (terima, penuhi, lapor), antrean (nomor, urutan tidak dilompati), alur pasien penuh, 8 pasien sekaligus (6 duduk, 2 berdiri, pindah duduk saat kursi kosong), menyerah setelah menunggu lama, antrean bubar saat tutup, rencana harian deterministik 14 hari.
+- Tes asap di scene: node NPC sinkron, Y-sort satu kelompok dengan pemain, tabrakan pemain-NPC, dialog dan panel, bahasa, pasien tiba di klinik dan duduk, meja penerimaan memanggil, tempat periksa menyelesaikan, pasien keluar, 6 jam permainan tetap sinkron.
+- Tangkapan layar CI (renderer perangkat lunak) menunjukkan penduduk di alun-alun, panel dialog, dan pasien duduk di bangku klinik (Y-sort benar) dengan dialog keluhan.
 
 ## Batas yang jujur
 - Tidak diuji di HP. Perlu dicek: NPC berjalan wajar dan tidak sering tersangkut, jadwal jalan, dialog terbaca, pasien datang dan antrean berjalan, Y-sort/tabrakan dengan NPC, rasa performa.
