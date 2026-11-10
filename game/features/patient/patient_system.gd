@@ -17,6 +17,7 @@ const PATIENCE_MIN: float = 120.0
 const VISIT_TIMEOUT_MIN: float = 180.0
 const AUTO_CALL_DELAY_MIN: float = 12.0
 const AUTO_EXAM_MIN: float = 25.0
+const STALE_ARRIVAL_MIN: int = 30     # rencana yang terlewat lebih dari ini (mis. lompat waktu) dilewati
 const RECEPTION_SPOT: String = "antre_resepsi"
 const STANDING_SPOT: String = "berdiri_tunggu"
 
@@ -81,6 +82,12 @@ func planned() -> Array[Dictionary]:
 	return _plan
 
 
+## Matikan rencana pasien otomatis untuk hari ini (tes/debug: kunjungan hanya lewat start_visit).
+func suppress_plan() -> void:
+	_planned_day = clock.day
+	_plan = []
+
+
 # --- Pembaruan ---------------------------------------------------------------
 
 func update(_delta: float) -> void:
@@ -91,9 +98,10 @@ func update(_delta: float) -> void:
 	var m: int = clock.minute()
 	var t: float = now()
 	for e in _plan:
-		if not e["started"] and m >= int(e["minute"]) and m < CLOSE_MIN - 30:
+		if not e["started"] and m >= int(e["minute"]):
 			e["started"] = true
-			if queue.for_npc(String(e["npc"])) == null:
+			var fresh: bool = m - int(e["minute"]) <= STALE_ARRIVAL_MIN and m < CLOSE_MIN - 30
+			if fresh and queue.for_npc(String(e["npc"])) == null:
 				start_visit(String(e["npc"]), String(e["complaint"]))
 	for p in queue.records:
 		if p.done:

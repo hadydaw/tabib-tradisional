@@ -57,7 +57,7 @@ static func t(key: String, args: Dictionary = {}) -> String:
 		var d: Dictionary = _table(DEFAULT_LANG)
 		text = String(d[key]) if d.has(key) else key
 	for k in args.keys():
-		text = text.replace("{%s}" % String(k), String(args[k]))
+		text = text.replace("{%s}" % str(k), str(args[k]))
 	return text
 
 

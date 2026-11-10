@@ -65,6 +65,7 @@ func _place_player_next_to(a: NpcAgent) -> void:
 
 
 func _step_load() -> void:
+	_world.get_patients().suppress_plan()  # pasien hanya dari debug_new_patient (deterministik)
 	var sim: NpcSimulation = _world.get_sim()
 	var visible_n: int = sim.agents_in("desa").size()
 	_check(sim.agents.size() == 8, "8 NPC disimulasikan")
@@ -219,9 +220,6 @@ func _step_collision_with_npc() -> void:
 func _step_patient_to_clinic() -> void:
 	_world.debug_set_time(1, 9, 0)
 	var ps: PatientSystem = _world.get_patients()
-	ps.update(0.0)
-	for e in ps.planned():
-		e["started"] = true
 	ps.auto_call = false
 	_world.get_player().teleport_grid(Vector2(23.5, 16.5))
 	var p: PatientRecord = _world.debug_new_patient()

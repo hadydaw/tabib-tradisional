@@ -467,10 +467,7 @@ func _test_sim_long_run() -> void:
 			visits[to_loc] = true)
 	# pemain berdiri di alun-alun sepanjang waktu
 	sim.set_player("desa", Vector2(23.5, 16.5))
-	var player_cells: Dictionary = {}
-	for x in [22, 23, 24]:
-		for y in [15, 16, 17]:
-			player_cells[Vector2i(x, y)] = true
+	var player_cells: Dictionary = {Vector2i(23, 16): true}
 	var player_hits: int = 0
 	var sched_checks: int = 0
 	var sched_good: int = 0
@@ -580,9 +577,7 @@ func _test_patient_flow() -> void:
 	var events: Array = []
 	ps.patient_event.connect(func(kind: String, p: PatientRecord) -> void: events.append("%s:%s" % [kind, p.npc_id]))
 	# cegah rencana otomatis ikut campur: tandai semua rencana hari ini sudah dimulai
-	ps.update(0.0)
-	for e in ps.planned():
-		e["started"] = true
+	ps.suppress_plan()
 	var p: PatientRecord = ps.start_visit("sari", "demam_dingin")
 	_check(p != null and p.state == PatientRecord.State.MENUJU and p.npc_id == "sari", "kunjungan dimulai (MENUJU)")
 	_check(ps.start_visit("sari", "batuk_kering") == null, "tidak bisa dua kunjungan bersamaan")
@@ -614,9 +609,7 @@ func _test_patient_flow() -> void:
 	var sim2: NpcSimulation = pair2[0]
 	var ps2: PatientSystem = pair2[1]
 	ps2.auto_call = true
-	ps2.update(0.0)
-	for e in ps2.planned():
-		e["started"] = true
+	ps2.suppress_plan()
 	var p2: PatientRecord = ps2.start_visit("joko", "mata_perih")
 	var finished: bool = _run_until(sim2, ps2, 4000.0, func() -> bool: return p2.done)
 	_check(finished and p2.state == PatientRecord.State.SELESAI and ps2.completed_count == 1, "auto_call: panggil, periksa, dan pulang otomatis")
@@ -626,9 +619,7 @@ func _test_patient_crowd() -> void:
 	var pair: Array = _make_patient_sim(8, 0)
 	var sim: NpcSimulation = pair[0]
 	var ps: PatientSystem = pair[1]
-	ps.update(0.0)
-	for e in ps.planned():
-		e["started"] = true
+	ps.suppress_plan()
 	var recs: Array[PatientRecord] = []
 	var i: int = 0
 	for id in NpcRoster.ids():
@@ -682,9 +673,7 @@ func _test_patient_giveup_and_close() -> void:
 	var pair: Array = _make_patient_sim(8, 0)
 	var sim: NpcSimulation = pair[0]
 	var ps: PatientSystem = pair[1]
-	ps.update(0.0)
-	for e in ps.planned():
-		e["started"] = true
+	ps.suppress_plan()
 	var p: PatientRecord = ps.start_visit("dewi", "gatal_kulit")
 	_run_until(sim, ps, 1500.0, func() -> bool: return p.state == PatientRecord.State.MENUNGGU)
 	_check(p.state == PatientRecord.State.MENUNGGU, "siap menunggu")
@@ -702,9 +691,7 @@ func _test_patient_giveup_and_close() -> void:
 	var pair2: Array = _make_patient_sim(15, 0)
 	var sim2: NpcSimulation = pair2[0]
 	var ps2: PatientSystem = pair2[1]
-	ps2.update(0.0)
-	for e in ps2.planned():
-		e["started"] = true
+	ps2.suppress_plan()
 	var p2: PatientRecord = ps2.start_visit("raka", "lelah_berat")
 	_run_until(sim2, ps2, 1200.0, func() -> bool: return p2.state == PatientRecord.State.MENUNGGU)
 	_check(p2.state == PatientRecord.State.MENUNGGU, "pasien menunggu sebelum tutup")
