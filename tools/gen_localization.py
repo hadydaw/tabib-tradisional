@@ -153,6 +153,8 @@ import loc_fase5
 loc_fase5.register(add)
 import loc_fase6
 loc_fase6.register(add)
+import loc_fase7
+loc_fase7.register(add)
 
 if __name__ == "__main__":
     root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "game", "localization")

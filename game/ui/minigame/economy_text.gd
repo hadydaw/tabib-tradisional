@@ -18,6 +18,10 @@ static func reason_text(reason: String) -> String:
 			item = Locale.t("milestone.%s" % arg)
 		"naik_tingkat":
 			item = Locale.t("skill.%s" % arg) if arg != "" else ""
+		"jelajah":
+			item = Locale.t("area.%s.name" % arg)
+		"misi":
+			item = Locale.t("mission.%s.title" % arg)
 	var key: String = "ledger.%s" % kind
 	if not Locale.has_key(key):
 		return reason

@@ -51,6 +51,7 @@ var _stats: ClinicStats
 var _garden: GardenSystem
 var _upgrades: ClinicUpgrades
 var _shop: ClinicShop
+var _adventure: AdventureState   # Fase 7: stamina, cooldown tanaman liar, misi, rahasia
 var load_status: int = SaveSystem.Status.MISSING   # hasil pemuatan saat mulai (SaveSystem.Status)
 var _treatment: TreatmentManager
 var _minigames: MinigameManager
@@ -197,6 +198,7 @@ func load_location(id: String, spawn_name: String) -> bool:
 	if _btn_interact != null:
 		update_interaction()
 		_show_toast(data.display_name)
+	_on_area_entered(id)
 	location_changed.emit(id)
 	return true
 
@@ -263,6 +265,12 @@ func update_interaction() -> void:
 
 
 func _prompt_for(it: Interactable) -> String:
+	if ForageDb.has(it.id):
+		return Locale.t("adv.forage_prompt")
+	if it.id == "adventure_board":
+		return Locale.t("adv.board_prompt")
+	if it.id == "secret_cleft":
+		return Locale.t("adv.secret_prompt")
 	var key: String = "prompt.%s" % it.id
 	if it.kind == "poi" and Locale.has_key(key):
 		return Locale.t(key)
@@ -285,9 +293,16 @@ func press_interact() -> bool:
 			interact_shelf()
 		"clinic_treatment_table":
 			interact_table()
+		"adventure_board":
+			_interact_board()
+		"secret_cleft":
+			_interact_secret()
 		_:
 			if GardenSystem.is_spot(_near.id):
 				_interact_plant(_near.id)
+				return true
+			if ForageDb.has(_near.id):
+				_interact_forage(_near.id)
 				return true
 			_show_toast("[Placeholder] %s: sistemnya belum dibuat" % _near.prompt)
 	return true
@@ -297,6 +312,8 @@ func press_interact() -> bool:
 
 ## Maju satu frame dunia: simulasi NPC + pasien, sinkron tabrakan dinamis, node NPC, zona.
 func step_world(delta: float) -> void:
+	if _adventure != null and _medical_enabled:
+		_adventure.sync(_clock.absolute_minutes())
 	if _npcs_enabled:
 		_sim.set_player(_loc.id, _player.grid_pos)
 		var sim_delta: float = delta * _time_scale
@@ -424,6 +441,8 @@ func _setup_medical() -> void:
 	add_child(_minigames)
 	_minigames.setup(_treatment, _skills, _inventory, _stats, _garden, _clock)
 	_minigames.setup_economy(_upgrades, _shop)
+	_adventure = AdventureState.new()
+	_minigames.adventure = _adventure
 	_minigames.save_action = save_game
 	_minigames.closed.connect(_on_minigame_closed)
 	_patients.auto_exam = false
@@ -479,7 +498,7 @@ func _on_skill_level_up(branch: String, lvl: int) -> void:
 func save_game() -> bool:
 	if not SaveSystem.enabled() or _loc == null:
 		return false
-	return SaveSystem.write(SaveSystem.collect(_clock, _loc.id, _stats, _skills, _inventory, _garden, _upgrades))
+	return SaveSystem.write(SaveSystem.collect(_clock, _loc.id, _stats, _skills, _inventory, _garden, _upgrades, _adventure))
 
 
 ## Muat kemajuan dari berkas. Mengembalikan SaveSystem.Status. Berkas hilang/rusak -> permainan baru (aman).
@@ -492,15 +511,15 @@ func load_game() -> int:
 		_show_toast(Locale.t("ui.load_corrupt"))
 		return load_status
 	var d: Dictionary = r["data"]
-	SaveSystem.apply(d, _stats, _skills, _inventory, _garden, _upgrades)
+	SaveSystem.apply(d, _stats, _skills, _inventory, _garden, _upgrades, _adventure)
 	Locale.set_language(String(d["language"]))
 	_clock.day = int(d["day"])
 	_clock.minute_f = float(d["minute"])
 	_last_day = _clock.day
 	_stats.day_now = _clock.day
 	_sim.snap_to_schedule()
-	if String(d["location"]) == "klinik":
-		load_location("klinik", "dari_desa")
+	if String(d["location"]) != "desa":
+		load_location(String(d["location"]), "dari_desa")
 	refresh_npcs()
 	_btn_book.text = Locale.t("ui.book")
 	_refresh_clock_label()
@@ -588,6 +607,8 @@ func _refresh_clock_label() -> void:
 	head += "   " + Locale.t("ui.queue", {"n": _patients.queue.waiting_count()})
 	if _stats != null:
 		head += "\n" + Locale.t("ui.money", {"money": _stats.money, "rep": int(roundf(_stats.reputation))})
+		if _adventure != null:
+			head += "   " + Locale.t("ui.stamina", {"n": int(_adventure.stamina)})
 	lines.append(head)
 	for id in _requests.active_ids():
 		var key: String = "ui.request_ready" if _requests.status(id) == RequestLog.READY else "ui.request_active"
@@ -853,6 +874,53 @@ func interact_table() -> void:
 		_minigames.start_upgrades()
 	else:
 		_show_toast("[Placeholder] Meja Pengobatan: sistemnya belum dibuat")
+
+
+# --- Petualangan (Fase 7) ----------------------------------------------------
+
+func get_adventure() -> AdventureState:
+	return _adventure
+
+
+## Kunjungan pertama ke hutan/sungai/pegunungan: bonus koin sekali seumur permainan.
+func _on_area_entered(id: String) -> void:
+	if _adventure == null or _stats == null or not ForageDb.is_area(id):
+		return
+	if _adventure.visit(id):
+		_stats.add_money(AdventureState.VISIT_BONUS, "jelajah:%s" % id)
+		_show_toast(Locale.t("adv.first_visit", {"name": Locale.t("area.%s.name" % id)}))
+
+
+func _interact_forage(node_id: String) -> void:
+	if not _medical_enabled or _adventure == null:
+		_show_toast("[Placeholder] Tanaman liar: sistemnya belum dibuat")
+		return
+	if not _adventure.node_ready(node_id, _clock.absolute_minutes()):
+		_show_toast(Locale.t("adv.node_resting"))
+		return
+	if not _minigames.start_forage(node_id):
+		_show_toast(Locale.t("adv.too_tired"))
+
+
+func _interact_board() -> void:
+	if not _medical_enabled or not _minigames.start_board():
+		_show_toast("[Placeholder] Papan Pengembara: sistemnya belum dibuat")
+
+
+func _interact_secret() -> void:
+	if not _medical_enabled or _adventure == null:
+		_show_toast("[Placeholder] Celah batu: sistemnya belum dibuat")
+		return
+	if _adventure.has_secret(AdventureState.SECRET_ID):
+		_show_toast(Locale.t("adv.secret_done"))
+		return
+	if _skills.level("identifikasi_tanaman") < 2 and _skills.known_plants.size() < 3:
+		_show_toast(Locale.t("adv.secret_locked"))
+		return
+	if not _adventure.can_spend(AdventureState.COST_SECRET):
+		_show_toast(Locale.t("adv.too_tired"))
+		return
+	_minigames.start_secret()
 
 
 func get_upgrades() -> ClinicUpgrades:

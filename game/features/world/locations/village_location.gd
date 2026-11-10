@@ -35,6 +35,18 @@ static func build() -> LocationData:
 		b.set_kind(corner, TileKinds.GRASS)
 	b.reserve(Rect2i(37, 2, 9, 7))
 
+	# --- Pintu ke area petualangan (Fase 7): barat -> hutan, timur -> sungai ---
+	var west_exit: Array[Vector2i] = [Vector2i(0, 20), Vector2i(0, 21)]
+	var east_exit: Array[Vector2i] = [Vector2i(WIDTH - 1, 20), Vector2i(WIDTH - 1, 21)]
+	for c in west_exit:
+		b.set_kind(c, TileKinds.MAT)
+		b.reserve(Rect2i(c, Vector2i(1, 1)))
+	for c in east_exit:
+		b.set_kind(c, TileKinds.MAT)
+		b.reserve(Rect2i(c, Vector2i(1, 1)))
+	b.add_transition(west_exit, "hutan", "dari_desa")
+	b.add_transition(east_exit, "sungai", "dari_desa")
+
 	# --- Klinik tabib ---
 	var clinic_style := {"wall": Color("#d8d4b4"), "roof": Color("#3f7a58"), "height": 2.4, "roof_height": 1.8, "door_side": "y", "door_cells": [3, 4], "windows": true}
 	b.add_building(CLINIC_RECT, clinic_style, "Klinik Tabib")
@@ -178,4 +190,6 @@ static func build() -> LocationData:
 	# --- Titik mulai ---
 	b.set_spawn("awal", Vector2(23.5, 16.5))
 	b.set_spawn("dari_klinik", Vector2(float(door_x) + 1.0, float(mat_y) + 2.5))
+	b.set_spawn("dari_hutan", Vector2(2.5, 20.5))
+	b.set_spawn("dari_sungai", Vector2(float(WIDTH) - 2.5, 20.5))
 	return b.data

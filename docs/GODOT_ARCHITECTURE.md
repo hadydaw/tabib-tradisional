@@ -141,3 +141,10 @@ Catatan: aset siap-pakai-engine ditempatkan di `game/` saat diimpor; `assets/` m
 - Titik pasang efek upgrade (perubahan minimal pada sistem Fase 5): `TreatmentManager.upgrades` (energi diagnosis, `AcupunctureSystem.radius_bonus`, `HerbalCraftingSystem.tolerance_mult`, pengali penalti menunggu), `HerbInventory.daily_min`, bonus panen di `MinigameManager.start_plant`.
 - Data yang disimpan: hari/jam/bahasa/lokasi + `ClinicStats.to_dict`, `SkillProgressionSystem.to_dict`, `HerbInventory.to_dict`, `GardenSystem.to_dict`, `ClinicUpgrades.to_dict`. Menambah data baru: tambahkan ke `collect`/`apply`, beri nilai bawaan di `from_dict`; naikkan `VERSION` hanya bila bentuk lama tidak bisa dibaca.
 - Alur uang: sumber (`pasien`, `jual:*`, `capaian:*`, `naik_tingkat:*`) dan pengeluaran (`beli:*`, `upgrade:*`, `operasional`) semua melalui `ClinicStats`; `game_world` mendengarkan `money_changed` untuk HUD/toast.
+
+## Fase 7: folder dan kelas baru
+- `features/world/locations/`: `ForestLocation` (hutan), `RiverLocation` (sungai), `MountainLocation` (pegunungan). Desa mendapat dua pintu baru (barat ke hutan, timur ke sungai) dan titik mulai `dari_hutan`/`dari_sungai`.
+- `features/adventure/`: `ForageDb` (titik pengumpulan fiktif, peluang bahan langka, regenerasi), `AdventureState` (stamina, cooldown, penghitung, misi, rahasia; dengan `to_dict/from_dict`), `MissionDb` (misi berurutan).
+- Titik interaksi: `forage_*` (pengumpulan), `adventure_board` (papan misi), `secret_cleft` (celah rahasia). `game_world` memanggil `_on_area_entered` saat masuk area dan `MinigameManager.start_forage/start_board/start_secret`.
+- `MinigameManager._open_plant` adalah bagian identifikasi yang dipakai kebun (Fase 5) dan pengumpulan (Fase 7); callback `on_done`/`on_cancel` memisahkan efek.
+- Simpan: `SaveSystem.collect/apply` menerima `AdventureState` opsional (kunci `adventure`). Berkas Fase 6 tanpa kunci ini tetap valid. Lokasi tersimpan kini bisa area mana pun yang terdaftar di `LocationRegistry`.

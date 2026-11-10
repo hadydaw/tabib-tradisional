@@ -96,3 +96,14 @@ Semua koin dan bahan fiktif. Angka sementara (`EconomyDb`, `ClinicUpgrades.DEFS`
 - **Upgrade** (6 x 2 tingkat; Meja Pengobatan): Lentera Periksa (+1 energi periksa diagnosis), Set Jarum Perak (radius bidik +0,02; syarat Akupunktur 2/3), Lumpang Batu (toleransi takaran +10%; Peracikan 2/3), Rak Herbal Besar (stok harian minimal +1), Ruang Tunggu Nyaman (penalti menunggu -30%), Pupuk & Pagar Kebun (panen +1; Identifikasi 2/3). Biaya 120-420, syarat reputasi 20-40; setiap tingkat menambah biaya harian 5.
 - **Simpan**: otomatis saat pergantian hari, menutup layar penuh, aplikasi dijeda/ditutup; manual lewat Buku Tabib. Pasien yang sedang antre tidak disimpan.
 - **Menambah upgrade/bahan**: tambahkan entri di `ClinicUpgrades.DEFS` + `IDS` + fungsi efek + teks `upgrade.<id>.name/.effect` di `tools/loc_fase6.py`; harga bahan di `EconomyDb.HERB_BUY`.
+
+
+## Fase 7: eksplorasi, pengumpulan, dan misi (implementasi)
+Semua tanaman dan efek fiktif; tidak ada panduan pengobatan nyata.
+- **Area**: Hutan (barat desa; 4 titik pengumpulan; papan Pengembara), Sungai (timur desa; sungai dengan jembatan; 3 titik), Pegunungan (utara hutan; 3 titik; celah rahasia). Kunjungan pertama memberi 15 koin.
+- **Pengumpulan**: tanaman yang sudah dikenal langsung masuk inventaris (1 bahan, 2 bila langka; 15% peluang langka per titik). Tanaman belum dikenal membuka identifikasi (Fase 5); berhasil = dikenal, masuk Buku Tabib, dan panen. Setiap titik tumbuh kembali setelah 240 menit permainan (4 jam).
+- **Stamina** (0-100): pulih 0,1 per menit permainan (penuh dalam sekitar 1000 menit). Biaya: bahan dikenal 8, identifikasi 12, celah 10. Berjalan dan menjelajah tidak memakai stamina. Bila ditunda sebelum selesai, stamina dikembalikan. Stamina tidak pernah menghentikan gerak.
+- **Misi Pengembara** (berurutan; hadiah koin): kumpulkan 4 bahan di hutan (60), kenali 3 tanaman baru (90), kunjungi Sungai dan Pegunungan (80), baca celah rahasia (150).
+- **Celah rahasia**: butuh Identifikasi tingkat 2 atau 3 tanaman dikenal. Sekali seumur permainan: 2 Kayu Manis dan 40 koin.
+- **Integrasi**: inventaris, Buku Tabib (tanaman baru), identifikasi Fase 5, ekonomi Fase 6 (hadiah koin masuk buku kas), simpan Fase 6 (kunci `adventure`), dan skill (XP identifikasi).
+- **Menambah titik**: entri di `ForageDb.all_nodes()` dan teks di `tools/loc_fase7.py`; sel harus dapat dilewati (diperiksa tes lokasi).

@@ -20,6 +20,7 @@ var stats: ClinicStats
 var garden: GardenSystem
 var clock: GameClock
 var upgrades: ClinicUpgrades = null
+var adventure: AdventureState = null   # Fase 7
 var shop: ClinicShop = null
 var save_action: Callable = Callable()   # dipanggil tombol Simpan di Buku Tabib; mengembalikan bool
 var transitions: bool = true
@@ -280,29 +281,121 @@ func start_plant(spot_id: String) -> bool:
 	if is_open() or not GardenSystem.is_spot(spot_id) or not garden.available(spot_id, clock.day):
 		return false
 	var plant_id: String = GardenSystem.plant_for(spot_id, clock.day)
+	return _open_plant(plant_id, absi(spot_id.hash()) + clock.day * 31, Locale.t("spot.%s" % spot_id),
+		func(res: MinigameResult, _ok: bool, _learned: bool) -> void:
+			garden.mark_done(spot_id, clock.day)
+			plant_finished.emit(spot_id, res))
+
+
+## Minigame identifikasi umum. `on_done(res, ok, learned)` dipanggil saat selesai; `on_cancel()` bila ditunda.
+func _open_plant(plant_id: String, seed_value: int, title: String, on_done: Callable, on_cancel: Callable = Callable()) -> bool:
 	var sys := PlantIdentificationSystem.new()
-	sys.setup(plant_id, skills.level("identifikasi_tanaman"), absi(spot_id.hash()) + clock.day * 31)
+	sys.setup(plant_id, skills.level("identifikasi_tanaman"), seed_value)
 	var v := PlantView.new()
-	v.setup(sys, Locale.t("spot.%s" % spot_id))
+	v.setup(sys, title)
 	v.completed.connect(func(res: MinigameResult) -> void:
 		var awards: Array[Dictionary] = skills.award(res)
 		var lines: Array[String] = []
+		var learned: bool = false
 		if sys.succeeded():
 			lines.append(Locale.t("plant.result_ok", {"name": Locale.t("herb.%s" % plant_id)}))
-			var learned: bool = skills.learn_plant(plant_id)
+			learned = skills.learn_plant(plant_id)
 			if learned:
 				lines.append(Locale.t("plant.learned", {"name": Locale.t("herb.%s" % plant_id)}))
+				lines.append(Locale.t("plant.lore", {"habitat": Locale.t("lore.%s.habitat" % plant_id), "use": Locale.t("lore.%s.use" % plant_id)}))
 			if sys.harvest > 0:
 				var got: int = sys.harvest + (upgrades.harvest_bonus() if upgrades != null else 0)
 				inventory.add(plant_id, got)
 				lines.append(Locale.t("plant.harvest", {"n": got, "name": Locale.t("herb.%s" % plant_id)}))
 		else:
 			lines.append(Locale.t("plant.result_fail", {"name": Locale.t("herb.%s" % plant_id)}))
-		garden.mark_done(spot_id, clock.day)
-		plant_finished.emit(spot_id, res)
+		on_done.call(res, sys.succeeded(), learned)
 		v.show_result(res, awards, lines))
 	v.finished.connect(func(_r: MinigameResult, _a: Array) -> void: close())
+	if on_cancel.is_valid():
+		v.cancelled.connect(func() -> void: on_cancel.call())
 	_show(v, "identifikasi")
+	return true
+
+
+func _open_info(title: String, lines: Array[Dictionary], button: String = "") -> void:
+	var v := InfoView.new()
+	v.setup(title, lines, button)
+	v.closed.connect(close)
+	_show(v, "info")
+
+
+# --- Petualangan (Fase 7) -----------------------------------------------------
+
+## Kumpulkan dari titik liar. Bahan yang sudah dikenal langsung masuk inventaris; yang belum dikenal
+## memulai identifikasi (Fase 5). Mengembalikan false bila titik masih tumbuh, stamina kurang, atau layar penuh.
+func start_forage(node_id: String) -> bool:
+	if is_open() or adventure == null or not ForageDb.has(node_id):
+		return false
+	var now: float = clock.absolute_minutes()
+	if not adventure.node_ready(node_id, now):
+		return false
+	var area: String = String(ForageDb.get_node(node_id)["area"])
+	var pick: Dictionary = ForageDb.roll(node_id, int(now))
+	var herb: String = String(pick["herb"])
+	var known: bool = skills.knows_plant(herb)
+	var cost: float = AdventureState.COST_GATHER if known else AdventureState.COST_IDENTIFY
+	if not adventure.spend(cost):
+		return false
+	var title: String = Locale.t("forage.%s" % node_id)
+	if known:
+		var n: int = 2 if bool(pick["rare"]) else 1
+		adventure.mark_forage(node_id, now)
+		inventory.add(herb, n)
+		adventure.bump("gather:%s" % area, n)
+		var got: Array[Dictionary] = [{"text": Locale.t("adv.forage_got", {"name": Locale.t("herb.%s" % herb), "n": n}), "size": 26, "color": MinigameView.C_GREEN},
+			{"text": Locale.t("lore.%s.habitat" % herb), "size": 20, "color": MinigameView.C_DIM}]
+		_open_info(title, got, Locale.t("ui.close"))
+		return true
+	var on_done := func(_res: MinigameResult, ok: bool, learned: bool) -> void:
+		adventure.mark_forage(node_id, now)
+		if ok:
+			adventure.bump("gather:%s" % area)
+		if learned:
+			adventure.bump("identify_new")
+	var on_cancel := func() -> void:
+		adventure.refund(cost)
+	return _open_plant(herb, int(now) + 17, title, on_done, on_cancel)
+
+
+## Papan Pengembara: tampilkan misi aktif; bila selesai, klaim hadiah koin.
+func start_board() -> bool:
+	if is_open() or adventure == null:
+		return false
+	var lines: Array[Dictionary] = []
+	var m: Dictionary = adventure.active_mission()
+	if m.is_empty():
+		lines.append({"text": Locale.t("board.all_done"), "size": 26})
+	else:
+		var mid: String = String(m["id"])
+		lines.append({"text": Locale.t("mission.%s.title" % mid), "size": 30, "color": MinigameView.C_GOLD})
+		lines.append({"text": Locale.t("mission.%s.desc" % mid), "size": 22})
+		lines.append({"text": Locale.t("board.progress", {"done": adventure.mission_progress(m), "total": MissionDb.goal_n(m)}), "size": 24})
+		var got: Dictionary = adventure.claim()
+		if not got.is_empty():
+			stats.add_money(int(got["coin"]), "misi:%s" % String(got["id"]))
+			lines.append({"text": Locale.t("board.claimed", {"coin": int(got["coin"])}), "size": 24, "color": MinigameView.C_GREEN})
+	_open_info(Locale.t("board.title"), lines, Locale.t("ui.close"))
+	return true
+
+
+## Baca tanda di celah rahasia (satu kali). Syarat dan stamina diperiksa pemanggil.
+func start_secret() -> bool:
+	if is_open() or adventure == null or adventure.has_secret(AdventureState.SECRET_ID):
+		return false
+	if not adventure.spend(AdventureState.COST_SECRET):
+		return false
+	adventure.reveal_secret(AdventureState.SECRET_ID)
+	inventory.add(AdventureState.SECRET_HERB, AdventureState.SECRET_UNITS)
+	stats.add_money(AdventureState.SECRET_COIN, "celah")
+	var lines: Array[Dictionary] = [
+		{"text": Locale.t("adv.secret_found", {"name": Locale.t("herb.%s" % AdventureState.SECRET_HERB), "n": AdventureState.SECRET_UNITS, "coin": AdventureState.SECRET_COIN}), "size": 26, "color": MinigameView.C_GOLD}]
+	_open_info(Locale.t("adv.secret_title"), lines, Locale.t("ui.close"))
 	return true
 
 

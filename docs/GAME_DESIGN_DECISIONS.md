@@ -72,6 +72,8 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-33 | Fase 6: simpan lokal berversi, atomik (sementara -> cadangan -> ganti nama), jatuh ke cadangan lalu permainan baru bila rusak. Pasien antre dan sesi minigame setengah jalan tidak disimpan (dibuat ulang dari jadwal hari itu); jam disimpan tepat sampai menit. Penyimpanan mati saat tes headless. | Aman dari berkas rusak/aplikasi dimatikan; tidak ada cloud (P-13 tetap PENDING). Angka mudah diubah di `SaveSystem`. |
 | T-34 | Fase 6: koin fiktif; semua transaksi lewat buku kas `ClinicStats` (`add_money`/`spend`). Modal awal 100, biaya operasional harian 20 + 5/tingkat upgrade (dipotong sebatas saldo, tidak pernah minus), jual = 40% harga beli. Bukan keputusan monetisasi (P-12 tetap PENDING). | Angka sementara di `EconomyDb`; perlu disetel setelah uji di HP. |
 | T-35 | Fase 6: upgrade klinik harus berefek gameplay (bukan dekorasi) dan berbiaya + bersyarat (reputasi/skill). Efek kecil dan berlapis (mis. +0,02 radius bidik) agar keterampilan manual tetap menentukan. | Konsisten dengan T-30. Data di `ClinicUpgrades.DEFS`. |
+| T-36 | Fase 7: bahan langka bukan item khusus baru, melainkan peluang kecil dari titik tertentu (15%). Tidak menambah tanaman baru agar kunci identifikasi (ciri unik) tidak berubah. | Menjaga keseimbangan minigame Fase 5; tanaman baru bisa ditambah nanti lewat `HerbDb`. |
+| T-37 | Fase 7: stamina hanya untuk pengumpulan, identifikasi, dan celah; berjalan tidak memakai stamina dan tidak pernah menghentikan gerak. Pembatalan minigame mengembalikan stamina. | Sesuai syarat "tidak terlalu menghukum". |
 
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
 

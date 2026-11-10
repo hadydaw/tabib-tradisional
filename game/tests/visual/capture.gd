@@ -321,4 +321,15 @@ func _add_medical_steps() -> void:
 		_mg().close()
 		_mg().show_book())
 	_steps.append(func() -> void: _shot("35_buku_tabib_kas"))
+	_steps.append(func() -> void:
+		_mg().close()
+		_world.load_location("hutan", "dari_desa"))
+	_steps.append(func() -> void: _shot("36_hutan"))
+	_steps.append(func() -> void:
+		_world.load_location("pegunungan", "dari_hutan"))
+	_steps.append(func() -> void: _shot("37_pegunungan"))
+	_steps.append(func() -> void:
+		_world.load_location("hutan", "dari_desa")
+		_mg().start_board())
+	_steps.append(func() -> void: _shot("38_papan_pengembara"))
 	_steps.append(func() -> void: _mg().close())
