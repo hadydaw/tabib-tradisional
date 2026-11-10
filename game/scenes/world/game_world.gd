@@ -44,6 +44,17 @@ var _clock_label: Label
 var _npcs_enabled: bool = true
 var _hud_timer: float = 0.0
 
+# Fase 5: pengobatan berbasis minigame.
+var _skills: SkillProgressionSystem
+var _inventory: HerbInventory
+var _stats: ClinicStats
+var _garden: GardenSystem
+var _treatment: TreatmentManager
+var _minigames: MinigameManager
+var _medical_enabled: bool = true
+var _last_day: int = -1
+var _btn_book: TouchActionButton
+
 var _joystick: TouchJoystick
 var _btn_debug: TouchActionButton
 var _btn_interact: TouchActionButton
@@ -72,6 +83,7 @@ func _ready() -> void:
 	_patients = PatientSystem.new()
 	_patients.setup(_sim, _clock)
 	_patients.patient_event.connect(_on_patient_event)
+	_setup_medical()
 	_player = Player.new()
 	_player.walk_speed = WALK_SPEED
 	_camera = FollowCamera.new()
@@ -89,12 +101,13 @@ func _process(delta: float) -> void:
 	poll_input()
 	step_world(delta)
 	update_interaction()
-	if Input.is_action_just_pressed("ui_accept") and not is_dialogue_active():
+	if Input.is_action_just_pressed("ui_accept") and not is_dialogue_active() and not is_minigame_open():
 		press_interact()
 	try_transition(false)
 	_hud_timer -= delta
 	if _hud_timer <= 0.0:
 		_hud_timer = 0.25
+		_check_new_day()
 		_refresh_clock_label()
 	if _toast_left > 0.0:
 		_toast_left -= delta
@@ -211,7 +224,7 @@ func try_transition(instant: bool = false) -> bool:
 ## Gabungkan keyboard (uji di komputer) dan joystick sentuh menjadi masukan pemain.
 func poll_input() -> void:
 	var k := Vector2(Input.get_axis("ui_left", "ui_right"), Input.get_axis("ui_up", "ui_down"))
-	if _transitioning or is_dialogue_active():
+	if _transitioning or is_dialogue_active() or is_minigame_open():
 		_player.move_input = Vector2.ZERO
 	elif k.length() > 0.0:
 		_player.move_input = k.normalized()
@@ -224,7 +237,7 @@ func poll_input() -> void:
 
 
 func update_interaction() -> void:
-	if is_dialogue_active():
+	if is_dialogue_active() or is_minigame_open():
 		_near = null
 		_btn_interact.visible = false
 		_interact_label.visible = false
@@ -253,7 +266,7 @@ func _prompt_for(it: Interactable) -> String:
 
 ## Tekan tombol interaksi: bicara dengan NPC, atau aksi klinik, atau pesan placeholder.
 func press_interact() -> bool:
-	if _near == null or is_dialogue_active():
+	if _near == null or is_dialogue_active() or is_minigame_open():
 		return false
 	if _near.kind == "npc":
 		return start_dialogue(_near.ref_id)
@@ -264,6 +277,9 @@ func press_interact() -> bool:
 		"clinic_exam_bed":
 			_interact_exam_bed()
 		_:
+			if GardenSystem.is_spot(_near.id):
+				_interact_plant(_near.id)
+				return true
 			_show_toast("[Placeholder] %s: sistemnya belum dibuat" % _near.prompt)
 	return true
 
@@ -275,8 +291,10 @@ func step_world(delta: float) -> void:
 	if _npcs_enabled:
 		_sim.set_player(_loc.id, _player.grid_pos)
 		var sim_delta: float = delta * _time_scale
-		_sim.update(sim_delta)
-		_patients.update(sim_delta)
+		if not is_minigame_open():
+			_sim.update(sim_delta)
+		if not is_minigame_open():
+			_patients.update(sim_delta)
 		_collision.set_dynamic_blocked(_sim.occupied_cells(_loc.id))
 	for id: String in _npc_nodes.keys():
 		(_npc_nodes[id] as NpcNode).sync(delta)
@@ -352,11 +370,65 @@ func _interact_reception() -> void:
 
 
 func _interact_exam_bed() -> void:
+	if _medical_enabled:
+		var tp: PatientRecord = _treatment.exam_patient()
+		if tp == null:
+			_show_toast(Locale.t("clinic.exam_empty"))
+		else:
+			_minigames.start_treatment(tp)
+		return
 	var p: PatientRecord = _patients.finish_exam()
 	if p != null:
 		_show_toast(Locale.t("clinic.exam_done", {"name": Locale.t(NpcRoster.by_id(p.npc_id).name_key())}))
 	else:
 		_show_toast(Locale.t("clinic.exam_empty"))
+
+
+## Fase 5: identifikasi tanaman di petak kebun / titik liar.
+func _interact_plant(spot_id: String) -> void:
+	if not _medical_enabled:
+		_show_toast(Locale.t("plant.disabled"))
+		return
+	if not _garden.available(spot_id, _clock.day):
+		_show_toast(Locale.t("plant.done_today"))
+		return
+	_minigames.start_plant(spot_id)
+
+
+func _setup_medical() -> void:
+	_skills = SkillProgressionSystem.new()
+	_inventory = HerbInventory.new()
+	_stats = ClinicStats.new()
+	_garden = GardenSystem.new()
+	_treatment = TreatmentManager.new()
+	_treatment.setup(_patients, _skills, _inventory, _stats)
+	_minigames = MinigameManager.new()
+	add_child(_minigames)
+	_minigames.setup(_treatment, _skills, _inventory, _stats, _garden, _clock)
+	_minigames.closed.connect(_on_minigame_closed)
+	_patients.auto_exam = false
+	_last_day = _clock.day
+
+
+## Nyalakan/matikan alur pengobatan minigame. Mati = perilaku Fase 4 (pemeriksaan otomatis selesai di ranjang).
+func set_medical_enabled(on: bool) -> void:
+	_medical_enabled = on
+	_patients.auto_exam = not on
+
+
+func _on_minigame_closed() -> void:
+	_refresh_clock_label()
+
+
+func is_minigame_open() -> bool:
+	return _minigames != null and _minigames.is_open()
+
+
+func _check_new_day() -> void:
+	if _clock.day != _last_day:
+		_last_day = _clock.day
+		_inventory.restock_daily()
+		_show_toast(Locale.t("ui.new_day", {"day": _clock.day}))
 
 
 func _queue_status_text() -> String:
@@ -431,6 +503,8 @@ func _refresh_clock_label() -> void:
 	var head: String = Locale.t("ui.clock", {"day": _clock.day, "time": _clock.format_time()})
 	head += "   " + Locale.t("ui.clinic_open" if _patients.is_open() else "ui.clinic_closed")
 	head += "   " + Locale.t("ui.queue", {"n": _patients.queue.waiting_count()})
+	if _stats != null:
+		head += "\n" + Locale.t("ui.money", {"money": _stats.money, "rep": int(roundf(_stats.reputation))})
 	lines.append(head)
 	for id in _requests.active_ids():
 		var key: String = "ui.request_ready" if _requests.status(id) == RequestLog.READY else "ui.request_active"
@@ -489,6 +563,14 @@ func _build_hud() -> void:
 	_interact_label.visible = false
 	layer.add_child(_interact_label)
 
+	_btn_book = TouchActionButton.new()
+	_btn_book.font_size = 24
+	_btn_book.text = Locale.t("ui.book")
+	_btn_book.pressed.connect(func() -> void:
+		if not is_dialogue_active():
+			_minigames.show_book())
+	layer.add_child(_btn_book)
+
 	_btn_debug = TouchActionButton.new()
 	_btn_debug.font_size = 22
 	_btn_debug.pressed.connect(func() -> void: _set_debug(not _debug_on))
@@ -519,8 +601,10 @@ func _build_hud() -> void:
 func _layout_hud() -> void:
 	var vis: Vector2 = get_viewport().get_visible_rect().size
 	var safe: Rect2 = SafeArea.rect(vis)
-	_info.position = safe.position + Vector2(16.0, 8.0)
-	_clock_label.size = Vector2(760.0, 60.0)
+	_info.position = safe.position + Vector2(16.0, 76.0)
+	_btn_book.size = Vector2(170.0, 60.0)
+	_btn_book.position = safe.position + Vector2(16.0, 8.0)
+	_clock_label.size = Vector2(760.0, 80.0)
 	_clock_label.position = Vector2(vis.x * 0.5 - 380.0, safe.position.y + 4.0)
 	_panel.layout(vis, safe)
 	_btn_debug.size = Vector2(190.0, 52.0)
@@ -535,7 +619,7 @@ func _layout_hud() -> void:
 	_interact_label.size = Vector2(360.0, 34.0)
 	_interact_label.position = Vector2(safe.end.x - 360.0 - 40.0, _btn_interact.position.y - 40.0)
 	_toast.size = Vector2(800.0, 44.0)
-	_toast.position = Vector2(vis.x * 0.5 - 400.0, safe.position.y + 96.0)
+	_toast.position = Vector2(vis.x * 0.5 - 400.0, safe.position.y + 110.0)
 	# Area sentuh joystick: separuh kiri layar, bagian bawah.
 	var zone_top: float = safe.position.y + safe.size.y * 0.30
 	_joystick.position = Vector2(safe.position.x, zone_top)
@@ -635,6 +719,7 @@ func _cycle_time_scale() -> void:
 func _toggle_language() -> void:
 	var lang: String = Locale.toggle_language()
 	_outfit_buttons[7].text = "Bahasa: %s" % lang.to_upper()
+	_btn_book.text = Locale.t("ui.book")
 	_refresh_clock_label()
 	if is_dialogue_active():
 		_show_dialogue_view()
@@ -647,6 +732,38 @@ func _debug_new_patient() -> PatientRecord:
 			var n: int = _patients.queue.records.size()
 			return _patients.start_visit(id, ComplaintCatalog.IDS[n % ComplaintCatalog.IDS.size()])
 	return null
+
+
+func get_minigames() -> MinigameManager:
+	return _minigames
+
+
+func get_treatment() -> TreatmentManager:
+	return _treatment
+
+
+func get_skills() -> SkillProgressionSystem:
+	return _skills
+
+
+func get_inventory() -> HerbInventory:
+	return _inventory
+
+
+func get_stats() -> ClinicStats:
+	return _stats
+
+
+func get_garden() -> GardenSystem:
+	return _garden
+
+
+func interact_exam_bed() -> void:
+	_interact_exam_bed()
+
+
+func interact_plant(spot_id: String) -> void:
+	_interact_plant(spot_id)
 
 
 func get_sim() -> NpcSimulation:

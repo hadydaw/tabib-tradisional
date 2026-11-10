@@ -71,5 +71,10 @@ godot --headless --path game --script res://tests/smoke/run_smoke_npc.gd 2>&1 | 
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_npc.log"; then FAIL=1; fi
 
+echo "== 9. Tes asap medis Fase 5 (alur pengobatan lengkap lewat layar minigame, kebun, Buku Tabib) =="
+godot --headless --path game --script res://tests/smoke/run_smoke_medical.gd 2>&1 | tee "$LOGS/smoke_medical.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_medical.log"; then FAIL=1; fi
+
 if [ "$FAIL" -ne 0 ]; then echo "VALIDASI GAGAL"; exit 1; fi
 echo "VALIDASI LOLOS"

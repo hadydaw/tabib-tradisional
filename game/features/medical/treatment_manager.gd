@@ -107,6 +107,7 @@ func _advance(p: PatientRecord) -> void:
 	var pending: Array[String] = s.pending_methods()
 	if pending.is_empty():
 		_set_stage(s, TreatmentSession.Stage.HASIL)
+		finalize(p)
 		return
 	_set_stage(s, TreatmentSession.Stage.AKUPUNKTUR if pending[0] == METHOD_ACU else TreatmentSession.Stage.RAMUAN)
 

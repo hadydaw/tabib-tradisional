@@ -16,6 +16,7 @@ func _initialize() -> void:
 	Locale.set_language("id")
 	_world = (load("res://scenes/world/game_world.tscn") as PackedScene).instantiate()
 	root.add_child(_world)
+	_world.set_medical_enabled(false)
 	_steps = [_step_load, _step_clock_label, _step_daily_schedule, _step_dialogue, _step_requests, _step_language,
 		_step_collision_with_npc, _step_patient_to_clinic, _step_clinic_view, _step_clinic_actions,
 		_step_exit_and_long_run, _step_final]

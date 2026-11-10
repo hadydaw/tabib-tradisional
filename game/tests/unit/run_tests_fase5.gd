@@ -21,6 +21,7 @@ func _init() -> void:
 	_test_treatment_flow()
 	_test_treatment_wrong_diagnosis_and_failures()
 	_test_localization_complete()
+	_test_ui_keys_scanned()
 	print("Tes Fase 5 dijalankan: %d, gagal: %d" % [_count, _fail])
 	quit(1 if _fail > 0 else 0)
 
@@ -996,6 +997,11 @@ func _test_localization_complete() -> void:
 		keys.append("grade.%s" % g)
 	for id in GardenSystem.SPOTS.keys():
 		keys.append("prompt.%s" % id)
+		keys.append("spot.%s" % id)
+	for c in ["ketepatan", "relevansi", "kelengkapan", "waktu", "urutan", "kesalahan", "komposisi", "takaran", "tumbuk", "aduk", "pengamatan"]:
+		keys.append("comp.%s" % c)
+	for kd in ["diagnosis", "akupunktur", "peracikan", "identifikasi"]:
+		keys.append("minigame.title.%s" % kd)
 	for st in TreatmentSession.STAGE_KEYS:
 		keys.append("stage.%s" % st)
 	for o in ["sembuh", "membaik", "gagal"]:
@@ -1006,3 +1012,31 @@ func _test_localization_complete() -> void:
 			if not Locale.has_key(k, lang):
 				missing.append("%s[%s]" % [k, lang])
 	_check(missing.is_empty(), "localization lengkap untuk data Fase 5 (%d kunci x 2 bahasa; hilang: %s)" % [keys.size(), str(missing.slice(0, 12))])
+
+
+## Semua kunci literal Locale.t("...") di skrip UI minigame dan dunia harus ada di kedua bahasa.
+func _test_ui_keys_scanned() -> void:
+	var rx := RegEx.new()
+	rx.compile("\"((?:diag|acu|craft|plant|rhythm|ui|minigame|method|summary|book|comp|recipe|spot|part|clinic)\\.[a-z_\\.]+)\"")
+	var files: Array[String] = []
+	var dir := DirAccess.open("res://ui/minigame")
+	if dir != null:
+		for f in dir.get_files():
+			if f.ends_with(".gd"):
+				files.append("res://ui/minigame/%s" % f)
+	files.append("res://scenes/world/game_world.gd")
+	var missing: Array[String] = []
+	var total: int = 0
+	for path in files:
+		var src: String = FileAccess.get_file_as_string(path)
+		for m in rx.search_all(src):
+			var k: String = m.get_string(1)
+			if k.ends_with("."):
+				continue
+			total += 1
+			for lang in Locale.LANGS:
+				if not Locale.has_key(k, lang):
+					missing.append("%s[%s]" % [k, lang])
+	_check(files.size() >= 8, "skrip UI minigame ditemukan (%d berkas)" % files.size())
+	_check(total > 80, "kunci UI terpindai (%d)" % total)
+	_check(missing.is_empty(), "semua kunci UI ada di ID+EN (hilang: %s)" % str(missing.slice(0, 12)))

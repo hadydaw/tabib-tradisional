@@ -122,7 +122,7 @@ static func build() -> LocationData:
 	b.add_interactable("garden_plot_3", Vector2i(38, 33), "Petak Kebun 3")
 	b.add_interactable("garden_plot_4", Vector2i(42, 33), "Petak Kebun 4")
 	b.add_interactable("wild_plant_kolam", Vector2i(42, 9), "Tanaman Liar (Kolam)")
-	b.add_interactable("wild_plant_sumur", Vector2i(26, 36), "Tanaman Liar (Sumur)")
+	b.add_interactable("wild_plant_sumur", Vector2i(26, 33), "Tanaman Liar (Sumur)")
 	b.add_interactable("wild_plant_barat", Vector2i(6, 20), "Tanaman Liar (Jalan Barat)")
 	b.force_object(Vector2i(27, 35), "well")
 	b.add_interactable("village_well", Vector2i(27, 35), "Sumur")

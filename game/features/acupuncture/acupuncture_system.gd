@@ -13,7 +13,7 @@ const MAX_MISS: float = 1.6      # jarak (dalam radius) skor posisi 0
 const DEPTH_CENTER: float = 0.62
 const DEPTH_HALF: float = 0.13
 const DEPTH_FALLOFF: float = 0.35
-const WEIGHTS: Dictionary = {"ketepatan": 0.30, "kelengkapan": 0.25, "urutan": 0.15, "kesalahan": 0.20, "waktu": 0.10}
+const WEIGHTS: Dictionary = {"ketepatan": 0.45, "kelengkapan": 0.20, "urutan": 0.10, "kesalahan": 0.15, "waktu": 0.10}
 
 var ailment_id: String = ""        # penyakit sebenarnya (menentukan rencana yang benar)
 var hint_ailment_id: String = ""   # penyakit hasil diagnosis (menentukan catatan petunjuk)
