@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-11-10: Fase 7, petualangan dan eksplorasi
+- **Area baru**: Hutan, Sungai, dan Pegunungan, masing-masing dengan tanaman liar berbeda dan transisi jelas (desa <-> hutan/sungai, hutan <-> pegunungan). Desa kini punya gerbang barat dan timur.
+- **Pengumpulan herbal**: titik liar dapat diambil langsung, masuk inventaris, dan pulih setelah 240 menit. Peluang bahan langka kecil (15%) per titik.
+- **Identifikasi tanaman baru** memakai minigame Fase 5 yang sama, lalu tanaman tercatat di Buku Tabib beserta habitat dan kegunaan fiktif.
+- **Stamina** non-hukuman: pengumpulan -8, identifikasi -12, celah rahasia -10, berjalan tidak memakai stamina, dan dipulihkan 0,1 per menit. Batal membatalkan biaya.
+- **Papan Pengembara**: 4 misi berurutan (hutan, kenali tanaman, jelajah, celah) dengan hadiah koin.
+- **Celah rahasia** di pegunungan: terbuka dengan Identifikasi tingkat 2 atau 3 tanaman dikenal, sekali, memberi bahan dan koin.
+- **Hadiah jelajah**: kunjungan pertama ke tiap area memberi 15 koin.
+- Simpan/muat menyimpan progres petualangan (`adventure`), kompatibel dengan simpanan Fase 6.
+- Localization 527 kunci (ID + EN). Tes: unit Fase 7 (65), tes asap petualangan (48), regresi Fase 2-6 utuh, 3 tangkapan layar baru (hutan, pegunungan, papan).
+- Perbaikan tes asap pada CI pertama: ekspektasi jenis layar papan dan syarat celah rahasia di tes diperbaiki (kode game tidak berubah).
+- Dokumen: `docs/GODOT_ARCHITECTURE.md`, `docs/GAMEPLAY_SYSTEMS.md`, `docs/GAME_DESIGN_DECISIONS.md` (T-36, T-37). Belum diuji di perangkat.
+
 ## 2026-11-10: Fase 6, simpan, ekonomi, dan progres klinik
 - **Simpan/Muat** (`SaveSystem`): JSON berversi di `user://save.json`, ditulis atomik (berkas sementara -> cadangan `.bak` -> ganti nama). Berkas utama hilang/rusak/versi tak dikenal -> otomatis dari cadangan, lalu permainan baru; tidak pernah crash. Isi: hari & jam, bahasa, lokasi, koin, reputasi, buku kas, capaian, skill, tanaman dikenal, inventaris, kebun, upgrade. Simpan otomatis: pergantian hari, menutup layar penuh (toko/upgrade/buku/kunjungan/kebun), aplikasi dijeda/kehilangan fokus/ditutup, dan tombol Simpan di Buku Tabib.
 - **Ekonomi**: `ClinicStats` kini punya buku kas (`add_money`/`spend`/`charge_up_to`, 40 catatan terakhir), sinyal `money_changed`, toast "+N koin (alasan)" di HUD. `EconomyDb` memuat modal awal 100, harga beli/jual 10 bahan (jual 40% dari beli, tanpa arbitrase), biaya operasional harian (20 + 5/tingkat upgrade, tak pernah membuat saldo minus), hadiah capaian & naik tingkat skill.

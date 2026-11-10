@@ -65,7 +65,11 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
 - Pembuat karakter (sesuai P-08), audio, efek, animasi aksi.
 - Optimasi performa, aksesibilitas, peninjauan konten dan budaya (P-17).
 
-## Fase 7: Uji dan rilis
+## Fase 7 (selesai di kode, CI lolos): Petualangan dan eksplorasi
+
+Hutan, sungai, pegunungan; pengumpulan & identifikasi; stamina; misi; celah rahasia; simpan. Belum diuji di perangkat.
+
+## Fase 7 (rencana lama, ex-"Fase 7"): Uji dan rilis
 - Uji di beberapa perangkat, perbaikan bug.
 - Persiapan toko (ikon, deskripsi, kebijakan privasi bila perlu, tanda tangan).
 - Rilis tertutup lalu rilis.
