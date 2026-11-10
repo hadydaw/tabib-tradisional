@@ -5,6 +5,8 @@ extends RefCounted
 ## Bidang yang terlihat dari kamera isometrik: sisi +y ("kiri"), sisi +x ("kanan"), dan atas.
 
 var tile: Vector2
+## Pergeseran semua titik (piksel layar). Dipakai atap agar urutan Y-sort-nya sedikit di depan dinding.
+var shift: Vector2 = Vector2.ZERO
 var _verts: PackedVector2Array = PackedVector2Array()
 var _cols: PackedColorArray = PackedColorArray()
 
@@ -15,7 +17,7 @@ func _init(p_tile: Vector2) -> void:
 
 ## Titik grid (gx, gy) pada ketinggian z (piksel) ke koordinat layar relatif jangkar.
 func pt(gx: float, gy: float, z: float = 0.0) -> Vector2:
-	return IsoMath.grid_to_screen(Vector2(gx, gy), tile) + Vector2(0.0, -z)
+	return IsoMath.grid_to_screen(Vector2(gx, gy), tile) + Vector2(0.0, -z) + shift
 
 
 func vertex_count() -> int:

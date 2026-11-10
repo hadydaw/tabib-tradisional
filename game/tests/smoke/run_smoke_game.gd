@@ -114,14 +114,10 @@ func _step_ysort() -> void:
 	_check(player.get_parent() == actors, "pemain dalam kelompok Y-sort")
 	_check(_world.get_ground_view().z_index < actors.z_index, "lantai di lapisan bawah aktor")
 	var nested: bool = false
-	var roofs: int = 0
 	for c in actors.get_children():
 		if c is Node2D and (c as Node2D).y_sort_enabled and c != actors:
 			nested = true
-		if c is Node2D and (c as Node2D).y_sort_origin > 0:
-			roofs += 1
 	_check(not nested, "tidak ada Y-sort bersarang")
-	_check(roofs == _world.get_location().buildings.size(), "satu atap per bangunan (%d)" % roofs)
 	player.teleport_grid(Vector2(23.5, 16.5))
 	_check(player.position.y == IsoMath.grid_to_screen(player.grid_pos, player.tile).y, "titik urut pemain = kaki")
 
@@ -182,7 +178,7 @@ func _step_clinic_interactions() -> void:
 			# arah hadap grid ke titik interaksi -> indeks arah layar terdekat
 			var g: Vector2 = Vector2(-step.x, -step.y)
 			var screen_dir := Vector2(g.x - g.y, (g.x + g.y))
-			player.facing = IsoMath.direction_index(Vector2(screen_dir.x, screen_dir.y * 0.5 if false else screen_dir.y))
+			player.facing = IsoMath.direction_index(screen_dir)
 			_world.update_interaction()
 			if _world.get_near_interactable() != null and _world.get_near_interactable().id == it.id:
 				done = true
@@ -197,9 +193,8 @@ func _step_exit_clinic() -> void:
 	var player: Player = _world.get_player()
 	var loc: LocationData = _world.get_location()
 	player.teleport_grid(Vector2(8.0, 9.5))
-	_walk(player, IsoMath.direction_vector(1) if false else IsoMath.direction_vector(7), 0)
 	player.teleport_grid(Vector2(7.5, 10.5))
-	_walk(player, IsoMath.direction_vector(0), 12)  # s = grid (+1,+1) menuju keset keluar
+	_walk(player, IsoMath.direction_vector(0), 28)  # s = grid (+1,+1) menuju keset keluar
 	var cell := Vector2i(floori(player.grid_pos.x), floori(player.grid_pos.y))
 	_check(loc.transition_at(cell).size() > 0, "keset keluar tercapai (sel %s)" % cell)
 	_check(_world.try_transition(true), "keset keluar memindahkan ke desa")

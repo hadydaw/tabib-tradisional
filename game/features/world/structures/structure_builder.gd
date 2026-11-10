@@ -9,7 +9,9 @@ extends RefCounted
 ## door_side "y"|"x", door_cells (Array[int] indeks sel sepanjang sisi pintu), windows (bool).
 
 const OVERHANG: float = 0.3
-const ROOF_SORT_ORIGIN: int = 2
+## Atap digeser turun sekian piksel (node) dan mesh digeser naik sebaliknya: tampilan sama,
+## tetapi titik urut Y-sort atap sedikit di depan dinding sudut sehingga digambar di atasnya.
+const ROOF_SORT_SHIFT: float = 2.0
 
 static var _cache: Dictionary = {}
 
@@ -87,6 +89,7 @@ static func roof_mesh(tile: Vector2, rect: Rect2i, style: Dictionary) -> ArrayMe
 	if _cache.has(key):
 		return _cache[key]
 	var b := ShapeBuilder.new(tile)
+	b.shift = Vector2(0.0, -ROOF_SORT_SHIFT)
 	var ax: float = float(rect.end.x - 1) + 0.5
 	var ay: float = float(rect.end.y - 1) + 0.5
 	var x0: float = float(rect.position.x) - ax - OVERHANG
@@ -110,7 +113,6 @@ static func spawn_nodes(tile: Vector2, rect: Rect2i, style: Dictionary) -> Array
 		nodes.append(wall)
 	var roof := IsoStaticMesh.new()
 	roof.mesh = roof_mesh(tile, rect, style)
-	roof.position = IsoMath.grid_to_screen(Vector2(rect.end.x - 0.5, rect.end.y - 0.5), tile)
-	roof.y_sort_origin = ROOF_SORT_ORIGIN
+	roof.position = IsoMath.grid_to_screen(Vector2(rect.end.x - 0.5, rect.end.y - 0.5), tile) + Vector2(0.0, ROOF_SORT_SHIFT)
 	nodes.append(roof)
 	return nodes

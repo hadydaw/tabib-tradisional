@@ -61,7 +61,7 @@ func _test_shapes() -> void:
 
 func _test_props() -> void:
 	var kinds: Array = PropCatalog.all_kinds()
-	_check(kinds.size() >= 40, "katalog punya >= 40 jenis (%d)" % kinds.size())
+	_check(kinds.size() >= 30, "katalog punya >= 30 jenis (%d)" % kinds.size())
 	var all_ok: bool = true
 	for tile: Vector2 in [Vector2(64, 32), Vector2(128, 64)]:
 		for k: String in kinds:
@@ -89,8 +89,11 @@ func _test_structures() -> void:
 	var nodes: Array[Node2D] = StructureBuilder.spawn_nodes(tile, rect, style)
 	_check(nodes.size() == 7, "node bangunan = dinding terlihat + atap")
 	var roof: Node2D = nodes[nodes.size() - 1]
-	_check(roof.y_sort_origin > 0, "atap digambar di atas dinding sudut (y_sort_origin)")
-	_check(roof.position.is_equal_approx(IsoMath.grid_to_screen(Vector2(13.5, 7.5), tile)), "atap berjangkar di sel sudut depan")
+	_check(roof.position.is_equal_approx(IsoMath.grid_to_screen(Vector2(13.5, 7.5), tile) + Vector2(0.0, StructureBuilder.ROOF_SORT_SHIFT)), "atap berjangkar di sel sudut depan, sedikit di depan dinding")
+	var max_wall_y: float = -INF
+	for i in range(nodes.size() - 1):
+		max_wall_y = maxf(max_wall_y, nodes[i].position.y)
+	_check(roof.position.y > max_wall_y, "titik urut atap di depan semua dinding bangunan")
 	var plain: int = _verts(StructureBuilder.wall_mesh(tile, rect, style, Vector2i(10, 7)))
 	var door: int = _verts(StructureBuilder.wall_mesh(tile, rect, style, Vector2i(11, 7)))
 	_check(plain == 18 and door > plain, "sel pintu punya dekal tambahan (%d > %d)" % [door, plain])

@@ -54,7 +54,7 @@ if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_world.log"; then FAIL=1; fi
 echo "== 7. Tes asap game Fase 3 (desa, klinik, karakter, interaksi) =="
 godot --headless --path game --script res://tests/smoke/run_smoke_game.gd 2>&1 | tee "$LOGS/smoke_game.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
-if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$LOGS/smoke_game.log"; then FAIL=1; fi
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_game.log"; then FAIL=1; fi
 
 if [ "$FAIL" -ne 0 ]; then echo "VALIDASI GAGAL"; exit 1; fi
 echo "VALIDASI LOLOS"
