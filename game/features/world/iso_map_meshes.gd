@@ -48,13 +48,15 @@ static func screen_bounds(map: GroundMap, tile: Vector2, top_margin: float = 0.0
 
 
 ## Mesh bertekstur untuk satu jenis tile: setiap sel mendapat UV dari kotak layarnya (diamond mengisi kotak).
-static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int) -> ArrayMesh:
+static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int, variant: int = 0, count: int = 1) -> ArrayMesh:
 	var verts := PackedVector2Array()
 	var uvs := PackedVector2Array()
 	var cols := PackedColorArray()
 	for y in range(map.height):
 		for x in range(map.width):
 			if map.kind_at(Vector2i(x, y)) != kind:
+				continue
+			if TileKinds.variant_index(Vector2i(x, y), count) != variant:
 				continue
 			var q: PackedVector2Array = IsoMeshes.tile_corners(x, y, tile)
 			var mn: Vector2 = q[0]

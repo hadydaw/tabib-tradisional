@@ -19,18 +19,20 @@ func set_overlay(cells: Array[Vector2i]) -> void:
 
 func _ready() -> void:
 	for kind in range(TileKinds.COUNT):
-		if TileKinds.TEXTURES.has(kind):
-			var tm: ArrayMesh = IsoMapMeshes.textured_fill_mesh(map, tile, kind)
-			var tex: Texture2D = load(TileKinds.TEXTURES[kind]) as Texture2D
-			if tm != null and tex != null:
-				_tex_meshes.append([tm, tex])
-				continue
+		if TileKinds.TEXTURE_VARIANTS.has(kind):
+			var paths: Array = TileKinds.TEXTURE_VARIANTS[kind]
+			for v in range(paths.size()):
+				var tm: ArrayMesh = IsoMapMeshes.textured_fill_mesh(map, tile, kind, v, paths.size())
+				var tex: Texture2D = load(String(paths[v])) as Texture2D
+				if tm != null and tex != null:
+					_tex_meshes.append([tm, tex])
+			continue
 		var m: ArrayMesh = IsoMapMeshes.fill_mesh(map, tile, kind)
 		if m != null:
 			_meshes.append(m)
 	var textured_kinds: Array[int] = []
 	for kind in range(TileKinds.COUNT):
-		if TileKinds.TEXTURES.has(kind):
+		if TileKinds.TEXTURE_VARIANTS.has(kind):
 			textured_kinds.append(kind)
 	_lines = IsoMapMeshes.line_mesh(map, tile, textured_kinds)
 	queue_redraw()

@@ -17,12 +17,13 @@ const COLORS: Array[Color] = [
 	Color("#b08a5a"), Color("#8a6a45"), Color("#9a4a3a"), Color("#6b4a30"),
 ]
 const WALKABLE: Array[bool] = [true, true, true, false, true, true, true, true]
-## Tekstur tile (Fase 2 diganti gambar). Jenis yang tidak ada di sini tetap warna datar.
-const TEXTURES: Dictionary = {
-	GRASS: "res://assets/tiles/tile_rumput.png",
-	DIRT: "res://assets/tiles/tile_tanah.png",
-	STONE: "res://assets/tiles/tile_batu.png",
-	WATER: "res://assets/tiles/tile_air.png",
+## Varian tekstur tile per jenis (Fase 10). Tiap sel memilih satu varian lewat variant_index(), sehingga
+## pola tidak tampak berulang. Jenis yang tidak ada di sini tetap warna datar.
+const TEXTURE_VARIANTS: Dictionary = {
+	GRASS: ["res://assets/tiles/tile_rumput_a.png", "res://assets/tiles/tile_rumput_b.png"],
+	DIRT: ["res://assets/tiles/tile_tanah_a.png", "res://assets/tiles/tile_tanah_b.png"],
+	STONE: ["res://assets/tiles/tile_batu_a.png", "res://assets/tiles/tile_batu_b.png"],
+	WATER: ["res://assets/tiles/tile_air_a.png", "res://assets/tiles/tile_air_b.png"],
 }
 const NAMES: PackedStringArray = ["rumput", "tanah", "batu", "air", "kayu", "kayu gelap", "keset", "tanah olahan"]
 
@@ -37,6 +38,14 @@ static func kind_from_char(c: String) -> int:
 		"m": return MAT
 		"p": return PLOT
 		_: return GRASS
+
+
+## Indeks varian (0..count-1) untuk satu sel; deterministik dari posisi sel.
+static func variant_index(c: Vector2i, count: int) -> int:
+	if count <= 1:
+		return 0
+	var h: int = (c.x * 73856093) ^ (c.y * 19349663)
+	return absi(h) % count
 
 
 static func is_walkable(kind: int) -> bool:
