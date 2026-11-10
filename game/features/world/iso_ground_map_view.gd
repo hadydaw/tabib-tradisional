@@ -18,6 +18,8 @@ func set_overlay(cells: Array[Vector2i]) -> void:
 
 
 func _ready() -> void:
+	# Tekstur lantai harus berulang (UV melampaui 0-1 pada koordinat dunia).
+	texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 	for kind in range(TileKinds.COUNT):
 		if TileKinds.TEXTURES.has(kind):
 			var tm: ArrayMesh = IsoMapMeshes.textured_fill_mesh(map, tile, kind)
@@ -28,7 +30,11 @@ func _ready() -> void:
 		var m: ArrayMesh = IsoMapMeshes.fill_mesh(map, tile, kind)
 		if m != null:
 			_meshes.append(m)
-	_lines = IsoMapMeshes.line_mesh(map, tile)
+	var textured_kinds: Array[int] = []
+	for kind in range(TileKinds.COUNT):
+		if TileKinds.TEXTURES.has(kind):
+			textured_kinds.append(kind)
+	_lines = IsoMapMeshes.line_mesh(map, tile, textured_kinds)
 	queue_redraw()
 
 
