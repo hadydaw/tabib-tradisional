@@ -301,4 +301,24 @@ func _add_medical_steps() -> void:
 		_mg().close()
 		_mg().show_book())
 	_steps.append(func() -> void: _shot("32_buku_tabib"))
+	_steps.append(func() -> void:
+		_mg().close()
+		_world.get_stats().money = 400
+		_world.get_stats().reputation = 45.0
+		_mg().start_shop()
+		var v := _mg().current_view() as ShopView
+		v.do_buy("kayu_manis")
+		v.do_sell("jahe"))
+	_steps.append(func() -> void: _shot("33_pasar_bahan"))
+	_steps.append(func() -> void:
+		_mg().close()
+		_mg().start_upgrades()
+		var v := _mg().current_view() as UpgradeView
+		v.do_buy("lentera")
+		v.do_buy("jarum_perak"))
+	_steps.append(func() -> void: _shot("34_upgrade_klinik"))
+	_steps.append(func() -> void:
+		_mg().close()
+		_mg().show_book())
+	_steps.append(func() -> void: _shot("35_buku_tabib_kas"))
 	_steps.append(func() -> void: _mg().close())
