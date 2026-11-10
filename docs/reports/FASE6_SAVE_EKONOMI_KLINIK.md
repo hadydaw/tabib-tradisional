@@ -43,7 +43,7 @@ Pemain nilai B mencapai skill tingkat 2 sekitar kunjungan ke-3, tingkat 3 sekita
 | **Asap ekonomi & simpan/muat** | **58 lolos**: dunia dibuang lalu dibuat ulang → koin, reputasi, XP, inventaris, upgrade, kebun, hari/jam, bahasa, lokasi sama; toko & upgrade lewat layar nyata; pembelian ditolak saat koin/syarat kurang; kunjungan pasien nyata → bayaran/XP/capaian; biaya harian; berkas utama rusak → cadangan; kedua rusak → permainan baru; berkas hilang → permainan baru |
 | Kompatibilitas statis APK | 5/5 |
 
-Tangkapan layar Pasar Bahan, Upgrade Klinik, dan Buku Tabib (dengan buku kas) diperiksa di CI; tata letak terbaca. Hanya rapikan koma sisa di daftar Buku.
+CI final: run 42783267370, APK versionCode 34 (artifact `tabib-tradisional-debug-apk`). Tangkapan layar Pasar Bahan, Upgrade Klinik, dan Buku Tabib (dengan buku kas) diperiksa di CI; tata letak terbaca. Hanya rapikan koma sisa di daftar Buku.
 
 ## Yang BELUM diuji (perlu di HP)
 - Rasa kontrol & keterbacaan layar Toko/Upgrade di layar nubia Neo 2 (ukuran tombol, jarak jempol).
