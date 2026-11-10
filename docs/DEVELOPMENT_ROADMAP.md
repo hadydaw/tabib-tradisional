@@ -27,6 +27,9 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
 ## Fase 2 (berjalan, nomor menyesuaikan instruksi pemilik): Dunia isometrik dan kontrol pemain
 **Status (10 Nov 2026): kode selesai dan lolos tes otomatis di CI; uji di HP belum dilakukan.** Lihat `docs/reports/FASE2_DUNIA_PEMAIN.md`. Isi: dunia uji, tile/ground, pemain 8 arah dengan animasi idle/walk placeholder, tabrakan, Y-sort, kamera ikut, joystick melayang. Fase "Dasar sistem" di bawah menjadi berikutnya setelah uji HP.
 
+## Fase 4 (instruksi pemilik): NPC dan sistem pasien
+**Status (10 Nov 2026): kode selesai dan lolos CI; uji HP belum dilakukan.** Lihat `docs/reports/FASE4_NPC_PASIEN.md`. Isi: 8 NPC dengan jadwal dan navigasi, dialog ID/EN, permintaan sederhana, pasien dan antrean klinik. Diagnosis, akupunktur, dan peracikan belum dibuat.
+
 ## Fase 3 (instruksi pemilik): Karakter dan dunia
 **Status (10 Nov 2026): kode selesai dan lolos CI; uji HP belum dilakukan.** Lihat `docs/reports/FASE3_KARAKTER_DUNIA.md`. Isi: karakter kustom 8 arah, pergantian pakaian, desa, klinik, struktur interaksi. Sistem pengobatan belum dibuat.
 

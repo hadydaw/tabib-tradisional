@@ -53,6 +53,39 @@ func _initialize() -> void:
 		_steps.append(func() -> void: _set_face(f))
 		_steps.append(func() -> void: _crop(f))
 	_steps.append(func() -> void: _end_sheet())
+	# Fase 4: NPC, dialog, pasien di klinik
+	_steps.append(func() -> void:
+		_world.load_location("desa", "awal")
+		_world.debug_set_time(1, 10, 0)
+		_go(Vector2(23.5, 16.5)))
+	_steps.append(func() -> void: _shot("12_desa_npc"))
+	_steps.append(func() -> void:
+		_next_to("karto")
+		_world.start_dialogue("karto"))
+	_steps.append(func() -> void: _shot("13_dialog_npc"))
+	_steps.append(func() -> void:
+		_world.end_dialogue()
+		var ps: PatientSystem = _world.get_patients()
+		ps.suppress_plan()
+		ps.auto_call = false
+		for _i in range(4):
+			_world.debug_new_patient()
+		for _k in range(700):
+			_world.step_world(0.5)
+		_world.load_location("klinik", "dari_desa"))
+	_steps.append(func() -> void: _shot("14_klinik_pasien"))
+	_steps.append(func() -> void:
+		_world.start_dialogue(_world.get_patients().queue.records[0].npc_id))
+	_steps.append(func() -> void: _shot("15_dialog_pasien"))
+	_steps.append(func() -> void: _world.end_dialogue())
+
+
+func _next_to(npc_id: String) -> void:
+	var sim: NpcSimulation = _world.get_sim()
+	var a: NpcAgent = sim.agent(npc_id)
+	var pf: GridPathfinder = sim.navigation(a.loc)
+	var spot: Vector2i = pf.nearest_open(a.cell, sim.occupied_cells(a.loc), 3)
+	_go(Vector2(spot) + Vector2(0.5, 0.5))
 
 
 func _process(_delta: float) -> bool:

@@ -69,3 +69,8 @@ Catatan keamanan konten: titik, namanya, dan efeknya fiktif dan tidak mewakili l
 
 ## 14. Urutan prioritas implementasi
 Lihat `DEVELOPMENT_ROADMAP.md`. Irisan vertikal pertama: gerak isometrik → interaksi → satu pasien dengan diagnosis sederhana → satu terapi → hasil.
+
+## Fase 4: NPC, dialog, pasien (struktur)
+- **Penduduk**: jadwal harian per NPC; aktivitas ditampilkan di dialog ("Sedang apa?").
+- **Permintaan**: terima dari NPC, penuhi (bicara/kunjungi), lapor. Tanpa hadiah.
+- **Pasien**: keluhan fiktif ringan; antrean bernomor; satu ruang periksa. Tahap berikutnya mengisi `DiagnosisRecord`/`TreatmentRecord` (belum ada sistem diagnosis, akupunktur, atau peracikan).

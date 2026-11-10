@@ -59,6 +59,14 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-21 | Tampilan karakter dari `CharacterAppearance` (Resource) + `OutfitItem` per slot; kontrak nama animasi `idle_<arah>`/`walk_<arah>`. Placeholder prosedural, bukan keputusan gaya. UI pembuat karakter tetap P-08. | Memudahkan penggantian ke sprite final. |
 | T-22 | Interaksi klinik hanya struktur (`Interactable`, sinyal `interaction_requested`); sistem pengobatan belum ada. | Batas lingkup Fase 3. |
 
+| T-23 | NPC disimulasikan semua sepanjang waktu (logika murni `NpcSimulation`), hanya NPC di lokasi aktif yang punya node. Jadwal = daftar `(jam, lokasi, spot, aktivitas)`; tujuan berupa spot bernama di data lokasi. | Murah (maks 8 NPC), lintas lokasi tanpa kasus khusus, dites tanpa engine. |
+| T-24 | Navigasi NPC memakai A* pada sel yang sama dengan `GridCollision` (tanpa memotong sudut). Hunian sel dipesan sebelum melangkah; sel NPC menjadi sel terhalang sementara bagi pemain. | Tidak bertumpuk; konsisten dengan T-15. |
+| T-25 | Anti-tersangkut berjenjang: tunggu -> rencana ulang -> batalkan tugas dan menepi -> jeda -> ulang; pengawas kemajuan 9 detik. | Instruksi Fase 4. Dites 3 hari permainan tanpa macet >30 detik. |
+| T-26 | Localization: JSON per bahasa di `res://localization/`, dibuat dari `tools/gen_localization.py`; fungsi `Locale.t(key, args)` (bukan `tr`, bentrok dengan `Object.tr`); fallback ke Indonesia lalu ke kunci. | Dukungan English tanpa mengubah kode. |
+| T-27 | Dialog = pohon node data (`DialogueLibrary`) + runner murni + panel tampilan terpisah. Permintaan NPC hanya dua syarat (bicara dengan NPC / masuk zona), tanpa hadiah. | "Informasi dan permintaan sederhana" tanpa sistem quest penuh. |
+| T-28 | Pasien: alur MENUJU -> MENDAFTAR -> MENUNGGU -> DIPANGGIL -> DIPERIKSA -> SELESAI/BATAL. Pemanggilan/pemeriksaan bisa oleh pemain; bila tidak, `auto_call` otomatis (12 dan 25 menit permainan) sebagai pengganti sementara sampai diagnosis dibuat. | Antrean tetap berjalan tanpa campur tangan pemain. |
+| T-29 | Jam permainan: 1 detik nyata = 1 menit (hari = 24 menit nyata), klinik buka 08:00-16:00. Angka sementara, belum keputusan desain final. | Cukup untuk menguji jadwal; mudah diubah (`GameClock.minutes_per_second`). |
+
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
 
 | ID | Pertanyaan | Opsi / usulan Claude | Dampak jika terlambat |

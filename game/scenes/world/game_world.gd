@@ -41,7 +41,6 @@ var _npc_interactables: Dictionary = {}
 var _dialogue_npc: String = ""
 var _time_scale: float = 1.0
 var _clock_label: Label
-var _last_zone: String = ""
 var _npcs_enabled: bool = true
 var _hud_timer: float = 0.0
 
@@ -173,7 +172,6 @@ func load_location(id: String, spawn_name: String) -> bool:
 		_add_npc_node(a)
 	if not _npcs_enabled:
 		_collision.set_dynamic_blocked({})
-	_last_zone = ""
 
 	_camera.bounds = IsoMapMeshes.screen_bounds(_map, TILE, CAMERA_TOP_MARGIN)
 	_camera.snap_to_target()
@@ -284,10 +282,10 @@ func step_world(delta: float) -> void:
 		(_npc_nodes[id] as NpcNode).sync(delta)
 	var cell := Vector2i(floori(_player.grid_pos.x), floori(_player.grid_pos.y))
 	var zone: String = _loc.zone_at(cell)
-	if zone != _last_zone:
-		_last_zone = zone
-		if zone != "":
-			_notify_requests(_requests.notify_zone(zone))
+	if zone != "":
+		var changed: Array[String] = _requests.notify_zone(zone)
+		if not changed.is_empty():
+			_notify_requests(changed)
 
 
 func _add_npc_node(a: NpcAgent) -> void:
@@ -691,7 +689,8 @@ func debug_new_patient() -> PatientRecord:
 func set_npcs_enabled(on: bool) -> void:
 	_npcs_enabled = on
 	if not on:
-		_collision.set_dynamic_blocked({})
+		if _collision != null:
+			_collision.set_dynamic_blocked({})
 		_near = null
 
 

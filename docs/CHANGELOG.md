@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-11-10: Fase 4, NPC dan sistem pasien
+- 8 NPC penduduk dengan identitas, jadwal harian, aktivitas, dan navigasi A* (`GridPathfinder`, `NpcSimulation`); tabrakan dinamis dengan pemain; anti-tersangkut (tunggu, rencana ulang, batalkan sementara dan menepi).
+- Dialog berlokalisasi Indonesia/English (`Locale`, `DialogueLibrary/Runner/Panel`), permintaan sederhana (`RequestLog`).
+- Pasien dan antrean klinik (`PatientSystem`, `ClinicQueue`): mendaftar, duduk di area penerimaan, dipanggil ke ruang periksa, pulang. Struktur data diagnosis/perawatan disiapkan (kosong).
+- `GameClock` (1 detik = 1 menit permainan), HUD jam/antrean/permintaan, tombol debug waktu/bahasa/pasien baru.
+- Perbaikan: `TouchActionButton` mengabaikan sentuhan saat tidak terlihat.
+- Laporan: `docs/reports/FASE4_NPC_PASIEN.md`. Belum diuji di perangkat.
+
 ## 2026-11-10: Fase 3, karakter dan dunia
 - Sistem karakter kustom (`CharacterAppearance`, `OutfitCatalog`, `CharacterPalette`, `CharacterView`) dengan idle/walk 8 arah dan pergantian pakaian.
 - Desa 48x40 dan klinik 16x12 data-driven; transisi lewat keset pintu; `Interactable` + `InteractionSystem`.

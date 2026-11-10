@@ -74,3 +74,7 @@ Untuk Fase 1: diamond berwarna sebagai tile, kapsul/siluet sederhana sebagai kar
 - Bangunan: dinding per sel kolom/baris depan + satu atap; aset final harus dapat dipotong per sel 64x32 (sementara, T-14).
 - Pakaian: ganti per id `OutfitCatalog` dan slot (TOP/BOTTOM/HEAD).
 - Animasi: nama `idle_<arah>`/`walk_<arah>` x 8 arah.
+
+## Fase 4: yang perlu diganti saat aset final ada
+- Sprite NPC: tambahkan animasi `sit_<arah>`; titik duduk = sel kursi di data lokasi (`seats`).
+- Teks: semua nama, dialog, dan keluhan ada di `tools/gen_localization.py` (sumber) -> `localization/*.json`. Ganti di sumbernya lalu jalankan skrip.

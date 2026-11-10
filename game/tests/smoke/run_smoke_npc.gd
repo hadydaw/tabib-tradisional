@@ -124,7 +124,8 @@ func _step_dialogue() -> void:
 	_check(_world._btn_interact.visible and _world._interact_label.text.begins_with("Bicara: "), "label interaksi: %s" % _world._interact_label.text)
 	var started: bool = _world.press_interact()
 	_check(started and _world.is_dialogue_active() and _world.get_panel().visible, "dialog dimulai dan panel tampil")
-	_check(a.talking, "NPC berhenti berjalan saat diajak bicara")
+	var talked: NpcAgent = _world.get_sim().agent(_world._dialogue_npc)
+	_check(talked != null and talked.talking, "NPC berhenti berjalan saat diajak bicara")
 	var v: Dictionary = _world.get_dialogue().view()
 	_check(String(v["text"]) != "" and (v["choices"] as Array).size() >= 3, "dialog punya teks dan pilihan")
 	_check(_world.get_panel().choice_count() == (v["choices"] as Array).size(), "panel menampilkan semua pilihan")
@@ -137,7 +138,7 @@ func _step_dialogue() -> void:
 	_world.dialogue_choose(0)
 	_world.dialogue_choose(-1)
 	_world.dialogue_choose((_world.get_dialogue().view()["choices"] as Array).size() - 1)
-	_check(not _world.is_dialogue_active() and not _world.get_panel().visible and not a.talking, "pilih Sampai jumpa -> dialog selesai, NPC jalan lagi")
+	_check(not _world.is_dialogue_active() and not _world.get_panel().visible and not talked.talking, "pilih Sampai jumpa -> dialog selesai, NPC jalan lagi")
 	_check(not _world.press_interact() or _world.is_dialogue_active(), "interaksi lagi membuka dialog baru")
 	_world.end_dialogue()
 

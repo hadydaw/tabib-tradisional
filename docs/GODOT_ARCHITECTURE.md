@@ -113,3 +113,13 @@ Catatan: aset siap-pakai-engine ditempatkan di `game/` saat diimpor; `assets/` m
 - `features/interaction/`: `Interactable`, `InteractionSystem`.
 - `features/world/shapes/` (ShapeBuilder), `props/` (PropCatalog), `structures/` (StructureBuilder), `locations/` (data lokasi, builder, desa, klinik, registry).
 - `scenes/world/game_world.tscn`: scene utama (HUD, pemuatan lokasi, transisi fade).
+
+## Fase 4: folder dan kelas baru
+- `core/systems/grid_pathfinder.gd`: A* sel (logika murni). `GridCollision` mendapat sel dinamis.
+- `features/npc/`: `GameClock`, `NpcData`, `NpcRoster`, `NpcGoal`, `NpcAgent`, `NpcSimulation`, `NpcNode`.
+- `features/dialogue/`: `DialogueLibrary`, `DialogueRunner`. UI: `ui/hud/dialogue_panel.gd`.
+- `features/quest/`: `RequestDef`, `RequestLog` (permintaan sederhana).
+- `features/patient/`: `PatientRecord`, `ClinicQueue`, `PatientSystem`, `ComplaintCatalog`, `DiagnosisRecord`, `TreatmentRecord`.
+- `features/localization/locale.gd`: `Locale.t()`; data `localization/id.json`, `en.json` (dibuat oleh `tools/gen_localization.py`).
+- Data lokasi bertambah: `spots`, `seats`, `doors` (`LocationData`).
+- Alur per frame di `game_world.gd`: input -> `step_world` (simulasi NPC + pasien, sinkron sel dinamis, sinkron node) -> interaksi.

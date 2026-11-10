@@ -36,3 +36,7 @@ Dunia terinspirasi Nusantara. Pakaian, motif, dan nama daerah diperlakukan denga
 - Lapisan gambar (belakang ke depan): bayangan, rambut belakang, kaki/bawahan, lengan, badan, leher/kepala, rambut, wajah, penutup kepala.
 - Kontrak animasi final: `idle_<arah>` dan `walk_<arah>` dengan arah s, sw, w, nw, n, ne, e, se.
 - Visual masih placeholder prosedural; gaya final belum disetujui.
+
+## Fase 4: NPC dan pose duduk
+- NPC memakai `CharacterAppearance` yang sama (data di `NpcData.look`); 8 penduduk punya kombinasi kulit/rambut/pakaian berbeda.
+- Kontrak animasi bertambah: `sit_<arah>` (duduk), selain `idle_<arah>` dan `walk_<arah>`. Sementara `CharacterView` menggambar state `"sit"` secara prosedural.
