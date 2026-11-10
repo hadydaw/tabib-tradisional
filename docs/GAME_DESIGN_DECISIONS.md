@@ -74,6 +74,11 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-35 | Fase 6: upgrade klinik harus berefek gameplay (bukan dekorasi) dan berbiaya + bersyarat (reputasi/skill). Efek kecil dan berlapis (mis. +0,02 radius bidik) agar keterampilan manual tetap menentukan. | Konsisten dengan T-30. Data di `ClinicUpgrades.DEFS`. |
 | T-36 | Fase 7: bahan langka bukan item khusus baru, melainkan peluang kecil dari titik tertentu (15%). Tidak menambah tanaman baru agar kunci identifikasi (ciri unik) tidak berubah. | Menjaga keseimbangan minigame Fase 5; tanaman baru bisa ditambah nanti lewat `HerbDb`. |
 | T-37 | Fase 7: stamina hanya untuk pengumpulan, identifikasi, dan celah; berjalan tidak memakai stamina dan tidak pernah menghentikan gerak. Pembatalan minigame mengembalikan stamina. | Sesuai syarat "tidak terlalu menghukum". |
+| T-38 | Fase 8: hubungan NPC = kepercayaan 0..100 (awal 10). Naik lewat bicara harian (+2), bahan hadiah (+8 bila disukai, +3 lainnya), dan bab cerita (+4). Turun hanya lewat pilihan quest yang tidak jujur. | Bicara tidak bisa diulang-ulang untuk farming kepercayaan (sekali per hari). |
+| T-39 | Fase 8: bab cerita terbuka berurutan (ambang kepercayaan 25 dan 60) dan dicatat didengar hanya bila pemain memilih "Ceritakan lebih banyak". "Nanti saja" tidak mencatat, sehingga bab muncul lagi. | Cerita terbuka bertahap dan tidak terasa diulang. Sapaan berubah menurut tingkat (0/1/2). |
+| T-40 | Fase 8: quest cerita hanya empat, masing-masing dengan satu pemberi, satu langkah utama, dan dua pilihan. Hadiah = koin, reputasi desa, kepercayaan, atau bahan. Resep dan akses area baru belum dibuat. | Ruang lingkup Fase 8; resep dan akses ditunda agar tidak melebar. Dicatat sebagai batasan jujur di laporan. |
+| T-41 | Fase 8: event desa = jadwal tetap berdasarkan hari dan jam permainan (pasar tiap 3 hari, malam bakti tiap 4 hari). Peserta otomatis bila pemain berada di desa, sekali per hari per event. | Tidak ada menu tambahan; event terlihat di HUD sebagai "event berikutnya". |
+| T-42 | Fase 8: reputasi desa memakai `ClinicStats.reputation` yang sudah ada (Fase 6). Quest dan event hanya menggeser nilainya; tidak ada sistem reputasi kedua. | Menghindari dua sumber kebenaran untuk reputasi. |
 
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
 

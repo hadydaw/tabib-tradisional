@@ -107,3 +107,33 @@ Semua tanaman dan efek fiktif; tidak ada panduan pengobatan nyata.
 - **Celah rahasia**: butuh Identifikasi tingkat 2 atau 3 tanaman dikenal. Sekali seumur permainan: 2 Kayu Manis dan 40 koin.
 - **Integrasi**: inventaris, Buku Tabib (tanaman baru), identifikasi Fase 5, ekonomi Fase 6 (hadiah koin masuk buku kas), simpan Fase 6 (kunci `adventure`), dan skill (XP identifikasi).
 - **Menambah titik**: entri di `ForageDb.all_nodes()` dan teks di `tools/loc_fase7.py`; sel harus dapat dilewati (diperiksa tes lokasi).
+
+## Fase 8: hubungan NPC, cerita, quest, dan event desa
+
+**Hubungan (kepercayaan).** Setiap penduduk (8 orang) punya kepercayaan 0..100, mulai dari 10. Tingkat sapaan: 0 (di bawah 35, belum akrab), 1 (35..69), 2 (70 ke atas). Sapaan tiap penduduk punya tiga varian per tingkat.
+- Bicara: +2, sekali per hari per penduduk.
+- Berikan bahan (pilihan dialog "Berikan bahan herbal"): +8 bila bahan kesukaan penduduk, +3 untuk bahan lain. Satu kali per hari per penduduk. Bahan dikurangi dari tas.
+- Bab cerita: +4 saat pemain memilih "Ceritakan lebih banyak".
+
+**Bab cerita.** Setiap penduduk punya dua bab (ambang kepercayaan 25 dan 60). Tiap bab punya teks utama dan lanjutan. Bab terbuka berurutan, dan dicatat hanya bila didengar sampai habis; "Nanti saja" membuat bab muncul lagi.
+
+**Quest cerita.** Empat quest, masing-masing diberikan satu penduduk:
+- Ramuan untuk Mbah Wiryo (min. kepercayaan 30): kumpulkan 3 bahan dari titik liar. Pilihan: "jujur" (25 koin, reputasi +1, kepercayaan +6) atau "untung" (60 koin, reputasi -1, kepercayaan -4).
+- Cerita dari Sungai (min. kepercayaan 15): kunjungi Sungai, lalu lapor ke Dewi. Pilihan: "apa adanya" (15 koin, reputasi +1, kepercayaan +5, kayu manis) atau "dilebihkan" (30 koin, reputasi -2).
+- Pasien Pilihan (min. kepercayaan 25, reputasi desa 30): tangani 3 pasien dengan hasil B ke atas. Pilihan: "upah" (50 koin) atau "bagi" (10 koin, reputasi +2, kepercayaan +6, jahe).
+- Tanaman Liar di Kebun Karto (min. kepercayaan 40): identifikasi 2 tanaman baru. Pilihan: "bagi jasa" (20 koin, reputasi +2, kepercayaan +6) atau "ambil pujian" (40 koin, reputasi -1, kepercayaan -4).
+
+Alur: tawaran muncul di dialog penduduk pemberi bila syarat terpenuhi, lalu "Soal tugasmu..." untuk status, dan "Tugasku sudah selesai" saat siap diserahkan. Quest siap diberi tahu lewat toast dan baris HUD.
+
+**Event desa.**
+- Pasar Desa: setiap hari kelipatan 3, pukul 08:00 sampai 10:00. Pemain di desa mendapat 20 koin dan reputasi +1.
+- Malam Bakti: setiap hari kelipatan 4, pukul 18:00 sampai 19:00. Pemain di desa membuat semua penduduk makin percaya (+3) dan reputasi +2.
+Setiap event hanya dihitung sekali per hari. HUD menampilkan "Event berikutnya".
+
+**Reputasi desa** memakai nilai reputasi klinik yang sudah ada (0..100). Quest dan event menggesernya; pelayanan pasien tetap menjadi sumber utamanya.
+
+**Buku Tabib** menampilkan tingkat hubungan tiap penduduk dan jumlah tugas selesai/berjalan.
+
+**Simpan/muat.** Hubungan, bab, hari bicara dan pemberian, status quest, klaim event, serta permintaan Fase 4 disimpan di kunci `social`. Simpanan Fase 6 dan 7 tanpa kunci ini tetap bisa dimuat dan mulai dari keadaan awal.
+
+**Batasan jujur.** Resep dan akses area baru belum termasuk hadiah; quest hanya empat. Event tidak meminta tindakan khusus selain berada di desa.

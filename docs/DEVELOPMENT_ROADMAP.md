@@ -69,6 +69,10 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
 
 Hutan, sungai, pegunungan; pengumpulan & identifikasi; stamina; misi; celah rahasia; simpan. Belum diuji di perangkat.
 
+## Fase 8 (dikerjakan): Hubungan NPC, cerita, quest, dan event desa
+
+Kepercayaan, bab cerita, empat quest dengan pilihan, reputasi desa, event berbasis jam, simpan lintas sistem. Belum diuji di perangkat.
+
 ## Fase 7 (rencana lama, ex-"Fase 7"): Uji dan rilis
 - Uji di beberapa perangkat, perbaikan bug.
 - Persiapan toko (ikon, deskripsi, kebijakan privasi bila perlu, tanda tangan).

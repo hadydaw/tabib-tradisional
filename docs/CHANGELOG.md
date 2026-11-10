@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-11-10: Fase 8, hubungan NPC, cerita, quest, dan event desa
+- **Hubungan NPC**: kepercayaan 0..100 per penduduk. Bicara harian (+2), bahan hadiah (+8 bila disukai, +3 lainnya, sekali per hari), dan bab cerita (+4). Sapaan berubah menurut tingkat (0/1/2).
+- **Bab cerita**: dua bab per penduduk (ambang 25 dan 60) dengan teks utama dan lanjutan. Terbuka berurutan; tercatat hanya bila didengar sampai habis.
+- **Quest cerita**: empat quest (Ramuan untuk Mbah Wiryo, Cerita dari Sungai, Pasien Pilihan, Tanaman Liar di Kebun Karto) dengan syarat kepercayaan dan reputasi, langkah dari klinik/eksplorasi/identifikasi, dan dua pilihan berkonsekuensi (koin, reputasi, kepercayaan, bahan).
+- **Reputasi desa** memakai nilai klinik yang sudah ada; quest dan event menggesernya.
+- **Event desa**: Pasar Desa (tiap 3 hari, 08:00–10:00) dan Malam Bakti (tiap 4 hari, 18:00–19:00), dihitung sekali per hari bila pemain berada di desa. HUD menampilkan event berikutnya.
+- **Simpan/muat**: kunci `social` menyimpan hubungan, bab, quest, klaim event, dan permintaan Fase 4 (yang sebelumnya tidak tersimpan). Simpanan Fase 6–7 tetap dapat dimuat.
+- **Buku Tabib**: tingkat hubungan dan jumlah tugas.
+- **Dialog**: aksi baru lewat sinyal `DialogueRunner.action_requested`; logika permintaan Fase 4 tidak berubah.
+- Localization 643 kunci (ID + EN). Tes: unit Fase 8, tes asap sosial (dialog, bahan, bab, quest, event, simpan lintas dunia), regresi Fase 2–7 utuh, tangkapan layar dialog kepercayaan dan tugas.
+- Batasan: resep dan akses area baru belum jadi hadiah; quest hanya empat. Belum diuji di perangkat.
+
 ## 2026-11-10: Fase 7, petualangan dan eksplorasi
 - **Area baru**: Hutan, Sungai, dan Pegunungan, masing-masing dengan tanaman liar berbeda dan transisi jelas (desa <-> hutan/sungai, hutan <-> pegunungan). Desa kini punya gerbang barat dan timur.
 - **Pengumpulan herbal**: titik liar dapat diambil langsung, masuk inventaris, dan pulih setelah 240 menit. Peluang bahan langka kecil (15%) per titik.
