@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-11-10: Fase 9, wilayah baru, dungeon, dan penemuan langka
+- **Wilayah baru**: Rawa (di timur Sungai) dengan kabut yang menutup rawa dalam sampai teka-teki Penjaga Rawa dipecahkan; Gua Kapur (di timur Pegunungan) yang terbuka setelah 2 jenis penemuan langka.
+- **Teka-teki**: tiga teka-teki urutan simbol (Penjaga Rawa, Tablet Batu, Tuas Batu). Jawaban salah mengosongkan urutan. Jawaban benar memberi koin dan satu bahan langka, lalu membuka kabut, pintu tablet, atau celah tuas.
+- **Dungeon (Gua Kapur)**: pintu tablet membuka ruang dalam dengan titik langka; tuas membuka celah ke ceruk tempat Peti Gua (koin dan dua benih).
+- **Penemuan langka**: enam jenis bahan (akar rawa, benih kemuning, benih cendana, jamur gua, batu kompas, kristal tetes) dari enam titik (4 di rawa, 2 di gua). Titik beristirahat 300 menit permainan. Bahan langka tidak punya efek pengobatan; tercatat di Buku Tabib beserta penemuan pertama (+15 koin).
+- **Quest eksplorasi**: Lastri (kumpulkan 3 penemuan langka) dan Joko (selesaikan Gua Kapur). Keduanya memakai alur quest Fase 8.
+- **Simpan/muat**: kunci `frontier` (penemuan, titik, teka-teki, peti) dengan sanitasi; simpanan Fase 2-8 tetap terbaca.
+- **Tes**: unit Fase 9 (keterjangkauan wilayah dengan dan tanpa segel), tes asap eksplorasi Fase 9, dan tes Fase 8 diperbarui untuk dua jenis quest baru.
+- Belum diuji di perangkat. Integrasi penemuan langka ke identifikasi dan resep belum dibuat (lihat laporan).
+
 ## 2026-11-10: Fase 8, hubungan NPC, cerita, quest, dan event desa
 - **Hubungan NPC**: kepercayaan 0..100 per penduduk. Bicara harian (+2), bahan hadiah (+8 bila disukai, +3 lainnya, sekali per hari), dan bab cerita (+4). Sapaan berubah menurut tingkat (0/1/2).
 - **Bab cerita**: dua bab per penduduk (ambang 25 dan 60) dengan teks utama dan lanjutan. Terbuka berurutan; tercatat hanya bila didengar sampai habis.

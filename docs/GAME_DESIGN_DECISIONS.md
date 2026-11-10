@@ -79,6 +79,10 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-40 | Fase 8: quest cerita hanya empat, masing-masing dengan satu pemberi, satu langkah utama, dan dua pilihan. Hadiah = koin, reputasi desa, kepercayaan, atau bahan. Resep dan akses area baru belum dibuat. | Ruang lingkup Fase 8; resep dan akses ditunda agar tidak melebar. Dicatat sebagai batasan jujur di laporan. |
 | T-41 | Fase 8: event desa = jadwal tetap berdasarkan hari dan jam permainan (pasar tiap 3 hari, malam bakti tiap 4 hari). Peserta otomatis bila pemain berada di desa, sekali per hari per event. | Tidak ada menu tambahan; event terlihat di HUD sebagai "event berikutnya". |
 | T-42 | Fase 8: reputasi desa memakai `ClinicStats.reputation` yang sudah ada (Fase 6). Quest dan event hanya menggeser nilainya; tidak ada sistem reputasi kedua. | Menghindari dua sumber kebenaran untuk reputasi. |
+| T-43 | Fase 9: penemuan langka disimpan sebagai inventaris terpisah (`FrontierState`), tidak ditambahkan ke `HerbDb`. | Menghindari perubahan jumlah jenis tanaman yang dipakai tes identifikasi Fase 5 dan 6. Konsekuensi: bahan langka belum masuk sistem identifikasi dan resep. |
+| T-44 | Fase 9: kabut, pintu tablet, dan celah tuas adalah sel tertutup yang diblokir secara dinamis (digabung dengan penduduk yang berdiri). | Tidak mengubah data lantai; buka-tutup cukup memperbarui set blokir. |
+| T-45 | Fase 9: Gua Kapur terbuka lewat syarat eksplorasi (2 jenis penemuan langka), bukan lewat quest. Gerbang terkunci memberi tahu sekali per sel. | Syarat eksplorasi dapat dicapai tanpa menunggu NPC; quest tetap tersedia sebagai jalur tambahan. |
+| T-46 | Fase 9: teka-teki memakai urutan simbol (api, air, angin, tanah), bukan pertarungan. Tidak ada tantangan yang wajib pertarungan. | Sesuai aturan Fase 9. |
 
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
 

@@ -20,6 +20,8 @@ const KIND_GATHER: String = "gather"
 const KIND_IDENTIFY: String = "identify"
 const KIND_ZONE: String = "zone"
 const KIND_TREAT: String = "treat"
+const KIND_DISCOVER: String = "discover"   ## Fase 9: penemuan langka pertama
+const KIND_DUNGEON: String = "dungeon"     ## Fase 9: selesai satu area khusus (gua/rawa)
 const ANY: String = "any"
 const GOOD_TREAT: String = "good"
 
@@ -54,6 +56,22 @@ const QUESTS: Dictionary = {
 			"dilebihkan": {"coin": 30, "rep": -2.0, "trust": 1, "herb": ""},
 		},
 	},
+	"q_lastri_rawa": {
+		"giver": "lastri", "min_trust": 20, "min_rep": 0.0,
+		"steps": [{"kind": KIND_DISCOVER, "key": ANY, "need": 3}],
+		"choices": {
+			"bagi_hasil": {"coin": 30, "rep": 1.0, "trust": 5, "herb": ""},
+			"simpan_sendiri": {"coin": 15, "rep": 0.0, "trust": 2, "herb": ""},
+		},
+	},
+	"q_joko_gua": {
+		"giver": "joko", "min_trust": 35, "min_rep": 0.0,
+		"steps": [{"kind": KIND_DUNGEON, "key": "gua", "need": 1}],
+		"choices": {
+			"jujur": {"coin": 40, "rep": 1.0, "trust": 6, "herb": ""},
+			"minta_bagian": {"coin": 70, "rep": -1.0, "trust": -3, "herb": ""},
+		},
+	},
 	"q_ratih_pasien": {
 		"giver": "ratih", "min_trust": 25, "min_rep": 30.0,
 		"steps": [{"kind": KIND_TREAT, "key": GOOD_TREAT, "need": 3}],
@@ -72,7 +90,7 @@ const QUESTS: Dictionary = {
 	},
 }
 
-const QUEST_ORDER: Array[String] = ["q_dewi_sungai", "q_wiryo_ramuan", "q_karto_kebun", "q_ratih_pasien"]
+const QUEST_ORDER: Array[String] = ["q_dewi_sungai", "q_wiryo_ramuan", "q_karto_kebun", "q_ratih_pasien", "q_lastri_rawa", "q_joko_gua"]
 
 
 static func npc_ids() -> Array[String]:

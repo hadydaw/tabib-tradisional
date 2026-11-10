@@ -53,6 +53,8 @@ var _upgrades: ClinicUpgrades
 var _shop: ClinicShop
 var _adventure: AdventureState   # Fase 7: stamina, cooldown tanaman liar, misi, rahasia
 var _social: SocialState         # Fase 8: kepercayaan NPC, bab cerita, quest cerita, event desa
+var _frontier: FrontierState     # Fase 9: penemuan langka, teka-teki, peti, sel tertutup
+var _gate_toast_at: Vector2i = Vector2i(-1, -1)   # sel gerbang yang sudah diberi tahu (toast sekali)
 var load_status: int = SaveSystem.Status.MISSING   # hasil pemuatan saat mulai (SaveSystem.Status)
 var _treatment: TreatmentManager
 var _minigames: MinigameManager
@@ -187,11 +189,9 @@ func load_location(id: String, spawn_name: String) -> bool:
 	_actors.add_child(_player)
 	_overlay.player = _player
 	_sim.clear_for_player(id, spawn)
-	_collision.set_dynamic_blocked(_sim.occupied_cells(id))
 	for a in _sim.agents_in(id):
 		_add_npc_node(a)
-	if not _npcs_enabled:
-		_collision.set_dynamic_blocked({})
+	_refresh_blocked()
 
 	_camera.bounds = IsoMapMeshes.screen_bounds(_map, TILE, CAMERA_TOP_MARGIN)
 	_camera.snap_to_target()
@@ -211,9 +211,12 @@ func try_transition(instant: bool = false) -> bool:
 	var cell := Vector2i(floori(_player.grid_pos.x), floori(_player.grid_pos.y))
 	var t: Dictionary = _loc.transition_at(cell)
 	if t.is_empty():
+		_gate_toast_at = Vector2i(-1, -1)
 		return false
 	var target: String = t["target"]
 	var spawn: String = t["spawn"]
+	if not _transition_open(target, cell):
+		return false
 	if instant:
 		load_location(target, spawn)
 		return true
@@ -225,6 +228,61 @@ func try_transition(instant: bool = false) -> bool:
 	tw.tween_property(_fade, "color:a", 0.0, FADE_SEC)
 	tw.tween_callback(func() -> void: _transitioning = false)
 	return true
+
+
+# --- Eksplorasi lanjut (Fase 9) ---------------------------------------------
+
+## Gerbang lokasi: Gua Kapur baru terbuka setelah penemuan langka cukup (syarat eksplorasi).
+## Gerbang terkunci memberi tahu sekali per sel, lalu pemain tetap di tempat.
+func _transition_open(target: String, cell: Vector2i) -> bool:
+	if target != "gua":
+		return true
+	if _frontier != null and _frontier.gua_unlocked():
+		return true
+	if _gate_toast_at != cell:
+		_gate_toast_at = cell
+		_show_toast(Locale.t("fr.gate_gua", {"n": RareDb.GATE_GUA_FIRST_FINDS}))
+	return false
+
+
+## Sel yang diblokir: penduduk yang berdiri dan segel eksplorasi (kabut, pintu tablet, celah tuas).
+func _refresh_blocked() -> void:
+	if _collision == null or _loc == null:
+		return
+	var blocked: Dictionary = {}
+	if _npcs_enabled:
+		blocked = _sim.occupied_cells(_loc.id).duplicate()
+	if _frontier != null:
+		for c in _frontier.sealed_cells(_loc.id):
+			blocked[c] = true
+	_collision.set_dynamic_blocked(blocked)
+
+
+func _interact_rare(node_id: String) -> void:
+	if not _medical_enabled or _frontier == null or _adventure == null:
+		_show_toast(Locale.t("fr.unavailable"))
+		return
+	if not _frontier.node_ready(node_id, _clock.absolute_minutes()):
+		_show_toast(Locale.t("fr.node_resting"))
+		return
+	if not _minigames.start_rare(node_id):
+		_show_toast(Locale.t("adv.too_tired"))
+
+
+func _interact_puzzle(puzzle_id: String) -> void:
+	if not _medical_enabled or _frontier == null:
+		_show_toast(Locale.t("fr.unavailable"))
+		return
+	if not _minigames.start_puzzle(puzzle_id):
+		_show_toast(Locale.t("fr.puzzle_done"))
+
+
+func _interact_chest() -> void:
+	if not _medical_enabled or _frontier == null:
+		_show_toast(Locale.t("fr.unavailable"))
+		return
+	if not _minigames.start_chest():
+		_show_toast(Locale.t("fr.chest_empty"))
 
 
 # --- Masukan dan interaksi ---------------------------------------------------
@@ -272,6 +330,12 @@ func _prompt_for(it: Interactable) -> String:
 		return Locale.t("adv.board_prompt")
 	if it.id == "secret_cleft":
 		return Locale.t("adv.secret_prompt")
+	if RareDb.is_node(it.id):
+		return Locale.t("fr.node_prompt")
+	if RareDb.has_puzzle(it.id):
+		return Locale.t("fr.puzzle_prompt")
+	if it.id == RareDb.CHEST_ID:
+		return Locale.t("fr.chest_prompt")
 	var key: String = "prompt.%s" % it.id
 	if it.kind == "poi" and Locale.has_key(key):
 		return Locale.t(key)
@@ -305,6 +369,15 @@ func press_interact() -> bool:
 			if ForageDb.has(_near.id):
 				_interact_forage(_near.id)
 				return true
+			if RareDb.is_node(_near.id):
+				_interact_rare(_near.id)
+				return true
+			if RareDb.has_puzzle(_near.id):
+				_interact_puzzle(_near.id)
+				return true
+			if _near.id == RareDb.CHEST_ID:
+				_interact_chest()
+				return true
 			_show_toast("[Placeholder] %s: sistemnya belum dibuat" % _near.prompt)
 	return true
 
@@ -324,7 +397,7 @@ func step_world(delta: float) -> void:
 			_sim.update(sim_delta)
 		if not is_minigame_open():
 			_patients.update(sim_delta)
-		_collision.set_dynamic_blocked(_sim.occupied_cells(_loc.id))
+		_refresh_blocked()
 	for id: String in _npc_nodes.keys():
 		(_npc_nodes[id] as NpcNode).sync(delta)
 	var cell := Vector2i(floori(_player.grid_pos.x), floori(_player.grid_pos.y))
@@ -449,6 +522,9 @@ func _setup_medical() -> void:
 	_social = SocialState.new(_requests)
 	_minigames.social = _social
 	_minigames.social_event.connect(report_progress)
+	_frontier = FrontierState.new()
+	_minigames.frontier = _frontier
+	_minigames.frontier_changed.connect(_refresh_blocked)
 	_treatment.visit_completed.connect(_on_visit_completed)
 	_dialogue.action_requested.connect(_on_dialogue_action)
 	_minigames.save_action = save_game
@@ -506,7 +582,7 @@ func _on_skill_level_up(branch: String, lvl: int) -> void:
 func save_game() -> bool:
 	if not SaveSystem.enabled() or _loc == null:
 		return false
-	return SaveSystem.write(SaveSystem.collect(_clock, _loc.id, _stats, _skills, _inventory, _garden, _upgrades, _adventure, _social))
+	return SaveSystem.write(SaveSystem.collect(_clock, _loc.id, _stats, _skills, _inventory, _garden, _upgrades, _adventure, _social, _frontier))
 
 
 ## Muat kemajuan dari berkas. Mengembalikan SaveSystem.Status. Berkas hilang/rusak -> permainan baru (aman).
@@ -519,7 +595,7 @@ func load_game() -> int:
 		_show_toast(Locale.t("ui.load_corrupt"))
 		return load_status
 	var d: Dictionary = r["data"]
-	SaveSystem.apply(d, _stats, _skills, _inventory, _garden, _upgrades, _adventure, _social)
+	SaveSystem.apply(d, _stats, _skills, _inventory, _garden, _upgrades, _adventure, _social, _frontier)
 	Locale.set_language(String(d["language"]))
 	_clock.day = int(d["day"])
 	_clock.minute_f = float(d["minute"])
@@ -907,6 +983,11 @@ func get_adventure() -> AdventureState:
 
 func get_social() -> SocialState:
 	return _social
+
+
+## Keadaan eksplorasi lanjut (Fase 9); null bila mode medis mati.
+func get_frontier() -> FrontierState:
+	return _frontier
 
 
 ## Kemajuan quest cerita dari dunia (pengumpulan, identifikasi, area, pengobatan). Quest yang siap diserahkan diberi tahu.

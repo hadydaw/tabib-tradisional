@@ -69,7 +69,11 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
 
 Hutan, sungai, pegunungan; pengumpulan & identifikasi; stamina; misi; celah rahasia; simpan. Belum diuji di perangkat.
 
-## Fase 8 (dikerjakan): Hubungan NPC, cerita, quest, dan event desa
+## Fase 9 (dikerjakan): Wilayah baru, dungeon, dan penemuan langka
+
+Rawa dan Gua Kapur dengan teka-teki, kabut dan segel, penemuan langka, dua quest eksplorasi, simpan/muat. Belum diuji di perangkat.
+
+## Fase 8 (selesai, disetujui): Hubungan NPC, cerita, quest, dan event desa
 
 Kepercayaan, bab cerita, empat quest dengan pilihan, reputasi desa, event berbasis jam, simpan lintas sistem. Belum diuji di perangkat.
 

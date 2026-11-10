@@ -347,3 +347,20 @@ func _add_medical_steps() -> void:
 		_world.start_dialogue("karto"))
 	_steps.append(func() -> void: _shot("40_dialog_tugas"))
 	_steps.append(func() -> void: _world.end_dialogue())
+	# Fase 9: wilayah baru, penemuan langka, teka-teki, dan Buku Tabib
+	_steps.append(func() -> void:
+		_world.load_location("rawa", "dari_sungai")
+		_world.get_frontier().discover("akar_rawa", 2)
+		_world.get_frontier().discover("benih_cendana"))
+	_steps.append(func() -> void: _shot("41_rawa"))
+	_steps.append(func() -> void:
+		_world.load_location("gua", "dari_pegunungan")
+		_world.get_frontier().discover("batu_kompas"))
+	_steps.append(func() -> void: _shot("42_gua"))
+	_steps.append(func() -> void: _mg().start_puzzle("tablet_gua"))
+	_steps.append(func() -> void: _shot("43_teka_teki"))
+	_steps.append(func() -> void:
+		_mg().close()
+		_mg().show_book())
+	_steps.append(func() -> void: _shot("44_buku_langka"))
+

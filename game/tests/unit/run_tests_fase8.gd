@@ -58,7 +58,7 @@ func _test_profiles() -> void:
 			quest_ok = false
 		for s in d["steps"]:
 			var kind: String = String(s["kind"])
-			if not [SocialDb.KIND_GATHER, SocialDb.KIND_IDENTIFY, SocialDb.KIND_ZONE, SocialDb.KIND_TREAT].has(kind):
+			if not [SocialDb.KIND_GATHER, SocialDb.KIND_IDENTIFY, SocialDb.KIND_ZONE, SocialDb.KIND_TREAT, SocialDb.KIND_DISCOVER, SocialDb.KIND_DUNGEON].has(kind):
 				quest_ok = false
 		for opt in d["choices"].keys():
 			var herb: String = String(d["choices"][opt]["herb"])

@@ -24,6 +24,16 @@ static func build() -> LocationData:
 		b.reserve(Rect2i(c, Vector2i(1, 1)))
 	b.add_transition(west, "desa", "dari_sungai")
 
+	# Pintu timur ke Rawa (Fase 9): jalan tanah kecil di tepi timur sungai.
+	var east_path := Rect2i(20, 9, 8, 2)
+	b.rect(east_path, TileKinds.DIRT)
+	b.reserve(east_path)
+	var east: Array[Vector2i] = [Vector2i(27, 9), Vector2i(27, 10)]
+	for c in east:
+		b.set_kind(c, TileKinds.MAT)
+		b.reserve(Rect2i(c, Vector2i(1, 1)))
+	b.add_transition(east, "rawa", "dari_sungai")
+
 	for n in ForageDb.nodes_in("sungai"):
 		var c: Vector2i = n["cell"]
 		b.reserve(Rect2i(c, Vector2i(1, 1)))
@@ -38,4 +48,5 @@ static func build() -> LocationData:
 
 	b.add_zone("Sungai", Rect2i(8, 0, 4, HEIGHT))
 	b.set_spawn("dari_desa", Vector2(2.5, 10.5))
+	b.set_spawn("dari_rawa", Vector2(25.5, 10.5))
 	return b.data

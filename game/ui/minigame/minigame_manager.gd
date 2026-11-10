@@ -11,6 +11,7 @@ signal visit_summary(summary: Dictionary)
 signal plant_finished(spot_id: String, result: MinigameResult)
 ## Fase 8: kemajuan quest cerita (kind: "gather"/"identify", key: "any" atau area).
 signal social_event(kind: String, key: String)
+signal frontier_changed   # Fase 9: keadaan teka-teki/peti berubah (sel tertutup perlu dihitung ulang)
 
 const FADE_IN: float = 0.28
 const FADE_DIP: float = 0.18
@@ -24,6 +25,7 @@ var clock: GameClock
 var upgrades: ClinicUpgrades = null
 var adventure: AdventureState = null   # Fase 7
 var social: SocialState = null         # Fase 8: hubungan & quest (ditampilkan di Buku Tabib)
+var frontier: FrontierState = null     # Fase 9: penemuan langka, teka-teki, peti gua
 var shop: ClinicShop = null
 var save_action: Callable = Callable()   # dipanggil tombol Simpan di Buku Tabib; mengembalikan bool
 var transitions: bool = true
@@ -405,6 +407,88 @@ func start_secret() -> bool:
 	return true
 
 
+# --- Eksplorasi lanjut (Fase 9) -------------------------------------------------
+
+## Ambil bahan dari titik langka. Bahan langka selalu masuk Buku Tabib; penemuan pertama memberi koin.
+func start_rare(node_id: String) -> bool:
+	if is_open() or frontier == null or adventure == null or not RareDb.is_node(node_id):
+		return false
+	var now: float = clock.absolute_minutes()
+	if not frontier.node_ready(node_id, now):
+		return false
+	if not adventure.spend(RareDb.STAMINA_COST):
+		return false
+	var item: String = RareDb.roll(node_id, int(now))
+	frontier.mark_node(node_id, now)
+	var first: bool = frontier.discover(item)
+	var lines: Array[Dictionary] = [{"text": Locale.t("fr.rare_got", {"name": Locale.t("rare.%s.name" % item)}), "size": 26, "color": MinigameView.C_GREEN}]
+	if first:
+		stats.add_money(RareDb.FIRST_COIN, "langka:%s" % item)
+		lines.append({"text": Locale.t("fr.rare_first", {"coin": RareDb.FIRST_COIN}), "size": 24, "color": MinigameView.C_GOLD})
+	lines.append({"text": Locale.t("rare.%s.habitat" % item), "size": 20, "color": MinigameView.C_DIM})
+	_open_info(Locale.t("fr.node_title"), lines, Locale.t("ui.close"))
+	social_event.emit(SocialDb.KIND_DISCOVER, item)
+	frontier_changed.emit()
+	return true
+
+
+## Layar teka-teki urutan simbol. Jawaban benar memberi hadiah dan membuka jalan terkait.
+func start_puzzle(id: String) -> bool:
+	if is_open() or frontier == null or not RareDb.has_puzzle(id) or frontier.puzzle_solved(id):
+		return false
+	var d: Dictionary = RareDb.puzzle(id)
+	var opts: Array[String] = []
+	for o in d["options"]:
+		opts.append(String(o))
+	var v := PuzzleView.new()
+	v.setup(Locale.t("fr.puzzle.%s.title" % id), Locale.t("fr.puzzle.%s.hint" % id), opts, (d["answer"] as Array).size())
+	v.answered.connect(func(seq: Array) -> void: _on_puzzle_answer(id, seq, v))
+	_show(v, "puzzle")
+	return true
+
+
+func _on_puzzle_answer(id: String, seq: Array, v: PuzzleView) -> void:
+	var want: Array = RareDb.puzzle(id)["answer"]
+	if seq != want:
+		v.reject(Locale.t("fr.puzzle_wrong"))
+		return
+	frontier.solve(id)
+	var rw: Dictionary = RareDb.puzzle(id)["reward"]
+	var coin: int = int(rw["coin"])
+	var item: String = String(rw["item"])
+	stats.add_money(coin, "teka:%s" % id)
+	frontier.discover(item)
+	var lines: Array[Dictionary] = [
+		{"text": Locale.t("fr.puzzle_solved"), "size": 28, "color": MinigameView.C_GREEN},
+		{"text": Locale.t("fr.reward", {"coin": coin, "name": Locale.t("rare.%s.name" % item)}), "size": 24, "color": MinigameView.C_GOLD},
+	]
+	if id == RareDb.RIDDLE_ID:
+		lines.append({"text": Locale.t("fr.fog_lifted"), "size": 22})
+		social_event.emit(SocialDb.KIND_DUNGEON, "rawa")
+	elif id == RareDb.TABLET_ID:
+		lines.append({"text": Locale.t("fr.door_open"), "size": 22})
+	elif id == RareDb.LEVER_ID:
+		lines.append({"text": Locale.t("fr.crack_open"), "size": 22})
+	_open_info(Locale.t("fr.puzzle.%s.title" % id), lines, Locale.t("ui.close"))
+	frontier_changed.emit()
+
+
+## Peti gua: sekali seumur permainan. Berisi koin dan bahan langka.
+func start_chest() -> bool:
+	if is_open() or frontier == null or not frontier.loot_chest():
+		return false
+	var c: Dictionary = RareDb.CHEST
+	stats.add_money(int(c["coin"]), "peti:gua")
+	frontier.discover(String(c["item"]), int(c["n"]))
+	var lines: Array[Dictionary] = [
+		{"text": Locale.t("fr.chest_open", {"coin": int(c["coin"]), "n": int(c["n"]), "name": Locale.t("rare.%s.name" % String(c["item"]))}), "size": 26, "color": MinigameView.C_GOLD},
+	]
+	_open_info(Locale.t("fr.chest_title"), lines, Locale.t("ui.close"))
+	social_event.emit(SocialDb.KIND_DUNGEON, "gua")
+	frontier_changed.emit()
+	return true
+
+
 # --- Buku Tabib ----------------------------------------------------------------
 
 func show_book() -> bool:
@@ -435,6 +519,18 @@ func show_book() -> bool:
 		var q_done: int = social.quests_in_status(SocialState.DONE).size()
 		var q_act: int = social.quests_in_status(SocialState.ACTIVE).size()
 		lines.append({"text": Locale.t("book.quests", {"done": q_done, "active": q_act}), "size": 20})
+	if frontier != null:
+		var rare_found: String = ""
+		for rid in RareDb.ITEMS:
+			var rn: int = frontier.count(rid)
+			if rn > 0:
+				rare_found += "%s ×%d   " % [Locale.t("rare.%s.name" % rid), rn]
+		lines.append({"text": Locale.t("fr.book_rare", {"kinds": frontier.distinct_found(), "total": RareDb.ITEMS.size(), "list": rare_found.strip_edges() if rare_found != "" else "-"}), "size": 20})
+		var solved: int = 0
+		for pid in RareDb.PUZZLES.keys():
+			if frontier.puzzle_solved(String(pid)):
+				solved += 1
+		lines.append({"text": Locale.t("fr.book_puzzles", {"solved": solved, "total": RareDb.PUZZLES.size()}), "size": 20})
 	if upgrades != null:
 		var ups: String = ""
 		for id in ClinicUpgrades.IDS:

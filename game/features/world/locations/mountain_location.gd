@@ -26,6 +26,13 @@ static func build() -> LocationData:
 		b.reserve(Rect2i(c, Vector2i(1, 1)))
 	b.add_transition(south, "hutan", "dari_pegunungan")
 
+	# Pintu timur ke Gua Kapur (Fase 9); dibuka lewat syarat eksplorasi di game_world.
+	var east: Array[Vector2i] = [Vector2i(23, 10), Vector2i(23, 11)]
+	for c in east:
+		b.set_kind(c, TileKinds.MAT)
+		b.reserve(Rect2i(c, Vector2i(1, 1)))
+	b.add_transition(east, "gua", "dari_pegunungan")
+
 	for n in ForageDb.nodes_in("pegunungan"):
 		var c: Vector2i = n["cell"]
 		b.reserve(Rect2i(c, Vector2i(1, 1)))
@@ -45,4 +52,5 @@ static func build() -> LocationData:
 	b.add_zone("Pegunungan", Rect2i(0, 0, WIDTH, HEIGHT))
 	b.set_spawn("dari_hutan", Vector2(11.5, HEIGHT - 2.5))
 	b.set_spawn("dari_desa", Vector2(11.5, HEIGHT - 2.5))
+	b.set_spawn("dari_gua", Vector2(21.5, 10.5))
 	return b.data

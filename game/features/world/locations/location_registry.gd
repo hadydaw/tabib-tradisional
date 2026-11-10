@@ -2,7 +2,7 @@ class_name LocationRegistry
 extends RefCounted
 ## Daftar lokasi yang ada. Id lokasi dipakai oleh perpindahan (LocationData.transitions).
 
-const IDS: Array[String] = ["desa", "klinik", "hutan", "sungai", "pegunungan"]
+const IDS: Array[String] = ["desa", "klinik", "hutan", "sungai", "pegunungan", "rawa", "gua"]
 const START_LOCATION: String = "desa"
 const START_SPAWN: String = "awal"
 
@@ -23,4 +23,6 @@ static func get_location(id: String) -> LocationData:
 			"hutan": _cache[id] = ForestLocation.build()
 			"sungai": _cache[id] = RiverLocation.build()
 			"pegunungan": _cache[id] = MountainLocation.build()
+			"rawa": _cache[id] = RawaLocation.build()
+			"gua": _cache[id] = GuaLocation.build()
 	return _cache[id]

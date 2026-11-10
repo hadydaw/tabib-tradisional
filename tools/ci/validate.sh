@@ -66,6 +66,11 @@ godot --headless --path game --script res://tests/unit/run_tests_fase8.gd 2>&1 |
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase8.log"; then FAIL=1; fi
 
+echo "== 4h. Tes unit Fase 9 (penemuan langka, teka-teki, eksplorasi, segel, keterjangkauan wilayah baru, quest) =="
+godot --headless --path game --script res://tests/unit/run_tests_fase9.gd 2>&1 | tee "$LOGS/unit_tests_fase9.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase9.log"; then FAIL=1; fi
+
 echo "== 5. Tes asap (semua profil render x tile x beban, headless) =="
 godot --headless --path game --script res://tests/smoke/run_smoke.gd 2>&1 | tee "$LOGS/smoke_tests.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
@@ -105,6 +110,11 @@ echo "== 12. Tes asap sosial Fase 8 (kepercayaan, bahan hadiah, bab cerita, ques
 godot --headless --path game --script res://tests/smoke/run_smoke_social.gd 2>&1 | tee "$LOGS/smoke_social.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_social.log"; then FAIL=1; fi
+
+echo "== 13. Tes asap eksplorasi Fase 9 (rawa, teka-teki, gerbang gua, tablet, tuas, peti, simpan lintas dunia) =="
+godot --headless --path game --script res://tests/smoke/run_smoke_frontier.gd 2>&1 | tee "$LOGS/smoke_frontier.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_frontier.log"; then FAIL=1; fi
 
 if [ "$FAIL" -ne 0 ]; then echo "VALIDASI GAGAL"; exit 1; fi
 echo "VALIDASI LOLOS"

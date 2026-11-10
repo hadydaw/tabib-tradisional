@@ -137,3 +137,11 @@ Setiap event hanya dihitung sekali per hari. HUD menampilkan "Event berikutnya".
 **Simpan/muat.** Hubungan, bab, hari bicara dan pemberian, status quest, klaim event, serta permintaan Fase 4 disimpan di kunci `social`. Simpanan Fase 6 dan 7 tanpa kunci ini tetap bisa dimuat dan mulai dari keadaan awal.
 
 **Batasan jujur.** Resep dan akses area baru belum termasuk hadiah; quest hanya empat. Event tidak meminta tindakan khusus selain berada di desa.
+
+## Fase 9: Wilayah baru, dungeon, dan penemuan langka
+
+- **Rawa**: 4 titik langka, batu Penjaga Rawa (teka-teki), dan kabut yang membuka rawa dalam (2 titik langka).
+- **Gua Kapur**: dibuka setelah 2 jenis penemuan langka. Tablet membuka ruang dalam, tuas membuka celah ke Peti Gua.
+- **Penemuan langka**: 6 jenis, 20% peluang bahan langka per titik, cooldown 300 menit, biaya stamina 10. Penemuan pertama +15 koin.
+- **Teka-teki**: urutan simbol. Hadiah pertama memberi koin dan satu bahan langka.
+- Detail: `docs/reports/FASE9_WILAYAH_DUNGEON_PENEMUAN.md`.
