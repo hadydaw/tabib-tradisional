@@ -22,6 +22,7 @@ func _initialize() -> void:
 	var packed: PackedScene = load("res://scenes/world/game_world.tscn")
 	_world = packed.instantiate()
 	root.add_child(_world)
+	_world.set_npcs_enabled(false)  # regresi Fase 3: tanpa gangguan NPC (NPC dites di run_smoke_npc.gd)
 	_world.interaction_requested.connect(func(it: Interactable) -> void: _signal_hits.append(it.id))
 	_world.location_changed.connect(func(id: String) -> void: _location_hits.append(id))
 	_steps = [_step_load, _step_directions, _step_collision, _step_ysort, _step_interaction_village,

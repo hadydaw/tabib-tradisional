@@ -53,10 +53,25 @@ static func build() -> LocationData:
 		b.force_object(Vector2i(x, 8), "counter")
 	for x in range(11, 14):
 		b.force_object(Vector2i(x, 9), "bench")
+	for x in range(2, 5):
+		b.force_object(Vector2i(x, 10), "bench")
 	b.force_object(Vector2i(1, 10), "pot")
 	b.force_object(Vector2i(14, 7), "pot")
 	b.force_object(Vector2i(2, 7), "jar")
 	b.add_interactable("clinic_reception", Vector2i(4, 8), "Meja Penerimaan")
+
+	# Kursi tunggu (sel bangku) dan tempat periksa (kaki ranjang); NPC boleh duduk di sini
+	var seat_face: int = NpcSimulation.facing_for(Vector2(0.0, -1.0))   # menghadap meja penerimaan
+	for x in range(11, 14):
+		b.add_seat(Vector2i(x, 9), seat_face, "tunggu")
+	for x in range(2, 5):
+		b.add_seat(Vector2i(x, 10), NpcSimulation.facing_for(Vector2(0.0, -1.0)), "tunggu")
+	b.add_seat(Vector2i(3, 2), NpcSimulation.facing_for(Vector2(1.0, 0.0)), "periksa")
+
+	# Titik tujuan NPC
+	b.add_spot("antre_resepsi", [Vector2i(4, 9), Vector2i(5, 9), Vector2i(6, 9)] as Array[Vector2i])
+	b.add_spot("berdiri_tunggu", [Vector2i(9, 9), Vector2i(10, 10), Vector2i(12, 10), Vector2i(13, 10)] as Array[Vector2i])
+	b.add_spot("tamu", [Vector2i(8, 8), Vector2i(9, 8), Vector2i(9, 7)] as Array[Vector2i])
 
 	# Keset keluar (baris depan)
 	b.set_kind(Vector2i(7, HEIGHT - 1), TileKinds.MAT)

@@ -23,6 +23,11 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if not is_visible_in_tree():
+		if _touch_index != -1:
+			_touch_index = -1
+			_set_down(false)
+		return
 	if event is InputEventScreenTouch:
 		var t := event as InputEventScreenTouch
 		if t.pressed:

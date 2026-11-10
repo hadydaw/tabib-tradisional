@@ -61,7 +61,10 @@ func _draw() -> void:
 	var back: bool = d.y < -0.3
 	var swing: float = 0.0
 	var bob: float = 0.0
-	if state == "walk":
+	var sitting: bool = state == "sit"
+	if sitting:
+		bob = 6.0 + sin(phase * TAU) * 0.4
+	elif state == "walk":
 		swing = sin(phase * TAU)
 		bob = -absf(sin(phase * TAU)) * 2.5
 	else:
@@ -92,6 +95,9 @@ func _draw() -> void:
 	var hip_y: float = -13.0 + bob
 	var foot_l: Vector2 = Vector2(-4.0, 0.0) + fwd * swing * 8.0
 	var foot_r: Vector2 = Vector2(4.0, 0.0) - fwd * swing * 8.0
+	if sitting:  # kaki menjulur ke depan (pose duduk sementara)
+		foot_l = Vector2(-4.0, -2.0) + fwd * 9.0
+		foot_r = Vector2(4.0, -2.0) + fwd * 9.0
 	var bstyle: String = bottom.style if bottom != null else "celana"
 	var bcolor: Color = bottom.color if bottom != null else Color("#2b3f35")
 	if bstyle == "kain":

@@ -19,6 +19,12 @@ var transitions: Array[Dictionary] = []
 var spawns: Dictionary = {}
 ## {"name": String, "rect": Rect2i}
 var zones: Array[Dictionary] = []
+## Titik tujuan bernama untuk NPC: nama -> Array[Vector2i] (sel jalan yang bebas).
+var spots: Dictionary = {}
+## Kursi: {"cell": Vector2i, "facing": int, "kind": "tunggu"|"periksa"}. Sel kursi boleh dimasuki NPC walau terhalang bagi pemain.
+var seats: Array[Dictionary] = []
+## Pintu rumah: nama spot -> sel pintu (NPC menghilang/muncul di sini saat masuk/keluar rumah).
+var doors: Dictionary = {}
 
 
 func ground_map() -> GroundMap:
@@ -77,3 +83,26 @@ func count_kind(kind: String) -> int:
 		if o["kind"] == kind:
 			n += 1
 	return n
+
+
+func spot_cells(spot: String) -> Array:
+	return spots.get(spot, [])
+
+
+func seat_at(cell: Vector2i) -> Dictionary:
+	for st in seats:
+		if st["cell"] == cell:
+			return st
+	return {}
+
+
+func is_seat(cell: Vector2i) -> bool:
+	return not seat_at(cell).is_empty()
+
+
+func seats_of_kind(kind: String) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for st in seats:
+		if st["kind"] == kind:
+			out.append(st)
+	return out

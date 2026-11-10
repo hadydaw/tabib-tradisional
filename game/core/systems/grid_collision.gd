@@ -12,6 +12,7 @@ var width: int
 var height: int
 var radius: float
 var _blocked: Dictionary = {}
+var _dynamic: Dictionary = {}  # sel yang sementara terhalang (NPC); diganti seluruhnya tiap frame
 
 
 func _init(p_width: int, p_height: int, p_radius: float = 0.25) -> void:
@@ -33,6 +34,17 @@ func blocked_cells() -> Array:
 
 
 func is_cell_blocked(cell: Vector2i) -> bool:
+	if cell.x < 0 or cell.y < 0 or cell.x >= width or cell.y >= height:
+		return true
+	return _blocked.has(cell) or _dynamic.has(cell)
+
+
+## Ganti himpunan sel terhalang sementara (mis. sel yang ditempati NPC). Tidak mengubah sel statis.
+func set_dynamic_blocked(cells: Dictionary) -> void:
+	_dynamic = cells
+
+
+func is_static_blocked(cell: Vector2i) -> bool:
 	if cell.x < 0 or cell.y < 0 or cell.x >= width or cell.y >= height:
 		return true
 	return _blocked.has(cell)

@@ -79,7 +79,19 @@ static func build() -> LocationData:
 			for xx in range(r.end.x, stop_x):
 				b.set_kind(Vector2i(xx, py), TileKinds.DIRT)
 				b.reserve(Rect2i(xx, py, 1, 1))
+		# titik pintu rumah: sel tepat di depan pintu (NPC masuk/keluar rumah di sini)
+		var front: Vector2i
+		if h[3] == "y":
+			front = Vector2i(r.position.x + int((h[4] as Array)[0]), r.end.y)
+		else:
+			front = Vector2i(r.end.x, r.position.y + int((h[4] as Array)[0]))
+		b.add_spot("rumah_%d" % hi, [front] as Array[Vector2i])
+		b.add_door("rumah_%d" % hi, front)
 		hi += 1
+	# jalan setapak rumah 6 ke jalan raya (rumah menghadap timur, jauh dari lorong)
+	for yy in range(21, 25):
+		b.set_kind(Vector2i(40, yy), TileKinds.DIRT)
+		b.reserve(Rect2i(40, yy, 1, 1))
 	b.add_zone("Permukiman Barat", Rect2i(2, 11, 14, 8))
 	b.add_zone("Permukiman Timur", Rect2i(32, 11, 12, 8))
 
@@ -108,6 +120,23 @@ static func build() -> LocationData:
 	b.add_interactable("village_well", Vector2i(27, 35), "Sumur")
 	b.force_object(Vector2i(30, 30), "basket")
 	b.force_object(Vector2i(43, 36), "jar")
+
+	# --- Titik tujuan NPC (dicadangkan agar tidak tertutup pohon/benda acak) ---
+	var plaza_spots: Array[Vector2i] = [Vector2i(18, 14), Vector2i(20, 16), Vector2i(26, 14), Vector2i(28, 16), Vector2i(19, 17), Vector2i(27, 17)]
+	b.add_spot("alun_alun", plaza_spots)
+	b.add_spot("klinik_depan", [Vector2i(21, 13), Vector2i(24, 13), Vector2i(22, 14), Vector2i(25, 14)] as Array[Vector2i])
+	b.add_spot("jalan_barat", [Vector2i(6, 20), Vector2i(8, 20), Vector2i(12, 20), Vector2i(14, 20)] as Array[Vector2i])
+	b.add_spot("jalan_timur", [Vector2i(34, 20), Vector2i(38, 20), Vector2i(41, 20), Vector2i(44, 20)] as Array[Vector2i])
+	b.add_spot("jalan_tengah", [Vector2i(20, 20), Vector2i(23, 20), Vector2i(26, 20)] as Array[Vector2i])
+	b.add_spot("kebun", [Vector2i(33, 33), Vector2i(36, 33), Vector2i(39, 33), Vector2i(41, 33)] as Array[Vector2i])
+	b.add_spot("sumur", [Vector2i(26, 34), Vector2i(28, 34), Vector2i(26, 36), Vector2i(27, 36), Vector2i(28, 36)] as Array[Vector2i])
+	b.reserve(Rect2i(25, 34, 4, 3))
+	# kolam: jalan setapak dari jalan raya ke tepi selatan kolam
+	for yy in range(9, 19):
+		b.set_kind(Vector2i(43, yy), TileKinds.DIRT)
+		b.reserve(Rect2i(43, yy, 1, 1))
+	b.reserve(Rect2i(40, 8, 5, 2))
+	b.add_spot("kolam", [Vector2i(41, 9), Vector2i(42, 9), Vector2i(43, 9), Vector2i(44, 9)] as Array[Vector2i])
 
 	# --- Lampu dan dekorasi di sepanjang jalan ---
 	for xx in range(3, 46, 6):

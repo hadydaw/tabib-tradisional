@@ -103,3 +103,17 @@ func scatter(kinds: Array[String], count: int, area: Rect2i) -> int:
 		if try_object(c, kinds[rng.randi() % kinds.size()]):
 			placed += 1
 	return placed
+
+
+## Titik tujuan NPC. Sel harus dapat dilewati (diperiksa tes).
+func add_spot(p_name: String, cells: Array[Vector2i]) -> void:
+	data.spots[p_name] = cells
+
+
+## kind: "tunggu" (ruang tunggu) atau "periksa" (tempat periksa).
+func add_seat(cell: Vector2i, facing: int, kind: String = "tunggu") -> void:
+	data.seats.append({"cell": cell, "facing": facing, "kind": kind})
+
+
+func add_door(p_name: String, cell: Vector2i) -> void:
+	data.doors[p_name] = cell
