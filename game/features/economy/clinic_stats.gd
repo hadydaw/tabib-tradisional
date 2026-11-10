@@ -47,6 +47,11 @@ func record_visit(visit: Dictionary) -> void:
 
 # --- Uang & buku kas ----------------------------------------------------------
 
+## Ubah reputasi desa (Fase 8: quest & event), dibatasi 0..100.
+func shift_reputation(delta: float) -> void:
+	reputation = clampf(reputation + delta, 0.0, 100.0)
+
+
 ## Tambah uang (delta > 0) dan catat di buku kas. delta 0 diabaikan.
 func add_money(amount: int, reason: String) -> void:
 	if amount <= 0:

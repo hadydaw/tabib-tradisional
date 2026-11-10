@@ -3,6 +3,9 @@ extends RefCounted
 ## Menjalankan pohon dialog (logika murni, dites unit). Tampilan dipisah (DialoguePanel).
 ## Aksi pilihan: "accept:<id>" dan "claim:<id>" diteruskan ke RequestLog.
 
+## Aksi pilihan yang bukan permintaan Fase 4 (contoh: "gift:<npc>", "chapter:<npc>:<n>", "squest_choice:<id>:<opt>").
+signal action_requested(action: String)
+
 var nodes: Dictionary = {}
 var node_id: String = ""
 var finished: bool = true
@@ -65,11 +68,14 @@ func select(index: int) -> void:
 
 
 func _run_action(action: String) -> void:
-	if action == "" or req_log == null:
+	if action == "":
 		return
 	var parts: PackedStringArray = action.split(":")
-	if parts.size() != 2:
+	if parts.size() == 2 and req_log != null and (parts[0] == "accept" or parts[0] == "claim"):
+		if parts[0] == "accept":
+			req_log.accept(parts[1])
+		else:
+			req_log.claim(parts[1])
 		return
-	match parts[0]:
-		"accept": req_log.accept(parts[1])
-		"claim": req_log.claim(parts[1])
+	# Aksi lain (Fase 8: bahan, bab cerita, quest) dijalankan pemanggil lewat sinyal.
+	action_requested.emit(action)

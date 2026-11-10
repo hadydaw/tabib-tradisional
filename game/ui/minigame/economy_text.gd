@@ -22,6 +22,10 @@ static func reason_text(reason: String) -> String:
 			item = Locale.t("area.%s.name" % arg)
 		"misi":
 			item = Locale.t("mission.%s.title" % arg)
+		"tugas":
+			item = Locale.t("sq.%s.title" % arg)
+		"event":
+			item = Locale.t("event.%s.title" % arg)
 	var key: String = "ledger.%s" % kind
 	if not Locale.has_key(key):
 		return reason

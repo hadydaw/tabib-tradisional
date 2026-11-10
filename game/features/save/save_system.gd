@@ -132,7 +132,7 @@ static func sanitize(d: Dictionary) -> Dictionary:
 	out["language"] = lang if Locale.LANGS.has(lang) else Locale.DEFAULT_LANG
 	var loc: String = String(d.get("location", "desa"))
 	out["location"] = loc if LocationRegistry.has_location(loc) else "desa"
-	for k in ["stats", "skills", "inventory", "garden", "upgrades", "adventure"]:
+	for k in ["stats", "skills", "inventory", "garden", "upgrades", "adventure", "social"]:
 		var v: Variant = d.get(k, {})
 		out[k] = v if v is Dictionary else {}
 	return out
@@ -141,18 +141,21 @@ static func sanitize(d: Dictionary) -> Dictionary:
 # --- Susun / terapkan ---------------------------------------------------------
 
 static func collect(clock: GameClock, location_id: String, stats: ClinicStats, skills: SkillProgressionSystem,
-		inventory: HerbInventory, garden: GardenSystem, upgrades: ClinicUpgrades, adventure: AdventureState = null) -> Dictionary:
+		inventory: HerbInventory, garden: GardenSystem, upgrades: ClinicUpgrades, adventure: AdventureState = null,
+		social: SocialState = null) -> Dictionary:
 	return {
 		"day": clock.day, "minute": clock.minute_f, "language": Locale.current, "location": location_id,
 		"stats": stats.to_dict(), "skills": skills.to_dict(), "inventory": inventory.to_dict(),
 		"garden": garden.to_dict(), "upgrades": upgrades.to_dict(),
 		"adventure": adventure.to_dict() if adventure != null else {},
+		"social": social.to_dict() if social != null else {},
 	}
 
 
 ## Terapkan `data` (hasil sanitize) ke sistem-sistem. Jam/lokasi/bahasa diurus pemanggil.
 static func apply(data: Dictionary, stats: ClinicStats, skills: SkillProgressionSystem,
-		inventory: HerbInventory, garden: GardenSystem, upgrades: ClinicUpgrades, adventure: AdventureState = null) -> void:
+		inventory: HerbInventory, garden: GardenSystem, upgrades: ClinicUpgrades, adventure: AdventureState = null,
+		social: SocialState = null) -> void:
 	stats.from_dict(data.get("stats", {}))
 	skills.from_dict(data.get("skills", {}))
 	upgrades.from_dict(data.get("upgrades", {}))
@@ -161,3 +164,5 @@ static func apply(data: Dictionary, stats: ClinicStats, skills: SkillProgression
 	garden.from_dict(data.get("garden", {}))
 	if adventure != null:
 		adventure.from_dict(data.get("adventure", {}))
+	if social != null:
+		social.from_dict(data.get("social", {}))

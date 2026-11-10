@@ -52,6 +52,7 @@ var _garden: GardenSystem
 var _upgrades: ClinicUpgrades
 var _shop: ClinicShop
 var _adventure: AdventureState   # Fase 7: stamina, cooldown tanaman liar, misi, rahasia
+var _social: SocialState         # Fase 8: kepercayaan NPC, bab cerita, quest cerita, event desa
 var load_status: int = SaveSystem.Status.MISSING   # hasil pemuatan saat mulai (SaveSystem.Status)
 var _treatment: TreatmentManager
 var _minigames: MinigameManager
@@ -314,6 +315,8 @@ func press_interact() -> bool:
 func step_world(delta: float) -> void:
 	if _adventure != null and _medical_enabled:
 		_adventure.sync(_clock.absolute_minutes())
+	if _social != null and _medical_enabled:
+		_check_village_events()
 	if _npcs_enabled:
 		_sim.set_player(_loc.id, _player.grid_pos)
 		var sim_delta: float = delta * _time_scale
@@ -443,6 +446,11 @@ func _setup_medical() -> void:
 	_minigames.setup_economy(_upgrades, _shop)
 	_adventure = AdventureState.new()
 	_minigames.adventure = _adventure
+	_social = SocialState.new(_requests)
+	_minigames.social = _social
+	_minigames.social_event.connect(report_progress)
+	_treatment.visit_completed.connect(_on_visit_completed)
+	_dialogue.action_requested.connect(_on_dialogue_action)
 	_minigames.save_action = save_game
 	_minigames.closed.connect(_on_minigame_closed)
 	_patients.auto_exam = false
@@ -498,7 +506,7 @@ func _on_skill_level_up(branch: String, lvl: int) -> void:
 func save_game() -> bool:
 	if not SaveSystem.enabled() or _loc == null:
 		return false
-	return SaveSystem.write(SaveSystem.collect(_clock, _loc.id, _stats, _skills, _inventory, _garden, _upgrades, _adventure))
+	return SaveSystem.write(SaveSystem.collect(_clock, _loc.id, _stats, _skills, _inventory, _garden, _upgrades, _adventure, _social))
 
 
 ## Muat kemajuan dari berkas. Mengembalikan SaveSystem.Status. Berkas hilang/rusak -> permainan baru (aman).
@@ -511,7 +519,7 @@ func load_game() -> int:
 		_show_toast(Locale.t("ui.load_corrupt"))
 		return load_status
 	var d: Dictionary = r["data"]
-	SaveSystem.apply(d, _stats, _skills, _inventory, _garden, _upgrades, _adventure)
+	SaveSystem.apply(d, _stats, _skills, _inventory, _garden, _upgrades, _adventure, _social)
 	Locale.set_language(String(d["language"]))
 	_clock.day = int(d["day"])
 	_clock.minute_f = float(d["minute"])
@@ -554,6 +562,14 @@ func start_dialogue(npc_id: String) -> bool:
 	a.facing = NpcSimulation.facing_for(to_player)
 	_dialogue_npc = npc_id
 	var ctx: Dictionary = {"activity": a.current_activity, "requests": _requests}
+	if _social != null and _medical_enabled:
+		var gain: int = _social.talk(npc_id, _clock.day)
+		if gain > 0:
+			_show_toast(Locale.t("ui.trust_gain", {"name": Locale.t(a.data.name_key()), "n": gain}))
+		ctx["social"] = _social
+		ctx["day"] = _clock.day
+		ctx["reputation"] = _stats.reputation
+		ctx["herbs_available"] = _inventory.total() > 0
 	var rec: PatientRecord = _patients.patient_for(npc_id)
 	if rec != null:
 		ctx["patient"] = {"state": rec.state_key(), "complaint": rec.complaint_id}
@@ -613,6 +629,13 @@ func _refresh_clock_label() -> void:
 	for id in _requests.active_ids():
 		var key: String = "ui.request_ready" if _requests.status(id) == RequestLog.READY else "ui.request_active"
 		lines.append(Locale.t(key, {"title": Locale.t("%s.title" % id)}))
+	if _social != null and _medical_enabled:
+		for qid in _social.quests_in_status(SocialState.ACTIVE):
+			var qkey: String = "ui.squest_line_ready" if _social.is_ready(qid) else "ui.squest_line"
+			lines.append(Locale.t(qkey, {"title": Locale.t("sq.%s.title" % qid)}))
+		var nxt: Dictionary = VillageEvents.soonest(_clock.day, int(_clock.minute_f))
+		if not nxt.is_empty():
+			lines.append(Locale.t("ui.event_next", {"title": Locale.t("event.%s.title" % String(nxt["id"])), "day": int(nxt["day"])}))
 	_clock_label.text = "\n".join(lines)
 
 
@@ -882,8 +905,111 @@ func get_adventure() -> AdventureState:
 	return _adventure
 
 
+func get_social() -> SocialState:
+	return _social
+
+
+## Kemajuan quest cerita dari dunia (pengumpulan, identifikasi, area, pengobatan). Quest yang siap diserahkan diberi tahu.
+func report_progress(kind: String, key: String) -> void:
+	if _social == null or not _medical_enabled:
+		return
+	var ready_list: Array[String] = _social.event(kind, key)
+	for qid in ready_list:
+		_show_toast(Locale.t("ui.squest_ready", {"title": Locale.t("sq.%s.title" % qid)}))
+	if not ready_list.is_empty():
+		_refresh_clock_label()
+
+
+func _on_visit_completed(_p: PatientRecord, summary: Dictionary) -> void:
+	if int(summary.get("grade", Grade.Level.D)) >= Grade.Level.B:
+		report_progress(SocialDb.KIND_TREAT, SocialDb.GOOD_TREAT)
+
+
+## Aksi dialog Fase 8 (dari DialogueRunner.action_requested).
+func _on_dialogue_action(action: String) -> void:
+	if _social == null or _stats == null:
+		return
+	var p: PackedStringArray = action.split(":")
+	match p[0]:
+		"gift":
+			if p.size() == 2:
+				_do_gift(p[1])
+		"chapter":
+			if p.size() == 3:
+				_do_chapter(p[1], int(p[2]))
+		"squest_accept":
+			if p.size() == 2 and _social.accept(p[1], _stats.reputation):
+				_show_toast(Locale.t("ui.squest_taken", {"title": Locale.t("sq.%s.title" % p[1])}))
+				_refresh_clock_label()
+		"squest_choice":
+			if p.size() == 3:
+				_do_quest_choice(p[1], p[2])
+		_:
+			pass
+
+
+func _do_gift(npc_id: String) -> void:
+	if not _social.gift_available(npc_id, _clock.day):
+		return
+	var avail: Array[String] = []
+	for hid in HerbDb.IDS:
+		if _inventory.count(hid) > 0:
+			avail.append(hid)
+	var herb: String = _social.pick_gift(npc_id, avail)
+	if herb == "" or not _inventory.remove(herb, 1):
+		_show_toast(Locale.t("ui.gift_none"))
+		return
+	var gain: int = _social.record_gift(npc_id, _clock.day, herb)
+	_show_toast(Locale.t("ui.gift_done", {"name": Locale.t(NpcRoster.by_id(npc_id).name_key()), "herb": Locale.t("herb.%s" % herb), "n": gain}))
+	_refresh_clock_label()
+
+
+func _do_chapter(npc_id: String, n: int) -> void:
+	if not _social.mark_chapter(npc_id, n):
+		return
+	var gain: int = _social.add_trust(npc_id, SocialDb.CHAPTER_GAIN)
+	_show_toast(Locale.t("ui.trust_gain", {"name": Locale.t(NpcRoster.by_id(npc_id).name_key()), "n": gain}))
+	_refresh_clock_label()
+
+
+func _do_quest_choice(qid: String, option: String) -> void:
+	var r: Dictionary = _social.complete(qid, option)
+	if r.is_empty():
+		return
+	_stats.add_money(int(r["coin"]), "tugas:%s" % qid)
+	_stats.shift_reputation(float(r["rep"]))
+	var herb: String = String(r["herb"])
+	if herb != "":
+		_inventory.add(herb, 1)
+	_show_toast(Locale.t("ui.squest_done", {"title": Locale.t("sq.%s.title" % qid)}))
+	_refresh_clock_label()
+
+
+## Event desa berkala: hanya saat pemain berada di desa, sekali per hari per event.
+func _check_village_events() -> void:
+	if _loc == null or _loc.id != "desa" or is_minigame_open() or is_dialogue_active():
+		return
+	for id in VillageEvents.active_at(_clock.day, int(_clock.minute_f)):
+		if _social.claim_event(id, _clock.day):
+			_apply_event_reward(id)
+
+
+func _apply_event_reward(id: String) -> void:
+	var d: Dictionary = VillageEvents.def(id)
+	var coin: int = int(d["coin"])
+	if coin > 0:
+		_stats.add_money(coin, "event:%s" % id)
+	_stats.shift_reputation(float(d["rep"]))
+	var t: int = int(d["trust_all"])
+	if t > 0:
+		_social.add_trust_all(t)
+	_show_toast(Locale.t("event.%s.toast" % id, {"n": coin}))
+	_refresh_clock_label()
+
+
 ## Kunjungan pertama ke hutan/sungai/pegunungan: bonus koin sekali seumur permainan.
 func _on_area_entered(id: String) -> void:
+	report_progress(SocialDb.KIND_ZONE, id)
 	if _adventure == null or _stats == null or not ForageDb.is_area(id):
 		return
 	if _adventure.visit(id):

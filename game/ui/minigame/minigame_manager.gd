@@ -9,6 +9,8 @@ signal opened(kind: String)
 signal closed
 signal visit_summary(summary: Dictionary)
 signal plant_finished(spot_id: String, result: MinigameResult)
+## Fase 8: kemajuan quest cerita (kind: "gather"/"identify", key: "any" atau area).
+signal social_event(kind: String, key: String)
 
 const FADE_IN: float = 0.28
 const FADE_DIP: float = 0.18
@@ -21,6 +23,7 @@ var garden: GardenSystem
 var clock: GameClock
 var upgrades: ClinicUpgrades = null
 var adventure: AdventureState = null   # Fase 7
+var social: SocialState = null         # Fase 8: hubungan & quest (ditampilkan di Buku Tabib)
 var shop: ClinicShop = null
 var save_action: Callable = Callable()   # dipanggil tombol Simpan di Buku Tabib; mengembalikan bool
 var transitions: bool = true
@@ -301,6 +304,7 @@ func _open_plant(plant_id: String, seed_value: int, title: String, on_done: Call
 			lines.append(Locale.t("plant.result_ok", {"name": Locale.t("herb.%s" % plant_id)}))
 			learned = skills.learn_plant(plant_id)
 			if learned:
+				social_event.emit("identify", "any")
 				lines.append(Locale.t("plant.learned", {"name": Locale.t("herb.%s" % plant_id)}))
 				lines.append(Locale.t("plant.lore", {"habitat": Locale.t("lore.%s.habitat" % plant_id), "use": Locale.t("lore.%s.use" % plant_id)}))
 			if sys.harvest > 0:
@@ -348,6 +352,7 @@ func start_forage(node_id: String) -> bool:
 		adventure.mark_forage(node_id, now)
 		inventory.add(herb, n)
 		adventure.bump("gather:%s" % area, n)
+		social_event.emit("gather", "any")
 		var got: Array[Dictionary] = [{"text": Locale.t("adv.forage_got", {"name": Locale.t("herb.%s" % herb), "n": n}), "size": 26, "color": MinigameView.C_GREEN},
 			{"text": Locale.t("lore.%s.habitat" % herb), "size": 20, "color": MinigameView.C_DIM}]
 		_open_info(title, got, Locale.t("ui.close"))
@@ -356,6 +361,7 @@ func start_forage(node_id: String) -> bool:
 		adventure.mark_forage(node_id, now)
 		if ok:
 			adventure.bump("gather:%s" % area)
+			social_event.emit("gather", "any")
 		if learned:
 			adventure.bump("identify_new")
 	var on_cancel := func() -> void:
@@ -421,6 +427,14 @@ func show_book() -> bool:
 	for id in skills.known_plants:
 		known += Locale.t("herb.%s" % id) + ", "
 	lines.append({"text": Locale.t("book.plants", {"n": skills.known_plants.size(), "total": HerbDb.IDS.size(), "list": known.trim_suffix(", ") if known != "" else "-"}), "size": 20})
+	if social != null:
+		var rel: String = ""
+		for nid in SocialDb.npc_ids():
+			rel += "%s %s  " % [Locale.t("npc.%s.name" % nid), Locale.t("book.tier.%d" % social.tier(nid))]
+		lines.append({"text": Locale.t("book.trust", {"list": rel.strip_edges()}), "size": 18})
+		var q_done: int = social.quests_in_status(SocialState.DONE).size()
+		var q_act: int = social.quests_in_status(SocialState.ACTIVE).size()
+		lines.append({"text": Locale.t("book.quests", {"done": q_done, "active": q_act}), "size": 20})
 	if upgrades != null:
 		var ups: String = ""
 		for id in ClinicUpgrades.IDS:

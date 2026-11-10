@@ -61,6 +61,11 @@ godot --headless --path game --script res://tests/unit/run_tests_fase7.gd 2>&1 |
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase7.log"; then FAIL=1; fi
 
+echo "== 4g. Tes unit Fase 8 (hubungan NPC, cerita, quest, event desa, simpan, dialog, localization) =="
+godot --headless --path game --script res://tests/unit/run_tests_fase8.gd 2>&1 | tee "$LOGS/unit_tests_fase8.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase8.log"; then FAIL=1; fi
+
 echo "== 5. Tes asap (semua profil render x tile x beban, headless) =="
 godot --headless --path game --script res://tests/smoke/run_smoke.gd 2>&1 | tee "$LOGS/smoke_tests.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
@@ -95,6 +100,11 @@ echo "== 11. Tes asap petualangan Fase 7 (pindah area, pengumpulan, identifikasi
 godot --headless --path game --script res://tests/smoke/run_smoke_adventure.gd 2>&1 | tee "$LOGS/smoke_adventure.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_adventure.log"; then FAIL=1; fi
+
+echo "== 12. Tes asap sosial Fase 8 (kepercayaan, bahan hadiah, bab cerita, quest, event desa, simpan lintas dunia) =="
+godot --headless --path game --script res://tests/smoke/run_smoke_social.gd 2>&1 | tee "$LOGS/smoke_social.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_social.log"; then FAIL=1; fi
 
 if [ "$FAIL" -ne 0 ]; then echo "VALIDASI GAGAL"; exit 1; fi
 echo "VALIDASI LOLOS"

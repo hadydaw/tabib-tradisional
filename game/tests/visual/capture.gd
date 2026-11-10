@@ -333,3 +333,17 @@ func _add_medical_steps() -> void:
 		_mg().start_board())
 	_steps.append(func() -> void: _shot("38_papan_pengembara"))
 	_steps.append(func() -> void: _mg().close())
+	_steps.append(func() -> void:
+		_world.load_location("desa", "dari_hutan")
+		_world.debug_set_time(1, 12, 0)
+		_world.get_social().trust["wiryo"] = 60
+		_next_to("wiryo")
+		_world.start_dialogue("wiryo"))
+	_steps.append(func() -> void: _shot("39_dialog_kepercayaan"))
+	_steps.append(func() -> void:
+		_world.end_dialogue()
+		_world.get_social().trust["karto"] = 45
+		_next_to("karto")
+		_world.start_dialogue("karto"))
+	_steps.append(func() -> void: _shot("40_dialog_tugas"))
+	_steps.append(func() -> void: _world.end_dialogue())
