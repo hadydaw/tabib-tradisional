@@ -69,12 +69,16 @@ static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int, variant
 				mn = mn.min(p)
 				mx = mx.max(p)
 			var size: Vector2 = mx - mn
+			var cell := Vector2i(x, y)
+			var flip: bool = TileKinds.cell_flip(cell)
+			var t: float = TileKinds.cell_tint(cell)
 			for idx: int in [0, 1, 2, 0, 2, 3]:
 				verts.append(q[idx])
-				# UV per sel: x 0-1, y dipotong ke permukaan atas (TOP_FACE_V) agar pita tepi gelap tidak tampil.
+				# UV per sel: y dipotong ke permukaan atas (TOP_FACE_V); x dicerminkan bila flip.
 				var uv: Vector2 = (q[idx] - mn) / size
-				uvs.append(Vector2(uv.x, uv.y * TOP_FACE_V))
-				cols.append(Color(1, 1, 1, 1))
+				var ux: float = 1.0 - uv.x if flip else uv.x
+				uvs.append(Vector2(ux, uv.y * TOP_FACE_V))
+				cols.append(Color(t, t, t, 1))
 	if verts.is_empty():
 		return null
 	var arrays: Array = []

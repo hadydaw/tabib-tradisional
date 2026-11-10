@@ -40,12 +40,28 @@ static func kind_from_char(c: String) -> int:
 		_: return GRASS
 
 
-## Indeks varian (0..count-1) untuk satu sel; deterministik dari posisi sel.
+## Hash deterministik per sel: dasar untuk varian, cermin, dan variasi warna (tidak berpola kisi).
+static func cell_hash(c: Vector2i) -> int:
+	var h: int = c.x * 374761393 + c.y * 668265263
+	h = (h ^ (h >> 13)) * 1274126177
+	return (h ^ (h >> 16)) & 0x7fffffff
+
+
+## Indeks varian (0..count-1) untuk satu sel.
 static func variant_index(c: Vector2i, count: int) -> int:
 	if count <= 1:
 		return 0
-	var h: int = (c.x * 73856093) ^ (c.y * 19349663)
-	return absi(h) % count
+	return cell_hash(c) % count
+
+
+## Cermin horizontal per sel (0 atau 1): memecah pengulangan pola antar-sel.
+static func cell_flip(c: Vector2i) -> bool:
+	return ((cell_hash(c) >> 8) & 1) == 1
+
+
+## Pengali warna halus per sel (sekitar 0.96..1.04).
+static func cell_tint(c: Vector2i) -> float:
+	return 0.96 + float((cell_hash(c) >> 12) & 15) / 15.0 * 0.08
 
 
 static func is_walkable(kind: int) -> bool:
