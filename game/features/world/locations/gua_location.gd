@@ -22,13 +22,6 @@ static func _in_rooms(c: Vector2i, rooms: Array[Rect2i]) -> bool:
 	return false
 
 
-static func _touches_rooms(c: Vector2i, rooms: Array[Rect2i]) -> bool:
-	for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-		if _in_rooms(c + d, rooms):
-			return true
-	return false
-
-
 static func build() -> LocationData:
 	var b := LocationBuilder.new("gua", "Gua Kapur", WIDTH, HEIGHT, 20261116)
 	b.fill(TileKinds.STONE)
@@ -40,14 +33,12 @@ static func build() -> LocationData:
 	b.reserve(Rect2i(0, 9, 11, 3))
 	b.reserve(DOOR)
 	b.reserve(CRACK)
-	# Dinding: setiap sel batu yang bersebelahan dengan ruangan menjadi objek penghalang.
+	# Batu padat: setiap sel di luar ruangan menjadi objek penghalang (dinding ikut terbentuk).
 	var rooms: Array[Rect2i] = [Rect2i(0, 6, 10, 8), Rect2i(11, 6, 12, 8), Rect2i(5, 1, 5, 4), DOOR, CRACK]
 	for y in range(HEIGHT):
 		for x in range(WIDTH):
 			var c := Vector2i(x, y)
-			if _in_rooms(c, rooms):
-				continue
-			if _touches_rooms(c, rooms):
+			if not _in_rooms(c, rooms):
 				b.force_object(c, "rock")
 
 	var west: Array[Vector2i] = [Vector2i(0, 10), Vector2i(0, 11)]
