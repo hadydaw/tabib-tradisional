@@ -21,14 +21,11 @@ static func fill_mesh(map: GroundMap, tile: Vector2, kind: int) -> ArrayMesh:
 	return IsoMeshes._build(verts, cols, Mesh.PRIMITIVE_TRIANGLES)
 
 
-static func line_mesh(map: GroundMap, tile: Vector2, skip_kinds: Array[int] = []) -> ArrayMesh:
+static func line_mesh(map: GroundMap, tile: Vector2) -> ArrayMesh:
 	var verts := PackedVector2Array()
 	var cols := PackedColorArray()
 	for y in range(map.height):
 		for x in range(map.width):
-			# Lantai bertekstur tidak diberi garis kisi (agar tidak tampak sebagai sambungan).
-			if skip_kinds.has(map.kind_at(Vector2i(x, y))):
-				continue
 			var p: PackedVector2Array = IsoMeshes.tile_corners(x, y, tile)
 			for k in range(4):
 				verts.append(p[k])
@@ -47,11 +44,7 @@ static func screen_bounds(map: GroundMap, tile: Vector2, top_margin: float = 0.0
 		float(map.width + map.height) * tile.y * 0.5 + top_margin)
 
 
-## Mesh bertekstur untuk satu jenis tile: UV diambil dari koordinat layar sel (tekstur diulang mulus).
-## Satu periode tekstur (piksel layar) = satu ulangan tekstur 128x128.
-const TEXTURE_WORLD_PERIOD: Vector2 = Vector2(64, 64)
-
-
+## Mesh bertekstur untuk satu jenis tile: setiap sel mendapat UV dari kotak layarnya (diamond mengisi kotak).
 static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int) -> ArrayMesh:
 	var verts := PackedVector2Array()
 	var uvs := PackedVector2Array()
@@ -61,11 +54,15 @@ static func textured_fill_mesh(map: GroundMap, tile: Vector2, kind: int) -> Arra
 			if map.kind_at(Vector2i(x, y)) != kind:
 				continue
 			var q: PackedVector2Array = IsoMeshes.tile_corners(x, y, tile)
+			var mn: Vector2 = q[0]
+			var mx: Vector2 = q[0]
+			for p in q:
+				mn = mn.min(p)
+				mx = mx.max(p)
+			var size: Vector2 = mx - mn
 			for idx: int in [0, 1, 2, 0, 2, 3]:
 				verts.append(q[idx])
-				# UV mengikuti koordinat layar dunia (bukan 0-1 per sel), sehingga tekstur
-				# menyambung mulus antar-sel dan tidak tampak sebagai potongan gambar.
-				uvs.append(q[idx] / TEXTURE_WORLD_PERIOD)
+				uvs.append((q[idx] - mn) / size)
 				cols.append(Color(1, 1, 1, 1))
 	if verts.is_empty():
 		return null
