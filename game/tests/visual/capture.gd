@@ -173,13 +173,23 @@ func _mg() -> MinigameManager:
 func _add_medical_steps() -> void:
 	_steps.append(func() -> void:
 		_mg().transitions = false
-		_mp = _world.get_patients().queue.records[0]
-		_world._interact_reception()
+		_world.load_location("klinik", "dari_desa")
+		var ps2: PatientSystem = _world.get_patients()
+		ps2.auto_call = false
+		_mp = null
+		for r in ps2.queue.records:
+			if r.state == PatientRecord.State.MENUNGGU and _mp == null:
+				_mp = r
+		print("medis: kandidat ", _mp.npc_id if _mp != null else "-", " total ", ps2.queue.records.size(), " buka ", ps2.is_open(), " waktu ", _world.get_clock().format_time())
+		var called: PatientRecord = ps2.call_next()
+		print("medis: call_next ", called.npc_id if called != null else "null")
+		if called != null:
+			_mp = called
 		var guard: int = 0
-		while _mp.state != PatientRecord.State.DIPERIKSA and guard < 900:
+		while _mp != null and _mp.state != PatientRecord.State.DIPERIKSA and guard < 900:
 			_world.step_world(0.5)
 			guard += 1
-		print("medis: pasien ", _mp.npc_id, " state ", _mp.state_key(), " langkah ", guard)
+		print("medis: state ", _mp.state_key() if _mp != null else "-", " langkah ", guard)
 		_world.interact_exam_bed())
 	_steps.append(func() -> void:
 		var v := _mg().current_view() as DiagnosisView
