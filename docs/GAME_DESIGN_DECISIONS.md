@@ -53,6 +53,12 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-17 | Joystick melayang di separuh kiri layar; masukan dikunci ke 8 arah dengan faktor kecepatan 0,4-1,0. | Nyaman di HP; sesuai F-09. **Belum diuji di perangkat.** |
 | T-10 | UI sentuh memakai kontrol buatan sendiri yang membaca `InputEventScreenTouch/Drag`, dengan `emulate_mouse_from_touch=false`. | Emulasi mouse hanya melayani satu jari; joystick dan tombol harus bisa dipakai bersamaan. **Belum diuji di perangkat.** |
 
+| T-18 | Lokasi berbasis data (`LocationData` + `LocationBuilder`); desa dan klinik adalah dua lokasi, perpindahan lewat tile MAT dan nama spawn. | Menambah lokasi tanpa mengubah mesin dunia. |
+| T-19 | Bangunan dipotong per sel dinding yang terlihat + satu atap; atap digeser +2 px di node dan -2 px di mesh (Node2D Godot 4 tidak punya `y_sort_origin`). | Y-sort benar untuk bangunan lebar. |
+| T-20 | Satu `ArrayMesh` per prop/bangunan (1 draw call). Katalog `PropCatalog` memetakan jenis ke bentuk dan tabrakan. | Menjaga draw call rendah tanpa aset final. |
+| T-21 | Tampilan karakter dari `CharacterAppearance` (Resource) + `OutfitItem` per slot; kontrak nama animasi `idle_<arah>`/`walk_<arah>`. Placeholder prosedural, bukan keputusan gaya. UI pembuat karakter tetap P-08. | Memudahkan penggantian ke sprite final. |
+| T-22 | Interaksi klinik hanya struktur (`Interactable`, sinyal `interaction_requested`); sistem pengobatan belum ada. | Batas lingkup Fase 3. |
+
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
 
 | ID | Pertanyaan | Opsi / usulan Claude | Dampak jika terlambat |

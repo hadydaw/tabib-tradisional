@@ -29,3 +29,10 @@ Karakter dibangun dari **lapisan sprite** yang bisa diganti (tubuh, pakaian, ram
 
 ## 4. Pedoman budaya (USULAN)
 Dunia terinspirasi Nusantara. Pakaian, motif, dan nama daerah diperlakukan dengan hormat dan akurat; tidak mencampur atribut sakral dengan cara yang merendahkan. Peninjauan budaya direncanakan sebelum konten final (P-17).
+
+## Fase 3: Sistem karakter (placeholder)
+- Data: `CharacterAppearance` (kulit 0-5, gaya rambut botak/pendek/panjang/sanggul, warna rambut 0-5, id baju/celana/topi). `to_dict`/`from_dict` membersihkan nilai tidak valid.
+- Slot pakaian: TOP, BOTTOM, HEAD (`OutfitItem`, `OutfitCatalog`, 11 item).
+- Lapisan gambar (belakang ke depan): bayangan, rambut belakang, kaki/bawahan, lengan, badan, leher/kepala, rambut, wajah, penutup kepala.
+- Kontrak animasi final: `idle_<arah>` dan `walk_<arah>` dengan arah s, sw, w, nw, n, ne, e, se.
+- Visual masih placeholder prosedural; gaya final belum disetujui.

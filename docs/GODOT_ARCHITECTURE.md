@@ -107,3 +107,9 @@ tabib-tradisional/
 └── export/               preset dan catatan ekspor (tanpa rahasia)
 ```
 Catatan: aset siap-pakai-engine ditempatkan di `game/` saat diimpor; `assets/` menyimpan sumber dan versi kerja (lihat ASSET_PRODUCTION_GUIDE.md).
+
+## Fase 3: folder baru
+- `features/character/`: appearance, outfit, palette, view.
+- `features/interaction/`: `Interactable`, `InteractionSystem`.
+- `features/world/shapes/` (ShapeBuilder), `props/` (PropCatalog), `structures/` (StructureBuilder), `locations/` (data lokasi, builder, desa, klinik, registry).
+- `scenes/world/game_world.tscn`: scene utama (HUD, pemuatan lokasi, transisi fade).

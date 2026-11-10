@@ -68,3 +68,6 @@ Bayangan blob sederhana di bawah entitas (sprite terpisah) untuk menjaga perform
 
 ## 10. Batas performa visual (USULAN, diukur nanti)
 Target awal: 60 FPS stabil di HP kelas menengah. Batasi jumlah node aktif, ukuran atlas, dan overdraw. Angka diukur di Fase 1.
+
+## Fase 3: urutan lapisan
+Z_GROUND=-10 (lantai), Z_ACTORS=0 (pemain, prop, dinding, atap; Y-sort), Z_OVERLAY=5, HUD_LAYER=10. Tile 64x32 tetap standar kerja sementara.

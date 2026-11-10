@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-10: Fase 3, karakter dan dunia
+- Sistem karakter kustom (`CharacterAppearance`, `OutfitCatalog`, `CharacterPalette`, `CharacterView`) dengan idle/walk 8 arah dan pergantian pakaian.
+- Desa 48x40 dan klinik 16x12 data-driven; transisi lewat keset pintu; `Interactable` + `InteractionSystem`.
+- Tile baru: WOOD, WOOD_DARK, MAT, PLOT. Katalog 35 prop. Scene utama: `game_world.tscn`.
+- Tes: unit Fase 3 142, asap game 59; CI lolos (run 42760732439, versionCode 17).
+- Belum diuji di perangkat. Laporan: `docs/reports/FASE3_KARAKTER_DUNIA.md`.
+
 ## 2026-11-10: Fase 2, dunia isometrik dan kontrol pemain
 - Investigasi performa dihentikan atas keputusan pemilik; kondisi performa saat ini diterima.
 - Dunia uji 24x24: `TileKinds`, `GroundMap`, `IsoMapMeshes`, `IsoGroundMapView`, `WorldLayout`, `WorldObjectKinds`.
