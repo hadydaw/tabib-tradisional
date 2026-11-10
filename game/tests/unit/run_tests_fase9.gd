@@ -185,10 +185,10 @@ func _test_reachability() -> void:
 	g.solve(RareDb.TABLET_ID)
 	var gua_door: Dictionary = _reach(gua, _cell_of(gua, "dari_pegunungan"), _sealed_of("gua", g))
 	_check(gua_door.has(Vector2i(12, 13)) and gua_door.has(Vector2i(13, 13)), "pintu tablet membuka ruang dalam (titik langka)")
-	_check(not gua_door.has(Vector2i(8, 2)), "ceruk peti masih tertutup sebelum tuas")
+	_check(not gua_door.has(Vector2i(8, 3)), "ceruk peti masih tertutup sebelum tuas")
 	g.solve(RareDb.LEVER_ID)
 	var gua_all: Dictionary = _reach(gua, _cell_of(gua, "dari_pegunungan"), _sealed_of("gua", g))
-	_check(gua_all.has(Vector2i(8, 2)), "tuas membuka celah ke ceruk peti")
+	_check(gua_all.has(Vector2i(8, 3)), "tuas membuka celah ke ceruk peti (sel di depan peti)")
 
 
 func _test_quests() -> void:
