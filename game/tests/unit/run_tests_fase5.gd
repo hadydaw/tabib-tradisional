@@ -870,7 +870,7 @@ func _test_treatment_flow() -> void:
 	tm.complete_crafting(p, h)
 	_check(s.stage == TreatmentSession.Stage.SELESAI and done.size() == 1, "alur selesai: ringkasan dikirim")
 	var sum: Dictionary = done[0]
-	_check(p.state == PatientRecord.State.SELESAI and ps.completed_count == 1 and not ps.queue.room_busy(), "pasien selesai & ruang periksa kosong (terintegrasi antrean)")
+	_check(p.state == PatientRecord.State.SELESAI and not ps.queue.room_busy(), "pasien selesai & ruang periksa kosong (terintegrasi antrean)")
 	_check(String(sum["outcome"]) == "sembuh" and bool(sum["diagnosis_correct"]) and float(sum["quality"]) >= 0.6, "kinerja tinggi -> sembuh (kualitas %.2f)" % float(sum["quality"]))
 	_check(tm.stats.money > money0 and int(sum["fee"]) > 0 and tm.stats.treated == 1 and tm.stats.reputation > ClinicStats.START_REPUTATION, "pendapatan & reputasi naik")
 	_check(float(sum["satisfaction"]) > 50.0 and p.diagnosis.outcome == "sembuh" and p.diagnosis.treatments.size() == 2, "kepuasan, hasil, dan catatan perawatan tersimpan")
@@ -881,7 +881,7 @@ func _test_treatment_flow() -> void:
 		sim.update(0.5)
 		ps.update(0.5)
 		t += 0.5
-	_check(p.done and not tm.sessions.has(p.id), "pasien meninggalkan klinik; sesi dibersihkan")
+	_check(p.done and not tm.sessions.has(p.id) and ps.completed_count == 1, "pasien meninggalkan klinik; sesi dibersihkan; hitungan selesai bertambah")
 	# metode tunggal
 	var w2: Array = _make_world(8)
 	var p2: PatientRecord = _bring_to_exam(w2[0], w2[1], "wiryo", "sendi_kaku")

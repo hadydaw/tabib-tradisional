@@ -17,7 +17,6 @@ func _initialize() -> void:
 	Locale.set_language("id")
 	_world = (load("res://scenes/world/game_world.tscn") as PackedScene).instantiate()
 	root.add_child(_world)
-	_world.get_minigames().transitions = false
 	_steps = [_step_bring_patient, _step_blocked_when_open, _step_postpone_resume, _step_diagnosis, _step_methods,
 		_step_acupuncture, _step_crafting, _step_summary, _step_plant, _step_book, _step_second_patient_failures, _step_final]
 
@@ -76,6 +75,7 @@ func _bring_to_exam(complaint_idx: int = 0) -> PatientRecord:
 
 
 func _step_bring_patient() -> void:
+	_mg().transitions = false
 	_check(_world.get_treatment() != null and _world.get_skills() != null and _world.get_inventory() != null, "sistem medis terpasang di dunia")
 	_check(_world.get_inventory().total() > 0, "inventaris bahan awal terisi")
 	_patient = _bring_to_exam(0)

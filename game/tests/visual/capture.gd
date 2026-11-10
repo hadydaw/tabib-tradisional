@@ -82,6 +82,7 @@ func _initialize() -> void:
 		_world.start_dialogue(_world.get_patients().queue.records[0].npc_id))
 	_steps.append(func() -> void: _shot("15_dialog_pasien"))
 	_steps.append(func() -> void: _world.end_dialogue())
+	_add_medical_steps()
 
 
 func _next_to(npc_id: String) -> void:
@@ -157,3 +158,134 @@ func _look_b() -> void:
 	a.equip("top_rompi_cokelat")
 	a.equip("bottom_kain_merah")
 	a.equip("head_caping")
+
+
+# --- Fase 5: layar minigame ---------------------------------------------------
+
+var _mp: PatientRecord
+var _mv: MinigameView
+
+
+func _mg() -> MinigameManager:
+	return _world.get_minigames()
+
+
+func _add_medical_steps() -> void:
+	_steps.append(func() -> void:
+		_mg().transitions = false
+		_mp = _world.get_patients().queue.records[0]
+		_world._interact_reception()
+		for _k in range(400):
+			_world.step_world(0.5)
+		_world.interact_exam_bed())
+	_steps.append(func() -> void:
+		var v := _mg().current_view() as DiagnosisView
+		v.click_button("observe")
+		v.press_at(v.hotspot_pos("lidah"))
+		v.release_at(v.hotspot_pos("lidah"))
+		v.press_at(v.hotspot_pos("kulit"))
+		v.release_at(v.hotspot_pos("kulit")))
+	_steps.append(func() -> void: _shot("16_diagnosis_periksa"))
+	_steps.append(func() -> void:
+		var v := _mg().current_view() as DiagnosisView
+		v.inspect_area("nadi")
+		v._pulse_t = 2.0)
+	_steps.append(func() -> void: _shot("17_diagnosis_nadi"))
+	_steps.append(func() -> void:
+		var v := _mg().current_view() as DiagnosisView
+		v.pulse_tap_time(1.2)
+		v.finish_pulse()
+		v.click_button("to_verdict"))
+	_steps.append(func() -> void: _shot("18_diagnosis_putusan"))
+	_steps.append(func() -> void:
+		var v := _mg().current_view() as DiagnosisView
+		var s: TreatmentSession = _world.get_treatment().session_for(_mp)
+		v.click_button("cand:%s" % s.true_ailment)
+		v.click_button("verdict_ok"))
+	_steps.append(func() -> void: _shot("19_diagnosis_hasil"))
+	_steps.append(func() -> void:
+		_mg().current_view().click_button("result_continue"))
+	_steps.append(func() -> void: _shot("20_pilih_metode"))
+	_steps.append(func() -> void:
+		var cv := _mg().current_view() as ChoiceView
+		cv.click_button("item:akupunktur")
+		cv.click_button("item:herbal")
+		cv.click_button("confirm")
+		var av := _mg().current_view() as AcupunctureView
+		var s: TreatmentSession = _world.get_treatment().session_for(_mp)
+		var plan: Array[String] = AilmentDb.acu_plan(s.true_ailment)
+		av.toggle(plan[0])
+		av.toggle(plan[1]))
+	_steps.append(func() -> void: _shot("21_akupunktur_pilih"))
+	_steps.append(func() -> void:
+		var av := _mg().current_view() as AcupunctureView
+		av.toggle(AilmentDb.acu_plan(_world.get_treatment().session_for(_mp).true_ailment)[2])
+		av.click_button("start")
+		av.aim = Vector2(0.15, -0.1))
+	_steps.append(func() -> void: _shot("22_akupunktur_jarum"))
+	_steps.append(func() -> void:
+		var av := _mg().current_view() as AcupunctureView
+		var guard: int = 0
+		while av.sys.phase == AcupunctureSystem.Phase.JARUM and guard < 20:
+			av.insert_at(Vector2(0.05, 0.03), AcupunctureSystem.DEPTH_CENTER)
+			guard += 1
+		av._tick(3.0))
+	_steps.append(func() -> void: _shot("23_akupunktur_hasil"))
+	_steps.append(func() -> void:
+		_mg().current_view().click_button("result_continue"))
+	_steps.append(func() -> void: _shot("24_pilih_resep"))
+	_steps.append(func() -> void:
+		var s: TreatmentSession = _world.get_treatment().session_for(_mp)
+		var best: String = RecipeDb.best_for(s.true_ailment)
+		if not _world.get_treatment().recipes_available().has(best):
+			best = _world.get_treatment().recipes_available()[0]
+		(_mg().current_view() as ChoiceView).click_button("item:%s" % best)
+		var v := _mg().current_view() as CraftingView
+		var first: Dictionary = v.sys.steps[0]
+		v.click_button("herb:%s" % String(first["herb"])))
+	_steps.append(func() -> void: _shot("25_peracikan_pilih"))
+	_steps.append(func() -> void:
+		var v := _mg().current_view() as CraftingView
+		for st in v.sys.steps:
+			for _u in range(int(st["units"])):
+				v.take(String(st["herb"]))
+		v.click_button("to_measure")
+		v._grams = v.sys.measure_target() * 0.85)
+	_steps.append(func() -> void: _shot("26_peracikan_takar"))
+	_steps.append(func() -> void:
+		var v := _mg().current_view() as CraftingView
+		for st in v.sys.steps:
+			v.submit_grams(float(st["grams"]))
+		v._pound_t = 0.5)
+	_steps.append(func() -> void: _shot("27_peracikan_tumbuk"))
+	_steps.append(func() -> void:
+		var v := _mg().current_view() as CraftingView
+		for b in v.sys.pound_beats:
+			v.pound_at(float(b))
+		v.finish_pound()
+		v.sys.stir_progress = v.sys.stir_target * 0.45)
+	_steps.append(func() -> void: _shot("28_peracikan_aduk"))
+	_steps.append(func() -> void:
+		var v := _mg().current_view() as CraftingView
+		var guard: int = 0
+		while not v.sys.is_finished() and guard < 3000:
+			v.stir_drag(0.05, 0.025)
+			guard += 1)
+	_steps.append(func() -> void: _shot("29_peracikan_hasil"))
+	_steps.append(func() -> void:
+		_mg().current_view().click_button("result_continue"))
+	_steps.append(func() -> void: _shot("30_ringkasan_kunjungan"))
+	_steps.append(func() -> void:
+		_mg().current_view().click_button("info_close")
+		_world.load_location("desa", "awal")
+		_world.get_clock().set_time(2, 9, 0)
+		_mg().start_plant("garden_plot_2")
+		var pv := _mg().current_view() as PlantView
+		pv.look("daun")
+		pv.look("akar"))
+	_steps.append(func() -> void: _shot("31_identifikasi_tanaman"))
+	_steps.append(func() -> void:
+		_mg().close()
+		_mg().show_book())
+	_steps.append(func() -> void: _shot("32_buku_tabib"))
+	_steps.append(func() -> void: _mg().close())
