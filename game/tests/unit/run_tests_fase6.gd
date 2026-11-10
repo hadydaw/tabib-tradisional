@@ -309,7 +309,7 @@ func _test_save_roundtrip() -> void:
 	SaveSystem.apply(d, cs, sk, inv, gd, up)
 	var ocs: ClinicStats = st[1]
 	var osk: SkillProgressionSystem = st[2]
-	_check(cs.money == ocs.money and is_equal_approx(cs.reputation, 47.5) and cs.treated == 1 and cs.cured == 1, "koin, reputasi, pasien dipulihkan")
+	_check(cs.money == ocs.money and is_equal_approx(cs.reputation, ocs.reputation) and ocs.reputation > 47.5 and cs.treated == 1 and cs.cured == 1, "koin, reputasi, pasien dipulihkan")
 	_check(cs.ledger.size() == ocs.ledger.size() and cs.milestones_done.size() == ocs.milestones_done.size(), "buku kas & capaian dipulihkan")
 	_check(sk.xp_of("diagnosis") == osk.xp_of("diagnosis") and sk.level("diagnosis") == osk.level("diagnosis") and sk.xp_of("peracikan") == 61, "XP & tingkat skill dipulihkan")
 	_check(sk.known_plants == osk.known_plants and sk.known_plants.size() == 2, "tanaman dikenal dipulihkan")

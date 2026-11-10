@@ -84,7 +84,10 @@ static func delete_all() -> void:
 static func _parse(text: String) -> Dictionary:
 	if text.strip_edges() == "":
 		return {}
-	var v: Variant = JSON.parse_string(text)
+	var j := JSON.new()
+	if j.parse(text) != OK:   # parse() (bukan parse_string) agar berkas rusak tidak mencetak galat mesin
+		return {}
+	var v: Variant = j.data
 	if not (v is Dictionary):
 		return {}
 	var env: Dictionary = v
