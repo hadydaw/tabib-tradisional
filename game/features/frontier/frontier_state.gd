@@ -133,4 +133,4 @@ func from_dict(d: Dictionary) -> void:
 		for k in p.keys():
 			if RareDb.has_puzzle(String(k)):
 				puzzles[String(k)] = true
-	chest_opened = bool(d.get("chest_opened", false))
+	chest_opened = d.get("chest_opened", false) == true

@@ -113,6 +113,7 @@ func _step_fog() -> void:
 
 func _step_gate() -> void:
 	var f: FrontierState = _world.get_frontier()
+	f.from_dict({})
 	_world.load_location("pegunungan", "dari_hutan")
 	_world.get_player().teleport_grid(Vector2(23.5, 10.5))
 	_check(not _world.try_transition(true) and _world.get_location().id == "pegunungan", "gua terkunci sebelum penemuan cukup")
