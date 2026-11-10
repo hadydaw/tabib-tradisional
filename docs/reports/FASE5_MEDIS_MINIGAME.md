@@ -1,6 +1,6 @@
 # Laporan Fase 5: Gameplay Medis dan Sistem Minigame (10 Nov 2026)
 
-**Status: kode selesai dan lolos tes otomatis di CI (run @RUN@, commit @SHA@, versionCode @VC@). BELUM diuji di perangkat fisik (nubia Neo 2 5G): rasa sentuhan, kenyamanan ibu jari, keseimbangan kesulitan, dan performa belum dinilai. Semua angka keseimbangan bersifat sementara. Semua pengobatan adalah simulasi fiktif, bukan panduan medis.**
+**Status: kode selesai dan lolos tes otomatis di CI (run 42773379984, commit 6e721fb, versionCode 30). BELUM diuji di perangkat fisik (nubia Neo 2 5G): rasa sentuhan, kenyamanan ibu jari, keseimbangan kesulitan, dan performa belum dinilai. Semua angka keseimbangan bersifat sementara. Semua pengobatan adalah simulasi fiktif, bukan panduan medis.**
 
 ## Prinsip
 Minigame adalah gameplay utama. Tidak ada jalur pengobatan lewat menu/tombol/timer saja: setiap tahap (diagnosis, akupunktur, peracikan) adalah permainan sentuh yang hasilnya ditentukan keterampilan pemain.
@@ -31,7 +31,7 @@ Diagnosis, Akupunktur, Pengetahuan Herbal, Peracikan, Identifikasi Tanaman (`Ski
 `AilmentDb` (12 penyakit fiktif, 6 area periksa), `AcupointDb` (10 titik, sifat unik), `HerbDb` (10 tanaman Nusantara: kunyit, jahe, temulawak, kencur, serai, lengkuas, sambiloto, kumis kucing, sirih, kayu manis; 4 ciri tiap tanaman), `RecipeDb` (7 resep berurutan), `SkillDb`. Sistem logika murni (tanpa node, dites unit) terpisah dari tampilan (`ui/minigame/`) dan alur (`TreatmentManager`, `MinigameManager`). `HerbInventory` (bahan; stok harian minimal 2 tiap bahan), `ClinicStats` (koin, reputasi, pasien), `GardenSystem`. HUD: tombol **Buku** (Buku Tabib: skill, bahan, tanaman dikenal, koin/reputasi) dan baris koin/reputasi.
 Detail: `GODOT_ARCHITECTURE.md`, `GAMEPLAY_SYSTEMS.md`.
 
-## Hasil tes (CI run @RUN@)
+## Hasil tes (CI run 42773379984)
 - Unit: dasar 108/0, Fase 3 149/0, Fase 4 138/0, **Fase 5 191/0** (penilaian, ritme, data, skill, inventaris, diagnosis, akupunktur, peracikan, identifikasi, kebun, alur terintegrasi dengan antrean, diagnosis salah/pengobatan gagal, kelengkapan localization termasuk pemindaian kunci di skrip UI).
 - Asap: prototipe 68/0, dunia Fase 2 46/0, game Fase 3 59/0, NPC Fase 4 55/0 (mode Fase 4 dipertahankan lewat `set_medical_enabled(false)`), **medis Fase 5 69/0**: alur lengkap lewat layar nyata (tombol dan sentuhan disimulasikan) dari ruang periksa sampai pasien pulang, Tunda/lanjut, kunci kontrol dunia, jeda waktu, inventaris berkurang saat bahan diambil, kebun -> panen/pengetahuan/XP, satu kali per hari lalu terbuka hari berikutnya, Buku Tabib, jalur gagal (diagnosis salah -> D, titik salah dan meleset -> D, hasil gagal).
 - Validasi proyek lolos; kompatibilitas statis 5/5; APK debug terbentuk.
