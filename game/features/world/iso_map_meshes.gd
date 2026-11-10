@@ -21,11 +21,14 @@ static func fill_mesh(map: GroundMap, tile: Vector2, kind: int) -> ArrayMesh:
 	return IsoMeshes._build(verts, cols, Mesh.PRIMITIVE_TRIANGLES)
 
 
-static func line_mesh(map: GroundMap, tile: Vector2) -> ArrayMesh:
+static func line_mesh(map: GroundMap, tile: Vector2, skip_kinds: Array[int] = []) -> ArrayMesh:
 	var verts := PackedVector2Array()
 	var cols := PackedColorArray()
 	for y in range(map.height):
 		for x in range(map.width):
+			# Lantai bertekstur tidak diberi garis kisi agar sambungan antar-tile tidak terlihat.
+			if skip_kinds.has(map.kind_at(Vector2i(x, y))):
+				continue
 			var p: PackedVector2Array = IsoMeshes.tile_corners(x, y, tile)
 			for k in range(4):
 				verts.append(p[k])

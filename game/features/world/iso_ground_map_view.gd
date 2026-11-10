@@ -28,7 +28,11 @@ func _ready() -> void:
 		var m: ArrayMesh = IsoMapMeshes.fill_mesh(map, tile, kind)
 		if m != null:
 			_meshes.append(m)
-	_lines = IsoMapMeshes.line_mesh(map, tile)
+	var textured_kinds: Array[int] = []
+	for kind in range(TileKinds.COUNT):
+		if TileKinds.TEXTURES.has(kind):
+			textured_kinds.append(kind)
+	_lines = IsoMapMeshes.line_mesh(map, tile, textured_kinds)
 	queue_redraw()
 
 
