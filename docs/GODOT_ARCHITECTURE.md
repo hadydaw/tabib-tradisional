@@ -123,3 +123,13 @@ Catatan: aset siap-pakai-engine ditempatkan di `game/` saat diimpor; `assets/` m
 - `features/localization/locale.gd`: `Locale.t()`; data `localization/id.json`, `en.json` (dibuat oleh `tools/gen_localization.py`).
 - Data lokasi bertambah: `spots`, `seats`, `doors` (`LocationData`).
 - Alur per frame di `game_world.gd`: input -> `step_world` (simulasi NPC + pasien, sinkron sel dinamis, sinkron node) -> interaksi.
+
+
+## Fase 5: folder dan kelas baru
+- `data/{ailments,points,herbs,recipes,skills}`: basis data fiktif (`AilmentDb`, `AcupointDb`, `HerbDb`, `RecipeDb`, `SkillDb`).
+- `features/medical/`: `Grade`, `MinigameResult`, `ScoringSystem`, `RhythmJudge`, `TreatmentSession`, `TreatmentManager`.
+- `features/{diagnosis,acupuncture,crafting,herbal}/`: `DiagnosisSystem`, `AcupunctureSystem`, `HerbalCraftingSystem`, `PlantIdentificationSystem`, `GardenSystem` (logika murni, dites unit).
+- `features/skill/SkillProgressionSystem`, `features/inventory/HerbInventory`, `features/economy/ClinicStats`.
+- `ui/minigame/`: `MinigameView` (dasar, mode langsung: tombol digambar sendiri, sentuh multi-jari), `DiagnosisView`, `AcupunctureView`, `CraftingView`, `PlantView`, `ChoiceView`, `InfoView`, `PlantArt`, `MinigameManager`. `ui/virtual_input/ui_gate.gd` mengunci kontrol dunia.
+- Pemisahan: sistem = aturan (tanpa node); view = gambar + sentuhan; manager = alur. View hanya memanggil metode sistem dan memancarkan `completed(result)`.
+- Alur: `game_world` -> `MinigameManager.start_treatment(pasien)` -> tahap `TreatmentSession` -> view -> `TreatmentManager.complete_*` -> skill/inventaris/statistik.

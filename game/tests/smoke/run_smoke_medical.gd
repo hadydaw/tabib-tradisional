@@ -280,7 +280,7 @@ func _step_book() -> void:
 
 func _step_second_patient_failures() -> void:
 	_world.get_clock().set_time(2, 9, 0)
-	var p: PatientRecord = _bring_to_exam(4)
+	var p: PatientRecord = _bring_to_exam(0)  # demam_dingin: >=3 kandidat, jadi dua tebakan salah mungkin
 	_world.interact_exam_bed()
 	var view := _view() as DiagnosisView
 	var s: TreatmentSession = _world.get_treatment().session_for(p)

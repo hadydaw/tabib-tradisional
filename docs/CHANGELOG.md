@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-11-10: Fase 5, gameplay medis dan sistem minigame
+- Alur pengobatan penuh terintegrasi dengan antrean Fase 4: pasien dipanggil -> ruang periksa -> **diagnosis (minigame)** -> pilih metode -> **akupunktur (minigame)** dan/atau **peracikan ramuan (minigame)** -> hasil dari performa -> ringkasan -> pasien pulang. Tahap disimpan per pasien (`TreatmentSession`), "Tunda" lalu lanjut ke tahap yang sama.
+- Empat minigame sentuh: diagnosis (6 area periksa, uji nadi berirama, catatan temuan, tabel kandidat), akupunktur (tubuh, pilih titik, bidik dengan geser, tekan kedalaman), peracikan (ambil bahan, takar tahan-tuang, tumbuk berirama, aduk melingkar), identifikasi tanaman (amati daun/bunga/akar/buah, pilih identitas).
+- Penilaian S/A/B/C/D (`ScoringSystem`): ketepatan, urutan, kesalahan, kesesuaian, waktu (bobot maksimum 15%, tidak pernah penentu tunggal). Hasil memengaruhi kualitas pengobatan, kepuasan, reputasi, bayaran, XP.
+- Lima cabang skill (`SkillProgressionSystem`, tingkat 1-5), efek terbatas (+-30-40% jendela) agar keterampilan manual tetap menentukan.
+- Data dapat diperluas tanpa mengubah kode inti: 12 penyakit fiktif, 10 titik, 10 tanaman, 7 resep (`game/data/*`).
+- Inventaris bahan (`HerbInventory`), statistik klinik (`ClinicStats`), kebun herbal/titik liar (`GardenSystem`), Buku Tabib (skill, bahan, tanaman, koin/reputasi), koin/reputasi di HUD.
+- `MinigameManager` (layar penuh dengan pudar halus, `UiGate` mengunci kontrol dunia, waktu dunia berhenti selama minigame). Mode `set_medical_enabled(false)` mempertahankan perilaku Fase 4 untuk tes regresi.
+- Localization 409 kunci (ID + EN). Tes: unit Fase 5, tes asap alur medis, tangkapan layar tiap minigame di CI.
+- Laporan: `docs/reports/FASE5_MEDIS_MINIGAME.md`. Belum diuji di perangkat.
+
 ## 2026-11-10: Fase 4, NPC dan sistem pasien
 - 8 NPC penduduk dengan identitas, jadwal harian, aktivitas, dan navigasi A* (`GridPathfinder`, `NpcSimulation`); tabrakan dinamis dengan pemain; anti-tersangkut (tunggu, rencana ulang, batalkan sementara dan menepi).
 - Dialog berlokalisasi Indonesia/English (`Locale`, `DialogueLibrary/Runner/Panel`), permintaan sederhana (`RequestLog`).

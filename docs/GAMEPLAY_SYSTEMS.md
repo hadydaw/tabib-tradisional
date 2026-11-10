@@ -74,3 +74,15 @@ Lihat `DEVELOPMENT_ROADMAP.md`. Irisan vertikal pertama: gerak isometrik → int
 - **Penduduk**: jadwal harian per NPC; aktivitas ditampilkan di dialog ("Sedang apa?").
 - **Permintaan**: terima dari NPC, penuhi (bicara/kunjungi), lapor. Tanpa hadiah.
 - **Pasien**: keluhan fiktif ringan; antrean bernomor; satu ruang periksa. Tahap berikutnya mengisi `DiagnosisRecord`/`TreatmentRecord` (belum ada sistem diagnosis, akupunktur, atau peracikan).
+
+
+## Fase 5: pengobatan lewat minigame (implementasi)
+Prinsip: **minigame adalah gameplay utama**; pengobatan tidak lewat menu/timer. Semua pengobatan fiktif; tidak ada panduan medis nyata.
+- **Alur**: pasien dipanggil -> Tempat Periksa -> Diagnosis -> Metode (akupunktur, ramuan, atau keduanya) -> minigame metode (akupunktur dulu, lalu ramuan) -> hasil -> ringkasan -> pasien pulang.
+- **Diagnosis**: 6 area periksa (dahi, mata, lidah, kulit, perut, nadi). Tiap pemeriksaan memakai "tenaga periksa" (4, naik dengan skill). Nadi = uji ritme (ketuk mengikuti denyut, 3 denyut pertama ditampilkan). "Amati" memberi satu petunjuk (yang paling lemah). Tabel kandidat memuat tanda cocok/bertentangan (skill tingkat 2+). Dua kesempatan menetapkan; salah = nilai maksimum D.
+- **Akupunktur**: pilih titik (urutan pilihan = urutan tusuk; maks 4), bidik jarum dengan geser pada bidang bidik (ada getaran), tekan JARUM saat penanda kedalaman di zona. Nilai: ketepatan posisi/kedalaman, kelengkapan rencana, urutan, kesalahan, waktu.
+- **Peracikan**: ambil bahan sesuai urutan resep dari inventaris, takar (tahan TUANG, lepas di garis), tumbuk (ketuk berirama), aduk (lingkar dengan kecepatan stabil). Komposisi/urutan salah membatasi nilai.
+- **Identifikasi tanaman**: amati bagian (sebagian tertutup pada skill tinggi), bandingkan dengan ciri di kartu pilihan, pilih (2 tebakan). Berhasil: pengetahuan + panen bahan. Satu kali per titik per hari.
+- **Penilaian**: skor 0-100 -> S>=92, A>=80, B>=65, C>=45, D. Kualitas metode = kecocokan x skor; gabungan = 1-(1-q1)(1-q2). Hasil: sembuh >=0.60, membaik >=0.35, gagal. Bayaran = dasar x (0.4+0.8q) x (1+reputasi/250); reputasi -2/0/+1/+2/+3 menurut nilai kunjungan.
+- **Skill** (tingkat 1-5; XP dari nilai minigame): Diagnosis, Akupunktur, Pengetahuan Herbal (membuka resep, petunjuk takaran), Peracikan, Identifikasi Tanaman.
+- **Menambah konten**: tambahkan entri di `data/ailments`, `data/points`, `data/herbs`, `data/recipes` + teks di `tools/loc_fase5.py`; tes data memeriksa konsistensi.

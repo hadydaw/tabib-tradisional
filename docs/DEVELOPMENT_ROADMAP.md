@@ -49,7 +49,11 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
 - Mengumpulkan, menanam, memanen; Crafting; Inventory.
 - Hubungkan ke terapi di klinik.
 
-## Fase 5: Dunia dan progres
+## Fase 5 (dikerjakan): Gameplay medis dan minigame
+- Diagnosis, akupunktur, peracikan, identifikasi tanaman sebagai minigame sentuh; penilaian S-D; skill; inventaris; kebun. Lihat `reports/FASE5_MEDIS_MINIGAME.md`.
+- Menunggu uji di HP: rasa kontrol sentuh, keseimbangan kesulitan, keterbacaan layar.
+
+## Fase 6 (rencana, ex-"Fase 5"): Dunia dan progres
 - Wilayah pertama (desa, lalu hutan), NPC, Quest.
 - Skill System, Economy (setelah P-12), reputasi, pengembangan klinik.
 - Wilayah berikutnya (pegunungan, dll.) sesuai P-11.

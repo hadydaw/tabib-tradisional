@@ -66,6 +66,9 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-27 | Dialog = pohon node data (`DialogueLibrary`) + runner murni + panel tampilan terpisah. Permintaan NPC hanya dua syarat (bicara dengan NPC / masuk zona), tanpa hadiah. | "Informasi dan permintaan sederhana" tanpa sistem quest penuh. |
 | T-28 | Pasien: alur MENUJU -> MENDAFTAR -> MENUNGGU -> DIPANGGIL -> DIPERIKSA -> SELESAI/BATAL. Pemanggilan/pemeriksaan bisa oleh pemain; bila tidak, `auto_call` otomatis (12 dan 25 menit permainan) sebagai pengganti sementara sampai diagnosis dibuat. | Antrean tetap berjalan tanpa campur tangan pemain. |
 | T-29 | Jam permainan: 1 detik nyata = 1 menit (hari = 24 menit nyata), klinik buka 08:00-16:00. Angka sementara, belum keputusan desain final. | Cukup untuk menguji jadwal; mudah diubah (`GameClock.minutes_per_second`). |
+| T-30 | Fase 5: minigame sebagai gameplay utama; nilai S-D, waktu maksimum 15% bobot; efek skill terbatas (<= sekitar 40% pelonggaran jendela). Angka (ambang nilai, bayaran, tenaga periksa, 2 tebakan) sementara, perlu disetel setelah uji di HP. | Arahan pemilik Fase 5; angka mudah diubah (`Grade`, `ScoringSystem`, `SkillDb`, `ClinicStats`). |
+| T-31 | Pengobatan dan semua data medis murni fiktif (penyakit, titik, ramuan). | Sesuai arahan; bukan panduan medis nyata. |
+| T-32 | Waktu dunia berhenti selama minigame; pasien tidak menunggu sambil dimainkan. | Adil bagi pemain; mudah diubah di `game_world.step_world`. |
 
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
 
