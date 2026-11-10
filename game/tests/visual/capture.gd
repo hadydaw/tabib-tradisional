@@ -368,6 +368,8 @@ func _add_medical_steps() -> void:
 	_steps.append(func() -> void: _mg().start_puzzle("tuas_gua"))
 	_steps.append(func() -> void: _shot("46_teka_tuas"))
 	_steps.append(func() -> void: _mg().close())
+	_steps.append(func() -> void: _world.load_location("gua", "dari_pegunungan"))
+	_steps.append(func() -> void: _shot("47a_peti_tertutup"))
 	_steps.append(func() -> void: _mg().start_chest())
 	_steps.append(func() -> void: _shot("47_peti_harta"))
 
