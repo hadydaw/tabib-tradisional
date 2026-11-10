@@ -8,6 +8,7 @@ signal changed
 const DAILY_MIN: int = 2
 
 var stock: Dictionary = {}
+var daily_min: int = DAILY_MIN   # naik lewat upgrade Rak Herbal Besar
 
 
 func _init() -> void:
@@ -57,6 +58,16 @@ func ids_in_stock() -> Array[String]:
 ## Pergantian hari: setiap bahan dijamin minimal DAILY_MIN (persediaan klinik).
 func restock_daily() -> void:
 	for id in HerbDb.IDS:
-		if count(id) < DAILY_MIN:
-			stock[id] = DAILY_MIN
+		if count(id) < daily_min:
+			stock[id] = daily_min
+	changed.emit()
+
+
+func to_dict() -> Dictionary:
+	return stock.duplicate()
+
+
+func from_dict(d: Dictionary) -> void:
+	for id in HerbDb.IDS:
+		stock[id] = maxi(0, int(d.get(id, 0)))
 	changed.emit()

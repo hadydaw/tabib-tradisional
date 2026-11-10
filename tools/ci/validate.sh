@@ -51,6 +51,11 @@ godot --headless --path game --script res://tests/unit/run_tests_fase5.gd 2>&1 |
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase5.log"; then FAIL=1; fi
 
+echo "== 4e. Tes unit Fase 6 (ekonomi, upgrade, simpan/muat, pacing) =="
+godot --headless --path game --script res://tests/unit/run_tests_fase6.gd 2>&1 | tee "$LOGS/unit_tests_fase6.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/unit_tests_fase6.log"; then FAIL=1; fi
+
 echo "== 5. Tes asap (semua profil render x tile x beban, headless) =="
 godot --headless --path game --script res://tests/smoke/run_smoke.gd 2>&1 | tee "$LOGS/smoke_tests.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
@@ -75,6 +80,11 @@ echo "== 9. Tes asap medis Fase 5 (alur pengobatan lengkap lewat layar minigame,
 godot --headless --path game --script res://tests/smoke/run_smoke_medical.gd 2>&1 | tee "$LOGS/smoke_medical.log"
 [ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
 if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_medical.log"; then FAIL=1; fi
+
+echo "== 10. Tes asap ekonomi & simpan/muat Fase 6 (toko, upgrade, biaya harian, tutup-buka ulang, berkas rusak) =="
+godot --headless --path game --script res://tests/smoke/run_smoke_economy.gd 2>&1 | tee "$LOGS/smoke_economy.log"
+[ "${PIPESTATUS[0]}" -eq 0 ] || FAIL=1
+if grep -E "SCRIPT ERROR|Parse Error" "$LOGS/smoke_economy.log"; then FAIL=1; fi
 
 if [ "$FAIL" -ne 0 ]; then echo "VALIDASI GAGAL"; exit 1; fi
 echo "VALIDASI LOLOS"

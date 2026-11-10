@@ -27,6 +27,7 @@ var insertions: Array[Dictionary] = []
 var elapsed: float = 0.0
 var point_time: float = 0.0
 var result: MinigameResult = null
+var radius_bonus: float = 0.0   # dari upgrade Set Jarum Perak
 
 var _ph: Array[float] = [0.0, 0.0, 0.0, 0.0]
 
@@ -94,7 +95,7 @@ func is_plan_point(id: String) -> bool:
 
 func target_radius() -> float:
 	var base: float = 0.26 - 0.03 * float(difficulty - 1)
-	return base * SkillDb.effect("akupunktur", "radius", skill_level)
+	return base * SkillDb.effect("akupunktur", "radius", skill_level) + radius_bonus
 
 
 func tremor_amplitude() -> float:

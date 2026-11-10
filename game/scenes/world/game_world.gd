@@ -49,6 +49,9 @@ var _skills: SkillProgressionSystem
 var _inventory: HerbInventory
 var _stats: ClinicStats
 var _garden: GardenSystem
+var _upgrades: ClinicUpgrades
+var _shop: ClinicShop
+var load_status: int = SaveSystem.Status.MISSING   # hasil pemuatan saat mulai (SaveSystem.Status)
 var _treatment: TreatmentManager
 var _minigames: MinigameManager
 var _medical_enabled: bool = true
@@ -95,6 +98,8 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_layout_hud)
 	_layout_hud()
 	_set_debug(false)
+	if SaveSystem.enabled():
+		load_game()
 
 
 func _process(delta: float) -> void:
@@ -276,6 +281,10 @@ func press_interact() -> bool:
 			_interact_reception()
 		"clinic_exam_bed":
 			_interact_exam_bed()
+		"clinic_herb_shelf":
+			interact_shelf()
+		"clinic_treatment_table":
+			interact_table()
 		_:
 			if GardenSystem.is_spot(_near.id):
 				_interact_plant(_near.id)
@@ -401,10 +410,21 @@ func _setup_medical() -> void:
 	_stats = ClinicStats.new()
 	_garden = GardenSystem.new()
 	_treatment = TreatmentManager.new()
+	_upgrades = ClinicUpgrades.new()
+	_shop = ClinicShop.new()
+	_shop.setup(_stats, _inventory)
+	_stats.money = EconomyDb.START_MONEY
+	_stats.day_now = _clock.day
+	_stats.money_changed.connect(_on_money_changed)
+	_skills.leveled_up.connect(_on_skill_level_up)
+	_upgrades.changed.connect(func() -> void: _inventory.daily_min = _upgrades.herb_daily_min())
 	_treatment.setup(_patients, _skills, _inventory, _stats)
+	_treatment.upgrades = _upgrades
 	_minigames = MinigameManager.new()
 	add_child(_minigames)
 	_minigames.setup(_treatment, _skills, _inventory, _stats, _garden, _clock)
+	_minigames.setup_economy(_upgrades, _shop)
+	_minigames.save_action = save_game
 	_minigames.closed.connect(_on_minigame_closed)
 	_patients.auto_exam = false
 	_last_day = _clock.day
@@ -418,6 +438,8 @@ func set_medical_enabled(on: bool) -> void:
 
 func _on_minigame_closed() -> void:
 	_refresh_clock_label()
+	if _medical_enabled:
+		save_game()
 
 
 func is_minigame_open() -> bool:
@@ -427,8 +449,69 @@ func is_minigame_open() -> bool:
 func _check_new_day() -> void:
 	if _clock.day != _last_day:
 		_last_day = _clock.day
+		_stats.day_now = _clock.day
+		var paid: int = 0
+		if _medical_enabled:
+			paid = _stats.charge_up_to(_upgrades.operating_cost(), "operasional")
 		_inventory.restock_daily()
-		_show_toast(Locale.t("ui.new_day", {"day": _clock.day}))
+		if paid > 0:
+			_show_toast(Locale.t("ui.new_day_cost", {"day": _clock.day, "cost": paid}))
+		else:
+			_show_toast(Locale.t("ui.new_day", {"day": _clock.day}))
+		if _medical_enabled:
+			save_game()
+
+
+## Perubahan koin: segarkan HUD dan tampilkan toast "+N koin (alasan)" bila tidak sedang di layar penuh.
+func _on_money_changed(delta: int, reason: String, _total: int) -> void:
+	_refresh_clock_label()
+	if not is_minigame_open() and not reason.begins_with("operasional"):
+		_show_toast(Locale.t("ui.coin_gain" if delta > 0 else "ui.coin_loss", {"n": absi(delta), "why": EconomyText.reason_text(reason)}))
+
+
+func _on_skill_level_up(branch: String, lvl: int) -> void:
+	_stats.add_money(EconomyDb.LEVEL_UP_COIN * lvl, "naik_tingkat:%s" % branch)
+
+
+# --- Simpan / muat (Fase 6) -----------------------------------------------------
+
+## Simpan kemajuan. False bila penyimpanan dimatikan (tes) atau gagal.
+func save_game() -> bool:
+	if not SaveSystem.enabled() or _loc == null:
+		return false
+	return SaveSystem.write(SaveSystem.collect(_clock, _loc.id, _stats, _skills, _inventory, _garden, _upgrades))
+
+
+## Muat kemajuan dari berkas. Mengembalikan SaveSystem.Status. Berkas hilang/rusak -> permainan baru (aman).
+func load_game() -> int:
+	var r: Dictionary = SaveSystem.read()
+	load_status = int(r["status"])
+	if load_status == SaveSystem.Status.MISSING:
+		return load_status
+	if load_status == SaveSystem.Status.CORRUPT_NEW:
+		_show_toast(Locale.t("ui.load_corrupt"))
+		return load_status
+	var d: Dictionary = r["data"]
+	SaveSystem.apply(d, _stats, _skills, _inventory, _garden, _upgrades)
+	Locale.set_language(String(d["language"]))
+	_clock.day = int(d["day"])
+	_clock.minute_f = float(d["minute"])
+	_last_day = _clock.day
+	_stats.day_now = _clock.day
+	_sim.snap_to_schedule()
+	if String(d["location"]) == "klinik":
+		load_location("klinik", "dari_desa")
+	refresh_npcs()
+	_btn_book.text = Locale.t("ui.book")
+	_refresh_clock_label()
+	_show_toast(Locale.t("ui.load_backup" if load_status == SaveSystem.Status.RESTORED_BACKUP else "ui.loaded", {"day": _clock.day}))
+	return load_status
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if _medical_enabled and _stats != null:
+			save_game()
 
 
 func _queue_status_text() -> String:
@@ -756,6 +839,28 @@ func get_stats() -> ClinicStats:
 
 func get_garden() -> GardenSystem:
 	return _garden
+
+
+func interact_shelf() -> void:
+	if _medical_enabled:
+		_minigames.start_shop()
+	else:
+		_show_toast("[Placeholder] Rak Herbal: sistemnya belum dibuat")
+
+
+func interact_table() -> void:
+	if _medical_enabled:
+		_minigames.start_upgrades()
+	else:
+		_show_toast("[Placeholder] Meja Pengobatan: sistemnya belum dibuat")
+
+
+func get_upgrades() -> ClinicUpgrades:
+	return _upgrades
+
+
+func get_shop() -> ClinicShop:
+	return _shop
 
 
 func interact_exam_bed() -> void:

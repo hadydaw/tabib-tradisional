@@ -53,6 +53,7 @@ func _walk(player: Player, input: Vector2, frames: int) -> void:
 
 
 func _step_load() -> void:
+	_world.set_medical_enabled(false)  # Fase 3: titik klinik hanya memberi pesan placeholder
 	var player: Player = _world.get_player()
 	var loc: LocationData = _world.get_location()
 	_check(loc.id == "desa", "mulai di desa")

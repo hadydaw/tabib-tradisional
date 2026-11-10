@@ -1017,7 +1017,7 @@ func _test_localization_complete() -> void:
 ## Semua kunci literal Locale.t("...") di skrip UI minigame dan dunia harus ada di kedua bahasa.
 func _test_ui_keys_scanned() -> void:
 	var rx := RegEx.new()
-	rx.compile("\"((?:diag|acu|craft|plant|rhythm|ui|minigame|method|summary|book|comp|recipe|spot|part|clinic)\\.[a-z_\\.]+)\"")
+	rx.compile("\"((?:diag|acu|craft|plant|rhythm|ui|minigame|method|summary|book|comp|recipe|spot|part|clinic|shop|upgrade|ledger|milestone)\\.[a-z_\\.]+)\"")
 	var files: Array[String] = []
 	var dir := DirAccess.open("res://ui/minigame")
 	if dir != null:

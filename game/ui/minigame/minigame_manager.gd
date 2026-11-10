@@ -19,6 +19,9 @@ var inventory: HerbInventory
 var stats: ClinicStats
 var garden: GardenSystem
 var clock: GameClock
+var upgrades: ClinicUpgrades = null
+var shop: ClinicShop = null
+var save_action: Callable = Callable()   # dipanggil tombol Simpan di Buku Tabib; mengembalikan bool
 var transitions: bool = true
 
 var _view: MinigameView = null
@@ -35,6 +38,12 @@ func setup(p_treatment: TreatmentManager, p_skills: SkillProgressionSystem, p_in
 	stats = p_stats
 	garden = p_garden
 	clock = p_clock
+
+
+## Fase 6: sambungkan upgrade klinik & pasar bahan.
+func setup_economy(p_upgrades: ClinicUpgrades, p_shop: ClinicShop) -> void:
+	upgrades = p_upgrades
+	shop = p_shop
 
 
 func _ready() -> void:
@@ -257,6 +266,8 @@ func _open_summary(sm: Dictionary) -> void:
 	var rd: float = float(sm["reputation_delta"])
 	lines.append({"text": Locale.t("summary.pay", {"fee": int(sm["fee"]), "rep": snappedf(rd, 0.1)}), "size": 24, "color": MinigameView.C_GOLD})
 	lines.append({"text": Locale.t("summary.totals", {"money": int(sm["money"]), "rep": snappedf(float(sm["reputation"]), 0.1)}), "size": 20, "color": MinigameView.C_DIM})
+	for mid in sm.get("milestones", []):
+		lines.append({"text": Locale.t("summary.milestone", {"name": Locale.t("milestone.%s" % String(mid))}), "size": 22, "color": MinigameView.C_GREEN})
 	v.setup(Locale.t("summary.title"), lines, Locale.t("summary.done"), int(sm["grade"]))
 	v.closed.connect(close)
 	_show(v, "ringkasan")
@@ -282,8 +293,9 @@ func start_plant(spot_id: String) -> bool:
 			if learned:
 				lines.append(Locale.t("plant.learned", {"name": Locale.t("herb.%s" % plant_id)}))
 			if sys.harvest > 0:
-				inventory.add(plant_id, sys.harvest)
-				lines.append(Locale.t("plant.harvest", {"n": sys.harvest, "name": Locale.t("herb.%s" % plant_id)}))
+				var got: int = sys.harvest + (upgrades.harvest_bonus() if upgrades != null else 0)
+				inventory.add(plant_id, got)
+				lines.append(Locale.t("plant.harvest", {"n": got, "name": Locale.t("herb.%s" % plant_id)}))
 		else:
 			lines.append(Locale.t("plant.result_fail", {"name": Locale.t("herb.%s" % plant_id)}))
 		garden.mark_done(spot_id, clock.day)
@@ -316,8 +328,49 @@ func show_book() -> bool:
 	for id in skills.known_plants:
 		known += Locale.t("herb.%s" % id) + ", "
 	lines.append({"text": Locale.t("book.plants", {"n": skills.known_plants.size(), "total": HerbDb.IDS.size(), "list": known if known != "" else "-"}), "size": 20})
+	if upgrades != null:
+		var ups: String = ""
+		for id in ClinicUpgrades.IDS:
+			if upgrades.level(id) > 0:
+				ups += "%s %d, " % [Locale.t("upgrade.%s.name" % id), upgrades.level(id)]
+		lines.append({"text": Locale.t("book.upgrades", {"list": ups if ups != "" else "-", "cost": upgrades.operating_cost()}), "size": 20})
+	if not stats.ledger.is_empty():
+		var led: String = ""
+		var from: int = maxi(0, stats.ledger.size() - 3)
+		for i in range(stats.ledger.size() - 1, from - 1, -1):
+			var e: Dictionary = stats.ledger[i]
+			led += "%s%d  %s\n" % ["+" if int(e["delta"]) > 0 else "", int(e["delta"]), EconomyText.reason_text(String(e["reason"]))]
+		lines.append({"text": Locale.t("book.ledger") + "\n" + led.strip_edges(), "size": 18, "color": MinigameView.C_DIM})
 	var v := InfoView.new()
+	if save_action.is_valid():
+		v.extra_text = Locale.t("book.save")
 	v.setup(Locale.t("book.title"), lines, Locale.t("ui.close"))
 	v.closed.connect(close)
+	v.extra.connect(func() -> void:
+		var ok: bool = bool(save_action.call())
+		v.extra_text = Locale.t("book.saved" if ok else "book.save_fail")
+		v.mark_dirty())
 	_show(v, "buku")
+	return true
+
+
+# --- Pasar bahan & upgrade klinik (Fase 6) --------------------------------------
+
+func start_shop() -> bool:
+	if is_open() or shop == null:
+		return false
+	var v := ShopView.new()
+	v.setup(shop)
+	v.closed.connect(close)
+	_show(v, "toko")
+	return true
+
+
+func start_upgrades() -> bool:
+	if is_open() or upgrades == null:
+		return false
+	var v := UpgradeView.new()
+	v.setup(upgrades, stats, skills)
+	v.closed.connect(close)
+	_show(v, "upgrade")
 	return true

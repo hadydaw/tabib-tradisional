@@ -4,11 +4,13 @@ extends MinigameView
 ## Baris: {text, size, color (opsional), indent (opsional)}.
 
 signal closed
+signal extra
 
 var heading: String = ""
 var lines: Array[Dictionary] = []
 var button_text: String = ""
 var grade: int = -1
+var extra_text: String = ""   # tombol tambahan di kiri-bawah (mis. Simpan); kosong = tidak ada
 
 
 func setup(p_heading: String, p_lines: Array[Dictionary], p_button_text: String = "", p_grade: int = -1) -> void:
@@ -23,11 +25,17 @@ func setup(p_heading: String, p_lines: Array[Dictionary], p_button_text: String 
 
 func _build() -> void:
 	_add_button("info_close", Rect2(area.get_center().x - 170.0, area.end.y - 86.0, 340.0, 76.0), button_text, true, "primary")
+	if extra_text != "":
+		_add_button("info_extra", Rect2(area.position.x + 20.0, area.end.y - 86.0, 300.0, 76.0), extra_text, true, "normal")
 
 
 func _on_button(id: String, phase: String) -> void:
-	if id == "info_close" and phase == "tap":
+	if phase != "tap":
+		return
+	if id == "info_close":
 		closed.emit()
+	elif id == "info_extra":
+		extra.emit()
 
 
 func _draw_content() -> void:

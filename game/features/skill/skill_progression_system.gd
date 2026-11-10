@@ -91,7 +91,11 @@ func to_dict() -> Dictionary:
 func from_dict(d: Dictionary) -> void:
 	var src: Dictionary = d.get("xp", {})
 	for b in SkillDb.BRANCHES:
-		xp[b] = int(src.get(b, 0))
+		xp[b] = maxi(0, int(src.get(b, 0)))
 	known_plants.clear()
 	for p in d.get("known_plants", []):
-		known_plants.append(String(p))
+		if not (p is String):
+			continue
+		var pid: String = String(p)
+		if HerbDb.has(pid) and not known_plants.has(pid):
+			known_plants.append(pid)

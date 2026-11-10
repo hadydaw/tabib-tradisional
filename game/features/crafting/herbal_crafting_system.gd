@@ -11,6 +11,7 @@ const WEIGHTS: Dictionary = {"komposisi": 0.25, "urutan": 0.15, "takaran": 0.20,
 const POUND_PERFECT: float = 0.09
 const POUND_GOOD: float = 0.22
 const POUND_LEAD: float = 1.0
+var tolerance_mult: float = 1.0   # dari upgrade Lumpang Batu
 const MEASURE_TOLERANCE: float = 0.06    # galat relatif yang dinilai sempurna
 const MEASURE_MAX_ERR: float = 0.40      # galat relatif skor 0
 const FILL_RATE: float = 14.0            # gram per detik saat menuang
@@ -178,7 +179,7 @@ func measure_herb() -> String:
 
 
 func measure_tolerance() -> float:
-	return MEASURE_TOLERANCE * SkillDb.effect("peracikan", "toleransi_takar", craft_level)
+	return MEASURE_TOLERANCE * SkillDb.effect("peracikan", "toleransi_takar", craft_level) * tolerance_mult
 
 
 ## Skor takaran untuk `grams`; menyimpannya dan maju ke bahan berikutnya (atau ke TUMBUK).

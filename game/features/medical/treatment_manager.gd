@@ -18,6 +18,7 @@ var patients: PatientSystem
 var skills: SkillProgressionSystem
 var inventory: HerbInventory
 var stats: ClinicStats
+var upgrades: ClinicUpgrades = null   # Fase 6: efek upgrade klinik (boleh null)
 var sessions: Dictionary = {}   # id pasien -> TreatmentSession
 
 
@@ -66,6 +67,9 @@ func begin_diagnosis(p: PatientRecord) -> DiagnosisSystem:
 	s.diagnosis_attempts += 1
 	var d := DiagnosisSystem.new()
 	d.setup(s.true_ailment, p.complaint_id, skills.level("diagnosis"), absi(p.id.hash()) + s.diagnosis_attempts)
+	if upgrades != null:
+		d.energy_max += upgrades.diagnosis_energy_bonus()
+		d.energy_left = d.energy_max
 	return d
 
 
@@ -120,6 +124,8 @@ func begin_acupuncture(p: PatientRecord) -> AcupunctureSystem:
 		return null
 	var a := AcupunctureSystem.new()
 	a.setup(s.true_ailment, s.diagnosed_id, skills.level("akupunktur"), absi(p.id.hash()) + 3)
+	if upgrades != null:
+		a.radius_bonus = upgrades.acupuncture_radius_bonus()
 	return a
 
 
@@ -154,6 +160,8 @@ func begin_crafting(p: PatientRecord, recipe_id: String) -> HerbalCraftingSystem
 	var h := HerbalCraftingSystem.new()
 	h.setup(recipe_id, inventory, skills.level("pengetahuan_herbal"), skills.level("peracikan"))
 	s.recipe_id = recipe_id
+	if upgrades != null:
+		h.tolerance_mult = upgrades.crafting_tolerance_mult()
 	return h
 
 
@@ -218,6 +226,8 @@ func finalize(p: PatientRecord) -> Dictionary:
 	if p.waiting_since >= 0.0 and p.exam_started >= p.waiting_since:
 		waited = p.exam_started - p.waiting_since
 	var wait_penalty: float = clampf((waited - 30.0) / 6.0, 0.0, 25.0)
+	if upgrades != null:
+		wait_penalty *= upgrades.wait_penalty_mult()
 	var satisfaction: float = clampf(35.0 + 65.0 * quality - wait_penalty, 0.0, 100.0)
 	var fee: int = ClinicStats.fee_for(AilmentDb.fee(s.true_ailment), quality, stats.reputation)
 	var rep_before: float = stats.reputation
@@ -228,6 +238,7 @@ func finalize(p: PatientRecord) -> Dictionary:
 		"methods": s.done_methods.duplicate(), "recipe_id": s.recipe_id,
 	}
 	stats.record_visit(summary)
+	summary["milestones"] = stats.check_milestones()
 	summary["reputation_delta"] = stats.reputation - rep_before
 	summary["reputation"] = stats.reputation
 	summary["money"] = stats.money

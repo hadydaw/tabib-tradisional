@@ -40,3 +40,14 @@ func available(spot_id: String, day: int) -> bool:
 func mark_done(spot_id: String, day: int) -> void:
 	if is_spot(spot_id):
 		done_day[spot_id] = day
+
+
+func to_dict() -> Dictionary:
+	return done_day.duplicate()
+
+
+func from_dict(d: Dictionary) -> void:
+	done_day.clear()
+	for k in d.keys():
+		if is_spot(String(k)):
+			done_day[String(k)] = int(d[k])
