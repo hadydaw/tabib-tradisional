@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-11-10: Fase 6, simpan, ekonomi, dan progres klinik
+- **Simpan/Muat** (`SaveSystem`): JSON berversi di `user://save.json`, ditulis atomik (berkas sementara -> cadangan `.bak` -> ganti nama). Berkas utama hilang/rusak/versi tak dikenal -> otomatis dari cadangan, lalu permainan baru; tidak pernah crash. Isi: hari & jam, bahasa, lokasi, koin, reputasi, buku kas, capaian, skill, tanaman dikenal, inventaris, kebun, upgrade. Simpan otomatis: pergantian hari, menutup layar penuh (toko/upgrade/buku/kunjungan/kebun), aplikasi dijeda/kehilangan fokus/ditutup, dan tombol Simpan di Buku Tabib.
+- **Ekonomi**: `ClinicStats` kini punya buku kas (`add_money`/`spend`/`charge_up_to`, 40 catatan terakhir), sinyal `money_changed`, toast "+N koin (alasan)" di HUD. `EconomyDb` memuat modal awal 100, harga beli/jual 10 bahan (jual 40% dari beli, tanpa arbitrase), biaya operasional harian (20 + 5/tingkat upgrade, tak pernah membuat saldo minus), hadiah capaian & naik tingkat skill.
+- **Pasar Bahan** (`ShopView`, dari Rak Herbal) dan **Upgrade Klinik** (`UpgradeView`, dari Meja Pengobatan): 6 fasilitas x 2 tingkat, tiap tingkat punya biaya + syarat reputasi/skill dan efek nyata: Lentera (+1 energi diagnosis), Jarum Perak (radius bidik +0,02), Lumpang Batu (toleransi takar +10%), Rak Herbal Besar (stok harian min +1), Ruang Tunggu (penalti menunggu -30%), Kebun (panen +1).
+- Buku Tabib: daftar fasilitas, 3 transaksi terakhir, tombol Simpan. Ringkasan kunjungan menampilkan capaian baru.
+- Localization 466 kunci (ID + EN). Tes: unit Fase 6 (83), tes asap ekonomi & simpan/muat tutup-buka ulang (58), regresi Fase 2-5 utuh.
+- Laporan: `docs/reports/FASE6_SAVE_EKONOMI_KLINIK.md`. Belum diuji di perangkat.
+
 ## 2026-11-10: Fase 5, gameplay medis dan sistem minigame
 - Alur pengobatan penuh terintegrasi dengan antrean Fase 4: pasien dipanggil -> ruang periksa -> **diagnosis (minigame)** -> pilih metode -> **akupunktur (minigame)** dan/atau **peracikan ramuan (minigame)** -> hasil dari performa -> ringkasan -> pasien pulang. Tahap disimpan per pasien (`TreatmentSession`), "Tunda" lalu lanjut ke tahap yang sama.
 - Empat minigame sentuh: diagnosis (6 area periksa, uji nadi berirama, catatan temuan, tabel kandidat), akupunktur (tubuh, pilih titik, bidik dengan geser, tekan kedalaman), peracikan (ambil bahan, takar tahan-tuang, tumbuk berirama, aduk melingkar), identifikasi tanaman (amati daun/bunga/akar/buah, pilih identitas).

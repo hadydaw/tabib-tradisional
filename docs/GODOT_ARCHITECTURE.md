@@ -74,7 +74,7 @@ Detail di `ISOMETRIC_VISUAL_STANDARD.md`. Usulan teknis: `TileMapLayer` dengan `
 Kunci teks dalam CSV atau PO (usulan: CSV untuk kemudahan edit), dua bahasa: `id` (utama, harus lengkap) dan `en` (kedua). Aturan: tidak ada string tampilan di skrip; tes otomatis memeriksa kunci yang hilang.
 
 ## 8. Save
-Format JSON versi (`save_version`), ditulis ke `user://`. Hanya data state (bukan referensi node). Migrasi versi disiapkan sejak awal. Penyimpanan cloud PENDING (P-13).
+Format JSON versi (`save_version`), ditulis ke `user://`. Hanya data state (bukan referensi node). Migrasi versi disiapkan sejak awal. Penyimpanan cloud PENDING (P-13). Implementasi Fase 6: lihat bagian "Fase 6" di bawah (`SaveSystem`).
 
 ## 9. Input dan UI Android
 Joystick virtual dan tombol dibuat sebagai `Control` yang mengirim `InputEvent` atau memanggil `Input.action_press`. Pemetaan aksi (`move_*`, `interact`, `menu`) didefinisikan di `project.godot`. Multi-touch wajib. Zona aman (notch/cutout) diperhitungkan. Lihat `ANDROID_REQUIREMENTS.md`.
@@ -133,3 +133,11 @@ Catatan: aset siap-pakai-engine ditempatkan di `game/` saat diimpor; `assets/` m
 - `ui/minigame/`: `MinigameView` (dasar, mode langsung: tombol digambar sendiri, sentuh multi-jari), `DiagnosisView`, `AcupunctureView`, `CraftingView`, `PlantView`, `ChoiceView`, `InfoView`, `PlantArt`, `MinigameManager`. `ui/virtual_input/ui_gate.gd` mengunci kontrol dunia.
 - Pemisahan: sistem = aturan (tanpa node); view = gambar + sentuhan; manager = alur. View hanya memanggil metode sistem dan memancarkan `completed(result)`.
 - Alur: `game_world` -> `MinigameManager.start_treatment(pasien)` -> tahap `TreatmentSession` -> view -> `TreatmentManager.complete_*` -> skill/inventaris/statistik.
+
+## Fase 6: folder dan kelas baru
+- `features/save/SaveSystem` (logika statis, tanpa node): `write` (atomik: `save.json.tmp` -> salin lama ke `save.json.bak` -> rename), `read` -> `{status, data}` dengan `Status.{OK, MISSING, RESTORED_BACKUP, CORRUPT_NEW}`, `sanitize` (batasi tipe/angka), `collect`/`apply` (susun/terapkan state). Pembungkus `{version, saved_at, data}`; versi < 1 atau > `VERSION` ditolak. `override_dir`/`force_enabled` untuk tes; penyimpanan otomatis mati bila dijalankan dengan `--script`/`-s`.
+- `features/economy/`: `EconomyDb` (angka), `ClinicStats` (uang + buku kas + capaian), `ClinicUpgrades` (6 upgrade, `check`/`buy`, fungsi efek `*_bonus`), `ClinicShop` (beli/jual bahan).
+- `ui/minigame/`: `ShopView`, `UpgradeView`, `EconomyText`; `InfoView` punya tombol tambahan (`extra`). `MinigameManager.start_shop()/start_upgrades()`, `setup_economy()`, `save_action`.
+- Titik pasang efek upgrade (perubahan minimal pada sistem Fase 5): `TreatmentManager.upgrades` (energi diagnosis, `AcupunctureSystem.radius_bonus`, `HerbalCraftingSystem.tolerance_mult`, pengali penalti menunggu), `HerbInventory.daily_min`, bonus panen di `MinigameManager.start_plant`.
+- Data yang disimpan: hari/jam/bahasa/lokasi + `ClinicStats.to_dict`, `SkillProgressionSystem.to_dict`, `HerbInventory.to_dict`, `GardenSystem.to_dict`, `ClinicUpgrades.to_dict`. Menambah data baru: tambahkan ke `collect`/`apply`, beri nilai bawaan di `from_dict`; naikkan `VERSION` hanya bila bentuk lama tidak bisa dibaca.
+- Alur uang: sumber (`pasien`, `jual:*`, `capaian:*`, `naik_tingkat:*`) dan pengeluaran (`beli:*`, `upgrade:*`, `operasional`) semua melalui `ClinicStats`; `game_world` mendengarkan `money_changed` untuk HUD/toast.

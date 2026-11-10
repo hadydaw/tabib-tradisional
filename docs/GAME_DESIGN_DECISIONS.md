@@ -69,6 +69,9 @@ Ini bukan keputusan desain pemilik. Diambil agar pekerjaan tidak berhenti, denga
 | T-30 | Fase 5: minigame sebagai gameplay utama; nilai S-D, waktu maksimum 15% bobot; efek skill terbatas (<= sekitar 40% pelonggaran jendela). Angka (ambang nilai, bayaran, tenaga periksa, 2 tebakan) sementara, perlu disetel setelah uji di HP. | Arahan pemilik Fase 5; angka mudah diubah (`Grade`, `ScoringSystem`, `SkillDb`, `ClinicStats`). |
 | T-31 | Pengobatan dan semua data medis murni fiktif (penyakit, titik, ramuan). | Sesuai arahan; bukan panduan medis nyata. |
 | T-32 | Waktu dunia berhenti selama minigame; pasien tidak menunggu sambil dimainkan. | Adil bagi pemain; mudah diubah di `game_world.step_world`. |
+| T-33 | Fase 6: simpan lokal berversi, atomik (sementara -> cadangan -> ganti nama), jatuh ke cadangan lalu permainan baru bila rusak. Pasien antre dan sesi minigame setengah jalan tidak disimpan (dibuat ulang dari jadwal hari itu); jam disimpan tepat sampai menit. Penyimpanan mati saat tes headless. | Aman dari berkas rusak/aplikasi dimatikan; tidak ada cloud (P-13 tetap PENDING). Angka mudah diubah di `SaveSystem`. |
+| T-34 | Fase 6: koin fiktif; semua transaksi lewat buku kas `ClinicStats` (`add_money`/`spend`). Modal awal 100, biaya operasional harian 20 + 5/tingkat upgrade (dipotong sebatas saldo, tidak pernah minus), jual = 40% harga beli. Bukan keputusan monetisasi (P-12 tetap PENDING). | Angka sementara di `EconomyDb`; perlu disetel setelah uji di HP. |
+| T-35 | Fase 6: upgrade klinik harus berefek gameplay (bukan dekorasi) dan berbiaya + bersyarat (reputasi/skill). Efek kecil dan berlapis (mis. +0,02 radius bidik) agar keterampilan manual tetap menentukan. | Konsisten dengan T-30. Data di `ClinicUpgrades.DEFS`. |
 
 ## C. Keputusan PENDING (menunggu persetujuan pemilik)
 

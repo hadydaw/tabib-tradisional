@@ -86,3 +86,13 @@ Prinsip: **minigame adalah gameplay utama**; pengobatan tidak lewat menu/timer. 
 - **Penilaian**: skor 0-100 -> S>=92, A>=80, B>=65, C>=45, D. Kualitas metode = kecocokan x skor; gabungan = 1-(1-q1)(1-q2). Hasil: sembuh >=0.60, membaik >=0.35, gagal. Bayaran = dasar x (0.4+0.8q) x (1+reputasi/250); reputasi -2/0/+1/+2/+3 menurut nilai kunjungan.
 - **Skill** (tingkat 1-5; XP dari nilai minigame): Diagnosis, Akupunktur, Pengetahuan Herbal (membuka resep, petunjuk takaran), Peracikan, Identifikasi Tanaman.
 - **Menambah konten**: tambahkan entri di `data/ailments`, `data/points`, `data/herbs`, `data/recipes` + teks di `tools/loc_fase5.py`; tes data memeriksa konsistensi.
+
+
+## Fase 6: ekonomi, upgrade klinik, dan simpanan (implementasi)
+Semua koin dan bahan fiktif. Angka sementara (`EconomyDb`, `ClinicUpgrades.DEFS`), perlu disetel setelah uji di HP.
+- **Pemasukan**: bayaran pasien (rumus Fase 5, naik dengan kualitas & reputasi); jual surplus bahan (40% harga beli); capaian sekali (pasien ke-1/10/30, sembuh pertama, reputasi 40/70: 20-250 koin); naik tingkat skill (25 x tingkat baru).
+- **Pengeluaran**: beli bahan di Pasar (Rak Herbal klinik, harga 5-14); upgrade; biaya operasional harian (20 + 5 per tingkat upgrade) dipotong saat pergantian hari, tidak pernah membuat saldo minus.
+- **Tempo**: 3-5 pasien/hari; kunjungan nilai B ~ 35-45 koin. Upgrade termurah (120) terjangkau dalam ~1-2 hari, semua upgrade dalam ~2-3 minggu. Pemain nilai B mencapai skill tingkat 2 setelah ~3 kunjungan dan tingkat 5 setelah ~25 per cabang (diuji di `run_tests_fase6.gd`).
+- **Upgrade** (6 x 2 tingkat; Meja Pengobatan): Lentera Periksa (+1 energi periksa diagnosis), Set Jarum Perak (radius bidik +0,02; syarat Akupunktur 2/3), Lumpang Batu (toleransi takaran +10%; Peracikan 2/3), Rak Herbal Besar (stok harian minimal +1), Ruang Tunggu Nyaman (penalti menunggu -30%), Pupuk & Pagar Kebun (panen +1; Identifikasi 2/3). Biaya 120-420, syarat reputasi 20-40; setiap tingkat menambah biaya harian 5.
+- **Simpan**: otomatis saat pergantian hari, menutup layar penuh, aplikasi dijeda/ditutup; manual lewat Buku Tabib. Pasien yang sedang antre tidak disimpan.
+- **Menambah upgrade/bahan**: tambahkan entri di `ClinicUpgrades.DEFS` + `IDS` + fungsi efek + teks `upgrade.<id>.name/.effect` di `tools/loc_fase6.py`; harga bahan di `EconomyDb.HERB_BUY`.

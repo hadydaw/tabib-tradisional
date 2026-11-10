@@ -53,9 +53,12 @@ Aturan tiap fase [FINAL dari aturan kerja]: bertahap dan mandiri, uji setiap mod
 - Diagnosis, akupunktur, peracikan, identifikasi tanaman sebagai minigame sentuh; penilaian S-D; skill; inventaris; kebun. Lihat `reports/FASE5_MEDIS_MINIGAME.md`.
 - Menunggu uji di HP: rasa kontrol sentuh, keseimbangan kesulitan, keterbacaan layar.
 
-## Fase 6 (rencana, ex-"Fase 5"): Dunia dan progres
+## Fase 6 (dikerjakan): Simpan, ekonomi, dan progres klinik
+- Save/Load berversi (atomik + cadangan), buku kas & ekonomi, pasar bahan, 6 upgrade klinik dengan efek gameplay, biaya operasional harian, hadiah capaian/naik tingkat. Lihat `reports/FASE6_SAVE_EKONOMI_KLINIK.md`.
+- Menunggu uji di HP: keseimbangan ekonomi & tempo kemajuan, keterbacaan layar Toko/Upgrade, simpan saat aplikasi ditutup/dijeda.
+
+## Setelah Fase 6 (rencana, ex-"Fase 5"): Dunia dan cerita
 - Wilayah pertama (desa, lalu hutan), NPC, Quest.
-- Skill System, Economy (setelah P-12), reputasi, pengembangan klinik.
 - Wilayah berikutnya (pegunungan, dll.) sesuai P-11.
 
 ## Fase 6: Pembuat karakter dan kepolesan
