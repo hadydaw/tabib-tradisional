@@ -151,7 +151,7 @@ func _step_requests() -> void:
 	_place_player_next_to(karto)
 	_check(_world.start_dialogue("karto"), "bicara dengan Pak Karto")
 	var labels: Array = _world.get_dialogue().view()["choices"]
-	var help_i: int = labels.find(Locale.tr("dlg.choice.help"))
+	var help_i: int = labels.find(Locale.t("dlg.choice.help"))
 	_check(help_i >= 0, "ada pilihan 'Ada yang bisa kubantu?'")
 	_world.dialogue_choose(help_i)
 	_world.dialogue_choose(0)  # terima
@@ -267,7 +267,7 @@ func _step_clinic_actions() -> void:
 	_world._interact_exam_bed()
 	_check(p.state == PatientRecord.State.SELESAI, "tempat periksa mengakhiri pemeriksaan (placeholder)")
 	_world._interact_reception()
-	_check(_world._toast.text == Locale.tr("clinic.no_patient"), "tidak ada pasien menunggu -> pesan")
+	_check(_world._toast.text == Locale.t("clinic.no_patient"), "tidak ada pasien menunggu -> pesan")
 	# pasien keluar dari klinik dan hilang dari tampilan
 	guard = 0
 	while _world.get_npc_node(p.npc_id) != null and guard < 1500:

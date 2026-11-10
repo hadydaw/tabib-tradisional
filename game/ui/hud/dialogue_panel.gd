@@ -71,7 +71,7 @@ func show_view(view: Dictionary) -> void:
 		if i < _choice_count:
 			_buttons[i].text = String(labels[i])
 	_next.visible = _choice_count == 0
-	_next.text = Locale.tr("ui.next")
+	_next.text = Locale.t("ui.next")
 
 
 func hide_panel() -> void:

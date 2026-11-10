@@ -237,7 +237,7 @@ func update_interaction() -> void:
 		var it: Interactable = _npc_interactables[id]
 		var a: NpcAgent = _sim.agent(id)
 		it.dynamic_pos = a.pos
-		it.prompt = Locale.tr("ui.talk", {"name": Locale.tr(a.data.name_key())})
+		it.prompt = Locale.t("ui.talk", {"name": Locale.t(a.data.name_key())})
 		list.append(it)
 	_near = InteractionSystem.find_best(_player.grid_pos, facing_grid, list)
 	_btn_interact.visible = _near != null
@@ -249,7 +249,7 @@ func update_interaction() -> void:
 func _prompt_for(it: Interactable) -> String:
 	var key: String = "prompt.%s" % it.id
 	if it.kind == "poi" and Locale.has_key(key):
-		return Locale.tr(key)
+		return Locale.t(key)
 	return it.prompt
 
 
@@ -328,27 +328,27 @@ func _on_agent_location_changed(id: String, from_loc: String, to_loc: String) ->
 
 
 func _on_patient_event(kind: String, p: PatientRecord) -> void:
-	var nm: String = Locale.tr(NpcRoster.by_id(p.npc_id).name_key())
+	var nm: String = Locale.t(NpcRoster.by_id(p.npc_id).name_key())
 	match kind:
 		"arrived":
-			_show_toast(Locale.tr("clinic.patient_arrived", {"name": nm}))
+			_show_toast(Locale.t("clinic.patient_arrived", {"name": nm}))
 		"gave_up":
-			_show_toast(Locale.tr("clinic.patient_left_waiting", {"name": nm}))
+			_show_toast(Locale.t("clinic.patient_left_waiting", {"name": nm}))
 
 
 func _interact_reception() -> void:
 	if not _patients.is_open():
-		_show_toast(Locale.tr("clinic.closed_notice"))
+		_show_toast(Locale.t("clinic.closed_notice"))
 		return
 	var p: PatientRecord = _patients.call_next()
 	if p != null:
-		var nm: String = Locale.tr(NpcRoster.by_id(p.npc_id).name_key())
-		_show_toast(Locale.tr("clinic.ticket_called", {"name": nm, "ticket": p.ticket}))
+		var nm: String = Locale.t(NpcRoster.by_id(p.npc_id).name_key())
+		_show_toast(Locale.t("clinic.ticket_called", {"name": nm, "ticket": p.ticket}))
 		return
 	if _patients.queue.waiting_count() == 0:
-		_show_toast(Locale.tr("clinic.no_patient"))
+		_show_toast(Locale.t("clinic.no_patient"))
 	elif _patients.queue.room_busy():
-		_show_toast(Locale.tr("clinic.room_occupied"))
+		_show_toast(Locale.t("clinic.room_occupied"))
 	else:
 		_show_toast(_queue_status_text())
 
@@ -356,14 +356,14 @@ func _interact_reception() -> void:
 func _interact_exam_bed() -> void:
 	var p: PatientRecord = _patients.finish_exam()
 	if p != null:
-		_show_toast(Locale.tr("clinic.exam_done", {"name": Locale.tr(NpcRoster.by_id(p.npc_id).name_key())}))
+		_show_toast(Locale.t("clinic.exam_done", {"name": Locale.t(NpcRoster.by_id(p.npc_id).name_key())}))
 	else:
-		_show_toast(Locale.tr("clinic.exam_empty"))
+		_show_toast(Locale.t("clinic.exam_empty"))
 
 
 func _queue_status_text() -> String:
-	var room: String = Locale.tr("clinic.room_busy" if _patients.queue.room_busy() else "clinic.room_free")
-	return Locale.tr("clinic.queue_status", {"waiting": _patients.queue.waiting_count(), "room": room})
+	var room: String = Locale.t("clinic.room_busy" if _patients.queue.room_busy() else "clinic.room_free")
+	return Locale.t("clinic.queue_status", {"waiting": _patients.queue.waiting_count(), "room": room})
 
 
 # --- Dialog ------------------------------------------------------------------
@@ -422,7 +422,7 @@ func _show_dialogue_view() -> void:
 
 func _notify_requests(changed: Array[String]) -> void:
 	for id in changed:
-		_show_toast(Locale.tr("ui.request_ready", {"title": Locale.tr("%s.title" % id)}))
+		_show_toast(Locale.t("ui.request_ready", {"title": Locale.t("%s.title" % id)}))
 	_refresh_clock_label()
 
 
@@ -430,13 +430,13 @@ func _refresh_clock_label() -> void:
 	if _clock_label == null:
 		return
 	var lines := PackedStringArray()
-	var head: String = Locale.tr("ui.clock", {"day": _clock.day, "time": _clock.format_time()})
-	head += "   " + Locale.tr("ui.clinic_open" if _patients.is_open() else "ui.clinic_closed")
-	head += "   " + Locale.tr("ui.queue", {"n": _patients.queue.waiting_count()})
+	var head: String = Locale.t("ui.clock", {"day": _clock.day, "time": _clock.format_time()})
+	head += "   " + Locale.t("ui.clinic_open" if _patients.is_open() else "ui.clinic_closed")
+	head += "   " + Locale.t("ui.queue", {"n": _patients.queue.waiting_count()})
 	lines.append(head)
 	for id in _requests.active_ids():
 		var key: String = "ui.request_ready" if _requests.status(id) == RequestLog.READY else "ui.request_active"
-		lines.append(Locale.tr(key, {"title": Locale.tr("%s.title" % id)}))
+		lines.append(Locale.t(key, {"title": Locale.t("%s.title" % id)}))
 	_clock_label.text = "\n".join(lines)
 
 

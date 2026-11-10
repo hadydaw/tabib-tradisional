@@ -31,10 +31,10 @@ func view() -> Dictionary:
 	var n: Dictionary = nodes[node_id]
 	var labels: Array[String] = []
 	for c: Dictionary in n["choices"]:
-		labels.append(Locale.tr(String(c["label"])))
+		labels.append(Locale.t(String(c["label"])))
 	return {
-		"speaker": Locale.tr(String(n["speaker"])),
-		"text": Locale.tr(String(n["text"]), n["args"]),
+		"speaker": Locale.t(String(n["speaker"])),
+		"text": Locale.t(String(n["text"]), n["args"]),
 		"choices": labels,
 		"has_choices": not labels.is_empty(),
 	}

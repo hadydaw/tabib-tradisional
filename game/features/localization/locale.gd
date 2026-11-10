@@ -2,7 +2,7 @@ class_name Locale
 extends RefCounted
 ## Localization sederhana: tabel kunci -> teks per bahasa (JSON di res://localization/).
 ## Bahasa bawaan Indonesia ("id"); English ("en") jatuh kembali ke Indonesia bila kunci belum ada.
-## Teks mendukung penanda {nama}. Logika murni, dites unit.
+## Teks diambil lewat Locale.t (bukan tr, bentrok dengan Object.tr). Mendukung penanda {nama}. Logika murni, dites unit.
 
 const LANGS: Array[String] = ["id", "en"]
 const DEFAULT_LANG: String = "id"
@@ -48,7 +48,7 @@ static func has_key(key: String, lang: String = "") -> bool:
 
 
 ## Teks untuk `key` dengan penanda `{nama}` diganti dari `args`. Kunci tak dikenal -> kunci itu sendiri.
-static func tr(key: String, args: Dictionary = {}) -> String:
+static func t(key: String, args: Dictionary = {}) -> String:
 	var text: String = ""
 	var t: Dictionary = _table(current)
 	if t.has(key):

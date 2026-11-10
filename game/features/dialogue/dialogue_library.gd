@@ -21,7 +21,7 @@ static func build(npc: NpcData, ctx: Dictionary) -> Dictionary:
 	var greet_args: Dictionary = {}
 	if not patient.is_empty():
 		var st: String = String(patient.get("state", ""))
-		var comp: String = Locale.tr("complaint.%s" % String(patient.get("complaint", "")))
+		var comp: String = Locale.t("complaint.%s" % String(patient.get("complaint", "")))
 		greet_args = {"complaint": comp}
 		match st:
 			"menuju", "mendaftar": greet_key = "dlg.patient.coming"
@@ -51,7 +51,7 @@ static func build(npc: NpcData, ctx: Dictionary) -> Dictionary:
 	nodes[START] = {"speaker": speaker, "text": greet_key, "args": greet_args, "choices": choices, "next": "", "end": false}
 
 	nodes["status"] = {"speaker": speaker, "text": "dlg.status",
-		"args": {"activity": Locale.tr("activity.%s" % String(ctx.get("activity", "di_rumah")))},
+		"args": {"activity": Locale.t("activity.%s" % String(ctx.get("activity", "di_rumah")))},
 		"choices": [], "next": START, "end": false}
 	nodes["about"] = {"speaker": speaker, "text": "dlg.%s.about" % npc.id, "args": {}, "choices": [], "next": "about2", "end": false}
 	nodes["about2"] = {"speaker": speaker, "text": "dlg.%s.about2" % npc.id, "args": {}, "choices": [], "next": START, "end": false}
